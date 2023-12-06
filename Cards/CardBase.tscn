@@ -1,0 +1,105 @@
+[gd_scene load_steps=3 format=3 uid="uid://dyqkclbhlvd8j"]
+
+[ext_resource type="Script" path="res://Cards/CardBase.gd" id="1_n4mnx"]
+[ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="2_a7rfg"]
+
+[node name="CardBase" type="VBoxContainer"]
+offset_right = 250.0
+offset_bottom = 350.0
+pivot_offset = Vector2(125, 175)
+script = ExtResource("1_n4mnx")
+
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(250, 350)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Border" type="Node2D" parent="."]
+
+[node name="Top" type="Sprite2D" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+scale = Vector2(250, 5)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Bottom" type="Sprite2D" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(0, 345)
+scale = Vector2(250, 5)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Right" type="Sprite2D" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(245, 0)
+scale = Vector2(5, 350)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Left" type="Sprite2D" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+scale = Vector2(5, 350)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Middle Line" type="Sprite2D" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(0, 192)
+scale = Vector2(250, 6)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Bottom of Name" type="Sprite2D" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(0, 40)
+scale = Vector2(250, 5)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Icon" type="Sprite2D" parent="."]
+
+[node name="Name" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Name" type="Label" parent="Name"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Testing"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TopText" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TopText" type="Label" parent="TopText"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 16
+text = "Testing"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomText" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="BottomText" type="Label" parent="BottomText"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 16
+text = "Testing"
+horizontal_alignment = 1
+vertical_alignment = 1
