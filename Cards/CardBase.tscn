@@ -14,45 +14,74 @@ scale = Vector2(250, 350)
 texture = ExtResource("2_a7rfg")
 centered = false
 
-[node name="Border" type="Node2D" parent="."]
+[node name="Border2" type="Node2D" parent="."]
 
-[node name="Top" type="Sprite2D" parent="Border"]
+[node name="Top" type="Sprite2D" parent="Border2"]
 modulate = Color(0, 0, 0, 1)
 scale = Vector2(250, 5)
 texture = ExtResource("2_a7rfg")
 centered = false
 
-[node name="Bottom" type="Sprite2D" parent="Border"]
+[node name="Bottom" type="Sprite2D" parent="Border2"]
 modulate = Color(0, 0, 0, 1)
 position = Vector2(0, 345)
 scale = Vector2(250, 5)
 texture = ExtResource("2_a7rfg")
 centered = false
 
-[node name="Right" type="Sprite2D" parent="Border"]
+[node name="Right" type="Sprite2D" parent="Border2"]
 modulate = Color(0, 0, 0, 1)
 position = Vector2(245, 0)
 scale = Vector2(5, 350)
 texture = ExtResource("2_a7rfg")
 centered = false
 
-[node name="Left" type="Sprite2D" parent="Border"]
+[node name="Left" type="Sprite2D" parent="Border2"]
 modulate = Color(0, 0, 0, 1)
 scale = Vector2(5, 350)
 texture = ExtResource("2_a7rfg")
 centered = false
 
-[node name="Middle Line" type="Sprite2D" parent="Border"]
+[node name="Middle Line" type="Sprite2D" parent="Border2"]
 modulate = Color(0, 0, 0, 1)
 position = Vector2(0, 192)
 scale = Vector2(250, 6)
 texture = ExtResource("2_a7rfg")
 centered = false
 
-[node name="Bottom of Name" type="Sprite2D" parent="Border"]
+[node name="Bottom of Name" type="Sprite2D" parent="Border2"]
 modulate = Color(0, 0, 0, 1)
 position = Vector2(0, 40)
 scale = Vector2(250, 5)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="HighlightBorder" type="Node2D" parent="."]
+visible = false
+
+[node name="Top" type="Sprite2D" parent="HighlightBorder"]
+modulate = Color(0.160784, 0.964706, 0.960784, 1)
+scale = Vector2(250, 5)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Bottom" type="Sprite2D" parent="HighlightBorder"]
+modulate = Color(0.160784, 0.964706, 0.960784, 1)
+position = Vector2(0, 345)
+scale = Vector2(250, 5)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Right" type="Sprite2D" parent="HighlightBorder"]
+modulate = Color(0.160784, 0.964706, 0.960784, 1)
+position = Vector2(245, 0)
+scale = Vector2(5, 350)
+texture = ExtResource("2_a7rfg")
+centered = false
+
+[node name="Left" type="Sprite2D" parent="HighlightBorder"]
+modulate = Color(0.160784, 0.964706, 0.960784, 1)
+scale = Vector2(5, 350)
 texture = ExtResource("2_a7rfg")
 centered = false
 
