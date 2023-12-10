@@ -13,6 +13,8 @@ var CardName = "Chop"
 
 @onready var CardImg = str("res://Assets/Icons/",CardInfo[0],".png")
 
+@onready var targetArea = null
+
 @onready var state = states.InHand
 var startpos = Vector2()
 var targetpos = Vector2()
@@ -61,6 +63,9 @@ func _ready():
 	$TopText/TopText.text = CardInfo[fields.TopText]
 	$BottomText/BottomText.text = CardInfo[fields.BottomText]
 	$Name/Name.text = CardInfo[fields.Name]
+	
+	if CardInfo.has(cdt.CARD_FIELDS.TargetArea):
+		targetArea = CardInfo[cdt.CARD_FIELDS.TargetArea]
 	
 	connect("mouse_entered",mouseEntered)
 	connect("mouse_exited", mouseExited)
@@ -187,4 +192,4 @@ func _input(event):
 			if event.pressed:
 				card_pressed = true
 				# Alert the playspace about which card has been clicked
-				PLAYSPACE.cardPressed(index, focuspos + size/2)
+				PLAYSPACE.cardPressed(index, focuspos + size/2, self)

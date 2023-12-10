@@ -69,18 +69,21 @@ func unFocus(index):
 	else:
 		return false
 
-var cardHeld = -1
+var cardHeldIndex = -1
+var cardHeldPointer = null
 var focusedCardPosition = Vector2()
 
-func cardPressed(index, cardPosition):
+func cardPressed(index, cardPosition, pointer):
+	cardHeldPointer = pointer
 	focusedCardPosition = cardPosition
-	cardHeld = index
+	cardHeldIndex = index
 	for i in range(cardsInHand.size()):
 		if i != index:
 			cardsInHand[i].other_card_pressed = true
 
 func cardReleased(index):
-	cardHeld = -1
+	cardHeldPointer = null
+	cardHeldIndex = -1
 	line.visible = false
 	$Terrain.clearHighlights()
 	for i in range(cardsInHand.size()):
@@ -103,16 +106,17 @@ func cardReleased(index):
 	#return curve.get_baked_points()
 	
 func _input(event):
-	if event is InputEventMouseMotion and cardHeld > -1:
-		line.visible = true
-		line.points = PackedVector2Array([focusedCardPosition, event.position])
-		terrain.highlightCells(event.position)
+	if event is InputEventMouseMotion and cardHeldIndex > -1:
+		if cardHeldPointer.targetArea != null:
+			line.visible = true
+			line.points = PackedVector2Array([focusedCardPosition, event.position])
+			terrain.highlightCells(event.position, cardHeldPointer.targetArea)
 		
 			
-	if event is InputEventMouseButton and cardHeld > -1:
+	if event is InputEventMouseButton and cardHeldIndex > -1:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if not event.pressed:
-				cardReleased(cardHeld)
+				cardReleased(cardHeldIndex)
 
 func drawCard(fromPosition, fromScale):
 	var new_card = CardBase.instantiate()
