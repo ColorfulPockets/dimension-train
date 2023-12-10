@@ -1,41 +1,38 @@
 extends TileMap
 
-var tree = Vector2i(4,2)
-var rock = Vector2i(0,3)
-var empty = Vector2i(0,0)
-var highlight = Vector2i(2,4)
 const MAP_SIZE = Vector2i(20,10)
 
-var highlightRegion = PackedVector2Array()
-
 @onready var fixedElements = $"../FixedElements"
+@onready var highlighted_tiles:Array[Vector2i] = []
 
 func randomTerrainVector():
 	var selection = randi_range(0,2)
 	if selection == 0:
-		return tree
+		return Global.tree
 	elif selection == 1:
-		return rock
+		return Global.rock
 	else:
-		return empty
+		return Global.empty
 
 func clearHighlights():
+	highlighted_tiles.clear()
 	for i in range(MAP_SIZE[0]):
 		for j in range(MAP_SIZE[1]):
-			set_cell(1,Vector2i(i,j),-1,Vector2i(-1,-1))
+			set_cell(Global.highlight_layer,Vector2i(i,j),-1,Vector2i(-1,-1))
 			
 			
 func screenPositionToMapPosition(screenPosition):
 	return local_to_map((screenPosition + fixedElements.position) / scale)
 
+# Draws the highlight and updates which cells are highlighted
 func highlightCells(mousePosition, targetArea:Vector2i):
-	for i in range(MAP_SIZE[0]):
-		for j in range(MAP_SIZE[1]):
-			set_cell(1,Vector2i(i,j),-1,Vector2i(-1,-1))
+	# OPTIMIZE: could just remove the tiles already in highlighted_tiles
+	clearHighlights()
+	
+	var currently_highlighted_tiles:Array[Vector2i] = []
 			
-	var highlighted_tiles = []
 	var center_tile = screenPositionToMapPosition(mousePosition)
-	highlighted_tiles.append(center_tile)
+	currently_highlighted_tiles.append(center_tile)
 	var spreadX = targetArea.x/2
 	var spreadY = targetArea.y/2
 	
@@ -48,41 +45,50 @@ func highlightCells(mousePosition, targetArea:Vector2i):
 	
 	for i in range(-1,spreadX):
 		for j in range(-1,spreadY):
-			highlighted_tiles.append(screenPositionToMapPosition(
+			currently_highlighted_tiles.append(screenPositionToMapPosition(
 				mousePosition + Vector2(
 					(addX + i)*tile_set.tile_size.x*scale.x, 
 					(addY + j)*tile_set.tile_size.y*scale.y)))
-			highlighted_tiles.append(screenPositionToMapPosition(
+			currently_highlighted_tiles.append(screenPositionToMapPosition(
 				mousePosition + Vector2(
 					-1*(addX + i)*tile_set.tile_size.x*scale.x, 
 					(addY + j)*tile_set.tile_size.y*scale.y)))
-			highlighted_tiles.append(screenPositionToMapPosition(
+			currently_highlighted_tiles.append(screenPositionToMapPosition(
 				mousePosition + Vector2(
 					-1*(addX + i)*tile_set.tile_size.x*scale.x, 
 					-1*(addY + j)*tile_set.tile_size.y*scale.y)))
-			highlighted_tiles.append(screenPositionToMapPosition(
+			currently_highlighted_tiles.append(screenPositionToMapPosition(
 				mousePosition + Vector2(
 					(addX + i)*tile_set.tile_size.x*scale.x, 
 					-1*(addY + j)*tile_set.tile_size.y*scale.y)))
-					
-	for highlighted_tile in highlighted_tiles:
-		if 0 <= highlighted_tile[0] \
+	
+	var containsOutOfBoundsCell = false
+	for highlighted_tile in currently_highlighted_tiles:
+		if not( 0 <= highlighted_tile[0] \
 			and highlighted_tile[0] < MAP_SIZE[0] \
 			and 0 <= highlighted_tile[1] \
-			and highlighted_tile[1] < MAP_SIZE[1]:
-			set_cell(1,highlighted_tile, 0, highlight)
+			and highlighted_tile[1] < MAP_SIZE[1]):
+				containsOutOfBoundsCell = true
+	
+	if not containsOutOfBoundsCell:
+		highlighted_tiles = currently_highlighted_tiles
+		for highlighted_tile in highlighted_tiles:
+			set_cell(Global.highlight_layer,highlighted_tile, 0, Global.highlight)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	add_layer(0)
 	set_layer_enabled(0, true)
-	set_layer_name(0, "base")
 	set_layer_z_index(0,0)
 	
 	add_layer(1)
 	set_layer_enabled(1, true)
-	set_layer_name(1, "highlight")
 	set_layer_z_index(1,0)
+	
+	add_layer(2)
+	set_layer_enabled(2, true)
+	set_layer_z_index(2,0)
+	
 	
 	for i in range(MAP_SIZE[0]):
 		for j in range(MAP_SIZE[1]):

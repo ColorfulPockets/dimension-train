@@ -3,8 +3,6 @@ extends Node2D
 const CardBase = preload("res://Cards/CardBase.tscn")
 const PlayerHand = preload("res://Cards/PlayerHand.gd")
 
-@onready var cdt = preload("res://CardDataTypes.gd").new()
-
 @onready var deck = ["Mine", "Chop", "Transport", "Build", "Mine", "Chop", "Transport", "Build", "Mine", "Chop", "Transport", "Build"]
 
 @onready var viewportSize = Vector2(get_viewport().size)
@@ -22,6 +20,7 @@ var numberOfFocusedCards = 0
 
 @onready var line = $FixedElements/CardTargetLine
 @onready var terrain = $Terrain
+@onready var cardFunctions = load("res://CardFunctions.gd").new(terrain)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -50,7 +49,7 @@ func reorganizeHand():
 		card.ellipseAngle -= deg_to_rad(5)
 		card.targetpos = posForAngle(card.ellipseAngle)
 		card.targetrot = rotForAngle(card.ellipseAngle)
-		card.state = cdt.CARD_STATES.ReorganizeHand
+		card.state = Global.CARD_STATES.ReorganizeHand
 		
 var focusIndex = 0
 # Tells each card where the focus is so they can move out of the way
@@ -105,17 +104,37 @@ func cardReleased(index):
 	#
 	#return curve.get_baked_points()
 	
+var shiftHeld = false
+
 func _input(event):
 	if event is InputEventMouseMotion and cardHeldIndex > -1:
-		if cardHeldPointer.targetArea != null:
+		if ((cardHeldPointer.bottomTargetArea != null) if shiftHeld else (cardHeldPointer.topTargetArea != null)):
 			line.visible = true
 			line.points = PackedVector2Array([focusedCardPosition, event.position])
-			terrain.highlightCells(event.position, cardHeldPointer.targetArea)
+			terrain.highlightCells(event.position, cardHeldPointer.bottomTargetArea if shiftHeld else cardHeldPointer.topTargetArea)
 		
+	if event is InputEventKey:
+		if event.key_label == KEY_SHIFT:
+			if event.pressed:
+				shiftHeld = true
+				# Fake mouse motion tells the tilemap to redraw the highlight
+				var fake_mouse_motion = InputEventMouseMotion.new()
+				fake_mouse_motion.position = get_viewport().get_mouse_position()
+				_input(fake_mouse_motion)
+			else:
+				shiftHeld = false
+				var fake_mouse_motion = InputEventMouseMotion.new()
+				fake_mouse_motion.position = get_viewport().get_mouse_position()
+				_input(fake_mouse_motion)
 			
 	if event is InputEventMouseButton and cardHeldIndex > -1:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if not event.pressed:
+				if shiftHeld:
+					Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomFunction]).call(terrain.highlighted_tiles)
+				else:
+					Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopFunction]).call(terrain.highlighted_tiles)
+					
 				cardReleased(cardHeldIndex)
 
 func drawCard(fromPosition, fromScale):
@@ -133,7 +152,7 @@ func drawCard(fromPosition, fromScale):
 	new_card.targetrot = (-angle + deg_to_rad(90))*CARD_ANGLE
 	
 	$FixedElements/Cards.add_child(new_card)
-	new_card.state = cdt.CARD_STATES.MoveDrawnCardToHand
+	new_card.state = Global.CARD_STATES.MoveDrawnCardToHand
 	reorganizeHand()
 	
 	# Tell the card which number it is in the hand

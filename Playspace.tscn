@@ -4123,8 +4123,6 @@ layer_1/z_index = 1
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("8_krthj")
 
-[node name="map" type="Node2D" parent="."]
-
 [node name="FixedElements" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0

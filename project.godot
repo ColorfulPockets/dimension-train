@@ -15,9 +15,17 @@ run/main_scene="res://Playspace.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Global="*res://Global.gd"
+
 [display]
 
 window/size/viewport_width=3840
 window/size/viewport_height=2160
 window/size/initial_position_type=2
 window/stretch/mode="viewport"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

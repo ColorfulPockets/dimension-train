@@ -1,9 +1,8 @@
 extends Container
 
-@onready var cdt = preload("res://CardDataTypes.gd").new()
-@onready var types = cdt.CARD_TYPES
-@onready var fields = cdt.CARD_FIELDS
-@onready var states = cdt.CARD_STATES
+@onready var types = Global.CARD_TYPES
+@onready var fields = Global.CARD_FIELDS
+@onready var states = Global.CARD_STATES
 
 @onready var CardDb = preload("res://CardDatabase.gd").new()
 
@@ -13,7 +12,8 @@ var CardName = "Chop"
 
 @onready var CardImg = str("res://Assets/Icons/",CardInfo[0],".png")
 
-@onready var targetArea = null
+var topTargetArea = null
+var bottomTargetArea = null
 
 @onready var state = states.InHand
 var startpos = Vector2()
@@ -64,8 +64,10 @@ func _ready():
 	$BottomText/BottomText.text = CardInfo[fields.BottomText]
 	$Name/Name.text = CardInfo[fields.Name]
 	
-	if CardInfo.has(cdt.CARD_FIELDS.TargetArea):
-		targetArea = CardInfo[cdt.CARD_FIELDS.TargetArea]
+	if CardInfo.has(Global.CARD_FIELDS.TopTargetArea):
+		topTargetArea = CardInfo[Global.CARD_FIELDS.TopTargetArea]
+		bottomTargetArea = CardInfo[Global.CARD_FIELDS.BottomTargetArea]
+		
 	
 	connect("mouse_entered",mouseEntered)
 	connect("mouse_exited", mouseExited)
