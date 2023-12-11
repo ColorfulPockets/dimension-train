@@ -10,5 +10,6 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	text = "Rail Left to Build: " + str(terrain.numRailToBuild)
+	text = str(terrain.numRailToBuild)
+	position = get_viewport().get_mouse_position() + Vector2(64,0)
 	

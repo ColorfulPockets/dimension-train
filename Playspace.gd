@@ -102,24 +102,25 @@ var cardHeldPointer = null
 var focusedCardPosition = Vector2()
 
 func cardPressed(index, cardPosition, pointer):
-	cardHeldPointer = pointer
-	focusedCardPosition = cardPosition
-	cardHeldIndex = index
-	for i in range(cardsInHand.size()):
-		if i != index:
-			cardsInHand[i].other_card_pressed = true
-		
-	var discard_card = Global.FUNCTION_STATES.Unshift if not shiftHeld else Global.FUNCTION_STATES.Shift
-	while discard_card == Global.FUNCTION_STATES.Unshift or discard_card == Global.FUNCTION_STATES.Shift:
-		if discard_card == Global.FUNCTION_STATES.Shift:
-			discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomFunction]).call(cardHeldPointer.CardInfo)
-		else:
-			discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopFunction]).call(cardHeldPointer.CardInfo)
-		
-	if discard_card == Global.FUNCTION_STATES.Success:
-		cardDiscarded(cardHeldIndex)
-	else:	
-		cardReleased(cardHeldIndex)
+	if cardHeldPointer == null:
+		cardHeldPointer = pointer
+		focusedCardPosition = cardPosition
+		cardHeldIndex = index
+		for i in range(cardsInHand.size()):
+			if i != index:
+				cardsInHand[i].other_card_pressed = true
+			
+		var discard_card = Global.FUNCTION_STATES.Unshift if not shiftHeld else Global.FUNCTION_STATES.Shift
+		while discard_card == Global.FUNCTION_STATES.Unshift or discard_card == Global.FUNCTION_STATES.Shift:
+			if discard_card == Global.FUNCTION_STATES.Shift:
+				discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomFunction]).call(cardHeldPointer.CardInfo)
+			else:
+				discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopFunction]).call(cardHeldPointer.CardInfo)
+			
+		if discard_card == Global.FUNCTION_STATES.Success:
+			cardDiscarded(cardHeldIndex)
+		else:	
+			cardReleased(cardHeldIndex)
 
 func cardReleased(index):
 	cardHeldPointer = null
