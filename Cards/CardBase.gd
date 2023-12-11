@@ -1,8 +1,12 @@
-extends Container
+class_name CardBase extends Container
 
 @onready var types = Global.CARD_TYPES
 @onready var fields = Global.CARD_FIELDS
 @onready var states = Global.CARD_STATES
+
+
+@onready var PLAYSPACE = $"../../.."
+
 
 @onready var CardDb = preload("res://CardDatabase.gd").new()
 
@@ -27,6 +31,9 @@ var focusrot = 0
 var focusscale = Vector2()
 var t = 0
 
+const DISCARD_PILE_ROTATION = 0
+const DISCARD_PILE_SCALE = Vector2.ZERO
+
 # Tracks where it is in the hand
 var index = 0
 
@@ -45,13 +52,11 @@ var card_pressed = false
 var other_card_pressed = false
 var mousedOver = false
 
-var DRAWTIME = 0.2
-var REORGTIME = 0.1
+var DRAWTIME = 0.3
+var REORGTIME = 0.15
 var RETURNTOHANDTIME = 0.1
 var FOCUSTIME = 0.1
 var moveTime = 0.1
-
-@onready var PLAYSPACE = $"../../.."
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -113,11 +118,45 @@ func resetCurrentPosition():
 		startscale = scale
 		currentPositionSet = true
 
+func reorganize():
+	resetCurrentPosition()
+	inHandPosition = PLAYSPACE.posForAngle(ellipseAngle)
+	inHandRotation = PLAYSPACE.rotForAngle(ellipseAngle)
+	inHandScale = targetscale
+	moveTime = REORGTIME
+	out_of_place = true
+	state = states.InHand
+
+func discard():
+	resetCurrentPosition()
+	out_of_place = true
+	moveTime = DRAWTIME
+	state = states.InDiscardPile
+	
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	match state:
-		states.InHand:
+		states.InDrawPile:
+			pass
+		states.InDiscardPile:
 			z_index = 0
+			if t <= 1 and out_of_place:
+				position = startpos.lerp(Global.DISCARD_PILE_POSITION, t)
+				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
+				scale = startscale.lerp(DISCARD_PILE_SCALE, t)
+				t += delta/float(moveTime)
+			else:
+				t = 0
+				position = Global.DISCARD_PILE_POSITION
+				rotation = DISCARD_PILE_ROTATION
+				scale = DISCARD_PILE_SCALE
+				visible = false
+				out_of_place = false
+				currentPositionSet = false
+		states.InHand:
+			visible = true
+			z_index = index
 			if t <= 1 and out_of_place:
 				position = startpos.lerp(inHandPosition, t)
 				rotation = startrot + (inHandRotation - startrot)*t
@@ -156,7 +195,7 @@ func _process(delta):
 			focuspos = Vector2(inHandPosition.x, get_viewport().size.y*0.97 - FOCUS_SCALE_AMOUNT*size.y)
 			focusrot = 0
 			focusscale = FOCUS_SCALE_AMOUNT*inHandScale
-			z_index = 1
+			z_index = 11
 			moveTime = RETURNTOHANDTIME
 			if t <= 1 and out_of_place:
 				position = startpos.lerp(focuspos, t)
@@ -178,14 +217,7 @@ func _process(delta):
 			out_of_place = true
 			moveTime = DRAWTIME
 			state = states.InHand
-		states.ReorganizeHand:
-			resetCurrentPosition()
-			inHandPosition = targetpos
-			inHandRotation = targetrot
-			inHandScale = targetscale
-			moveTime = REORGTIME
-			out_of_place = true
-			state = states.InHand
+
 
 func _input(event):
 	if mousedOver:

@@ -3,7 +3,7 @@ extends Node2D
 const CardBase = preload("res://Cards/CardBase.tscn")
 const PlayerHand = preload("res://Cards/PlayerHand.gd")
 
-@onready var deck = ["Mine", "Chop", "Transport", "Build", "Mine", "Chop", "Transport", "Build", "Mine", "Chop", "Transport", "Build"]
+@onready var deckNames = ["Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build"]
 
 @onready var viewportSize = Vector2(get_viewport().size)
 
@@ -13,25 +13,55 @@ const PlayerHand = preload("res://Cards/PlayerHand.gd")
 var angle = deg_to_rad(90)
 var ovalAngleVector = Vector2()
 
-# Each card is represented as [card_ref, standard_angle]
-var cardsInHand = []
+const HAND_LIMIT = 10
+var cardsInHand:Array[CardBase] = []
+var discardPile:Array[CardBase] = []
+var drawPile:Array[CardBase]		= []
 
 var numberOfFocusedCards = 0
 
-@onready var line = $FixedElements/CardTargetLine
 @onready var terrain = $Terrain
+@onready var drawPileNode = $FixedElements/DrawPile
 @onready var cardFunctions = load("res://CardFunctions.gd").new(terrain)
+
+
+var shiftHeld = false
+var building_rail = false
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	line.visible = false
-	line.z_index = 2
-	line.default_color = Color("#777777")
-	add_child(line)
+	#line.visible = false
+	#line.z_index = 2
+	#line.default_color = Color("#777777")
+	#add_child(line)
+	
+	var discardPileNode = $FixedElements/DiscardPile
+	
+	$FixedElements/DiscardPileCardCount.position = Global.DISCARD_PILE_POSITION + (discardPileNode.size*discardPileNode.scale / 2)
+	$FixedElements/DrawPileCardCount.position = Global.DRAW_PILE_POSITION + (drawPileNode.size*drawPileNode.scale / 2)
+	
+	for cardName in deckNames:
+		var new_card = CardBase.instantiate()
+		new_card.CardName = cardName
+		drawPile.append(new_card)
+		
+	drawPile.shuffle()
+	drawHand()
+	
+	terrain.building_rail.connect(func(): building_rail = true)
+	terrain.rail_built.connect(func(_x): building_rail = false, 1)
 
+
+func drawHand():
+	for i in range(5):
+		drawCard(drawPileNode.position, Vector2.ZERO)
+		await get_tree().create_timer(0.05).timeout
+		
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	$FixedElements/DiscardPileCardCount.text = str(discardPile.size())
+	$FixedElements/DrawPileCardCount.text = str(drawPile.size())
 
 const CARDSIZE = Vector2(750/2,1050/2)
 # How much the cards should be rotated compared to their position on the ellipse
@@ -47,9 +77,7 @@ func rotForAngle(angle):
 func reorganizeHand():
 	for card in cardsInHand:
 		card.ellipseAngle -= deg_to_rad(5)
-		card.targetpos = posForAngle(card.ellipseAngle)
-		card.targetrot = rotForAngle(card.ellipseAngle)
-		card.state = Global.CARD_STATES.ReorganizeHand
+		card.reorganize()
 		
 var focusIndex = 0
 # Tells each card where the focus is so they can move out of the way
@@ -79,11 +107,22 @@ func cardPressed(index, cardPosition, pointer):
 	for i in range(cardsInHand.size()):
 		if i != index:
 			cardsInHand[i].other_card_pressed = true
+		
+	var discard_card = Global.FUNCTION_STATES.Unshift if not shiftHeld else Global.FUNCTION_STATES.Shift
+	while discard_card == Global.FUNCTION_STATES.Unshift or discard_card == Global.FUNCTION_STATES.Shift:
+		if discard_card == Global.FUNCTION_STATES.Shift:
+			discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomFunction]).call(cardHeldPointer.CardInfo)
+		else:
+			discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopFunction]).call(cardHeldPointer.CardInfo)
+		
+	if discard_card == Global.FUNCTION_STATES.Success:
+		cardDiscarded(cardHeldIndex)
+	else:	
+		cardReleased(cardHeldIndex)
 
 func cardReleased(index):
 	cardHeldPointer = null
 	cardHeldIndex = -1
-	line.visible = false
 	$Terrain.clearHighlights()
 	for i in range(cardsInHand.size()):
 		cardsInHand[i].other_card_pressed = false
@@ -91,26 +130,37 @@ func cardReleased(index):
 		# mouseExited makes sure the card is unfocused and returns to hand
 		cardsInHand[i].mouseExited(true)
 		cardsInHand[i].manualFocusRetrigger()
-
-#func getLinePoints(points:Array[Vector2]):
-	#var curve = Curve2D.new()
-	#
-	#points.push_front(points[0])
-	#points.push_back(points[-1])
-	#
-	#for i in range(1,points.size()-1):
-		#curve.add_point(points[i], (points[i]-points[i-1])/2, (points[i+1]-points[i])/2)
-	#
-	#
-	#return curve.get_baked_points()
-	
-var shiftHeld = false
+		
+func cardDiscarded(index):
+	cardHeldPointer = null
+	cardHeldIndex = -1
+	$Terrain.clearHighlights()
+	for i in range(cardsInHand.size()):
+		cardsInHand[i].other_card_pressed = false
+		cardsInHand[i].card_pressed = false
+		# mouseExited makes sure the card is unfocused and returns to hand
+		cardsInHand[i].mouseExited(true)
+		cardsInHand[i].manualFocusRetrigger()
+		if i < index:
+			cardsInHand[i].ellipseAngle += deg_to_rad(5)
+		elif i > index:
+			cardsInHand[i].ellipseAngle -= deg_to_rad(5)
+		
+		cardsInHand[i].reorganize()
+	var card_discarded = cardsInHand.pop_at(index)
+	discardPile.append(card_discarded)
+	card_discarded.discard()
+	angle -= deg_to_rad(5)
+	for i in range(cardsInHand.size()):
+		cardsInHand[i].index = i
 
 func _input(event):
 	if event is InputEventMouseMotion and cardHeldIndex > -1:
+		if shiftHeld:
+			Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomMousePointer])
+		else:
+			Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer])
 		if ((cardHeldPointer.bottomTargetArea != null) if shiftHeld else (cardHeldPointer.topTargetArea != null)):
-			line.visible = true
-			line.points = PackedVector2Array([focusedCardPosition, event.position])
 			terrain.highlightCells(event.position, cardHeldPointer.bottomTargetArea if shiftHeld else cardHeldPointer.topTargetArea)
 		
 	if event is InputEventKey:
@@ -126,20 +176,30 @@ func _input(event):
 				var fake_mouse_motion = InputEventMouseMotion.new()
 				fake_mouse_motion.position = get_viewport().get_mouse_position()
 				_input(fake_mouse_motion)
-			
-	if event is InputEventMouseButton and cardHeldIndex > -1:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			if not event.pressed:
-				if shiftHeld:
-					Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomFunction]).call(terrain.highlighted_tiles)
-				else:
-					Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopFunction]).call(terrain.highlighted_tiles)
-					
-				cardReleased(cardHeldIndex)
+			#
+	#if event is InputEventMouseButton and cardHeldIndex > -1 and not building_rail:
+		#if event.button_index == MOUSE_BUTTON_LEFT:
+			#if not event.pressed:
+				
+
+func endTurn():
+	while cardsInHand.size() > 0:
+		cardDiscarded(0)
+		await get_tree().create_timer(0.05).timeout
+	await get_tree().create_timer(0.25).timeout
+	drawHand()
+	
+	
+		
 
 func drawCard(fromPosition, fromScale):
-	var new_card = CardBase.instantiate()
-	new_card.CardName = deck[0]
+	if drawPile.size() < 1:
+		drawPile = discardPile.duplicate()
+		drawPile.shuffle()
+		discardPile = []
+	if drawPile.size() < 1 or cardsInHand.size() >= HAND_LIMIT:
+		return
+	var new_card = drawPile.pop_front()
 	new_card.targetscale = CARDSIZE / new_card.size
 	
 	new_card.scale = fromScale
@@ -159,6 +219,5 @@ func drawCard(fromPosition, fromScale):
 	new_card.index = cardsInHand.size()
 	new_card.ellipseAngle = angle
 	cardsInHand.append(new_card)
-	deck.pop_front()
 	
 	angle += deg_to_rad(5)
