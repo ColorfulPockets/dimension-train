@@ -2,6 +2,7 @@ extends Node2D
 
 const CardBase = preload("res://Cards/CardBase.tscn")
 const PlayerHand = preload("res://Cards/PlayerHand.gd")
+const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
 @onready var deckNames = ["Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build"]
 
@@ -155,14 +156,24 @@ func cardDiscarded(index):
 		cardsInHand[i].index = i
 
 func _input(event):
-	if event is InputEventMouseMotion and cardHeldIndex > -1:
-		if shiftHeld:
-			Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomMousePointer])
+	if event is InputEventMouseMotion:
+		if cardHeldIndex > -1:
+			if shiftHeld:
+				Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomMousePointer], 0, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomMousePointer].get_size()/2)
+			else:
+				Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer], 0, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer].get_size()/2)
+			if ((cardHeldPointer.bottomTargetArea != null) if shiftHeld else (cardHeldPointer.topTargetArea != null)):
+				terrain.highlightCells(event.position, cardHeldPointer.bottomTargetArea if shiftHeld else cardHeldPointer.topTargetArea)	
 		else:
-			Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer])
-		if ((cardHeldPointer.bottomTargetArea != null) if shiftHeld else (cardHeldPointer.topTargetArea != null)):
-			terrain.highlightCells(event.position, cardHeldPointer.bottomTargetArea if shiftHeld else cardHeldPointer.topTargetArea)
-		
+			Input.set_custom_mouse_cursor(NORMAL_CURSOR,0,NORMAL_CURSOR.get_size()/2)
+	
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				var fake_mouse_motion = InputEventMouseMotion.new()
+				fake_mouse_motion.position = get_viewport().get_mouse_position()
+				_input(fake_mouse_motion)
+	
 	if event is InputEventKey:
 		if event.key_label == KEY_SHIFT:
 			if event.pressed:
@@ -176,10 +187,7 @@ func _input(event):
 				var fake_mouse_motion = InputEventMouseMotion.new()
 				fake_mouse_motion.position = get_viewport().get_mouse_position()
 				_input(fake_mouse_motion)
-			#
-	#if event is InputEventMouseButton and cardHeldIndex > -1 and not building_rail:
-		#if event.button_index == MOUSE_BUTTON_LEFT:
-			#if not event.pressed:
+			
 				
 
 func endTurn():

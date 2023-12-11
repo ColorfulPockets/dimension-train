@@ -71,6 +71,7 @@ func _ready():
 	
 	if CardInfo.has(Global.CARD_FIELDS.TopTargetArea):
 		topTargetArea = CardInfo[Global.CARD_FIELDS.TopTargetArea]
+	if CardInfo.has(Global.CARD_FIELDS.BottomTargetArea):	
 		bottomTargetArea = CardInfo[Global.CARD_FIELDS.BottomTargetArea]
 		
 	

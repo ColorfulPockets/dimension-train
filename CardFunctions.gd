@@ -69,6 +69,6 @@ func Build(cardInfo):
 	
 	tilemap.buildRail(numBuilt)
 	
-	var success = await tilemap.rail_built
+	var discard = await tilemap.rail_built
 	
-	return Global.FUNCTION_STATES.Success if success else Global.FUNCTION_STATES.Fail
+	return discard

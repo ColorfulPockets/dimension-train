@@ -196,13 +196,26 @@ func _input(event):
 				partialRailBuilt.clear()
 				railEndpoint = originalRailEndpoint
 				railEndpointFacing = originalRailEndpointFacing
-				rail_built.emit(false)
+				rail_built.emit(Global.FUNCTION_STATES.Fail)
 		if event.key_label == KEY_ENTER:
 			if event.pressed:
 				buildingRail = false
 				numRailToBuild = 0
 				partialRailBuilt.clear()
-				rail_built.emit(true)
+				rail_built.emit(Global.FUNCTION_STATES.Success)
+		if event.key_label == KEY_SHIFT:
+			buildingRail = false
+			numRailToBuild = 0
+			for rail in partialRailBuilt:
+				set_cell(0, rail, 0, Global.empty)
+				Stats.railCount += 1
+			partialRailBuilt.clear()
+			railEndpoint = originalRailEndpoint
+			railEndpointFacing = originalRailEndpointFacing
+			if event.pressed:
+				rail_built.emit(Global.FUNCTION_STATES.Shift)
+			else:
+				rail_built.emit(Global.FUNCTION_STATES.Unshift)
 	
 	if event is InputEventKey and targeting:
 		if event.key_label == KEY_ESCAPE:
