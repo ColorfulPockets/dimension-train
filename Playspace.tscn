@@ -5,9 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dqrs44ocueoyf" path="res://Assets/Tiles/Tileset_my_version.png" id="2_g6npi"]
 [ext_resource type="Script" path="res://CardFunctions.gd" id="2_tmeg0"]
 [ext_resource type="Texture2D" uid="uid://d3anf6ui5dklw" path="res://Assets/Icons/DrawPile_white.png" id="3_qwl87"]
-[ext_resource type="Script" path="res://DrawPile.gd" id="4_q8v2y"]
 [ext_resource type="Script" path="res://FixedElements.gd" id="6_tohbi"]
-[ext_resource type="Script" path="res://DiscardPile.gd" id="8_1nc4h"]
 [ext_resource type="Script" path="res://Terrain.gd" id="8_krthj"]
 [ext_resource type="Texture2D" uid="uid://tfk6705h2sle" path="res://Assets/Icons/DiscardPile_black.png" id="8_m8g5r"]
 [ext_resource type="Texture2D" uid="uid://c5tfhn3wdxfnw" path="res://Assets/Icons/DiscardPile_white.png" id="9_35wxk"]
@@ -21,6 +19,8 @@
 [ext_resource type="Texture2D" uid="uid://dhiybsqjvdali" path="res://Assets/Icons/Metal.png" id="18_xfgll"]
 [ext_resource type="Texture2D" uid="uid://rcx7qkoeksij" path="res://Assets/Icons/Rail.png" id="19_allsf"]
 [ext_resource type="Script" path="res://RailLeftToPlace.gd" id="20_hbuuu"]
+[ext_resource type="Script" path="res://MiddleBarContainer.gd" id="22_whwbt"]
+[ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
 texture = ExtResource("2_g6npi")
@@ -4158,7 +4158,6 @@ texture_normal = ExtResource("2_1tsry")
 texture_pressed = ExtResource("3_qwl87")
 texture_hover = ExtResource("2_1tsry")
 texture_disabled = ExtResource("2_1tsry")
-script = ExtResource("4_q8v2y")
 
 [node name="Cards" type="Control" parent="FixedElements"]
 anchors_preset = 0
@@ -4174,7 +4173,6 @@ texture_normal = ExtResource("8_m8g5r")
 texture_pressed = ExtResource("9_35wxk")
 texture_hover = ExtResource("8_m8g5r")
 texture_disabled = ExtResource("8_m8g5r")
-script = ExtResource("8_1nc4h")
 
 [node name="DrawPileCardCount" type="Label" parent="FixedElements"]
 layout_mode = 0
@@ -4264,3 +4262,34 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 100
 script = ExtResource("20_hbuuu")
+
+[node name="MiddleBarContainer" type="Control" parent="FixedElements"]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1000.0
+offset_bottom = 200.0
+script = ExtResource("22_whwbt")
+
+[node name="MiddleBar" type="Sprite2D" parent="FixedElements/MiddleBarContainer"]
+modulate = Color(0.231373, 0.231373, 0.231373, 0.819608)
+texture = ExtResource("15_n5iw7")
+centered = false
+
+[node name="Text" type="Label" parent="FixedElements/MiddleBarContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -34.5
+offset_right = -19.0
+offset_bottom = 34.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 65
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("23_wu33i")

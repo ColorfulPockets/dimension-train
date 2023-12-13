@@ -4,12 +4,17 @@ signal confirmed(confirmed)
 
 @onready var PLAYSPACE:Playspace = $".."
 @onready var tilemap:Terrain = $".."/Terrain
+@onready var middleBarContainer:MiddleBarContainer = $".."/FixedElements/MiddleBarContainer
 
 func Chop(_cardInfo):
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Chop Trees\n(Esc to cancel)")
 	tilemap.targeting = true
 	var discard = await tilemap.confirmed
 	
 	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
 		return discard
 	
 	discard = Global.FUNCTION_STATES.Fail
@@ -20,14 +25,21 @@ func Chop(_cardInfo):
 	
 	tilemap.targeting = false
 
+	middleBarContainer.visible = false
+
 	return discard
 
 func Mine(_cardInfo):
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Mine Stone\n(Esc to cancel)")
+	
 	tilemap.targeting = true
 	
 	var discard = await tilemap.confirmed
 	
 	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
 		return discard
 		
 	discard = Global.FUNCTION_STATES.Fail
@@ -38,14 +50,20 @@ func Mine(_cardInfo):
 	
 	tilemap.targeting = false
 	
+	middleBarContainer.visible = false
 	return discard
 			
 func Gather(_cardInfo):
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Gather materials\n(Esc to cancel)")
+	
 	tilemap.targeting = true
 	
 	var discard = await tilemap.confirmed
 	
 	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
 		return discard
 		
 	discard = Global.FUNCTION_STATES.Fail
@@ -61,6 +79,7 @@ func Gather(_cardInfo):
 	
 	tilemap.targeting = false
 	
+	middleBarContainer.visible = false
 	return discard
 
 func Build(cardInfo):
@@ -68,15 +87,26 @@ func Build(cardInfo):
 	var numBuilt = cardInfo[Global.CARD_FIELDS.Arguments][0]
 	
 	tilemap.buildRail(numBuilt)
+	middleBarContainer.middleBarText.buildingRail()
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	
 	var discard = await tilemap.rail_built
+	
+	middleBarContainer.visible = false
 	
 	return discard
 	
 func Manufacture(cardInfo):
 	var numManufactured = cardInfo[Global.CARD_FIELDS.Arguments][0]
 	
+	middleBarContainer.setText("Manufacture " + str(min(numManufactured, Stats.railCount, Stats.woodCount, Stats.metalCount)) + " rails.\n(Enter to confirm, Esc to cancel)")
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	
 	var confirmed = await confirmed
+	
+	middleBarContainer.visible = false
 	
 	if confirmed == Global.FUNCTION_STATES.Success:
 		var num_to_manufacture = min(numManufactured, Stats.woodCount, Stats.metalCount)

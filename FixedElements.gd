@@ -4,7 +4,11 @@ const CAMERA_SPEED = 450
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	$DiscardPile.scale *= 0.45
+	$DiscardPile.position = Global.DISCARD_PILE_POSITION
+	
+	$DrawPile.scale *= 0.45
+	$DrawPile.position = Global.DRAW_PILE_POSITION
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
