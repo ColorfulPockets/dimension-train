@@ -1,10 +1,10 @@
-extends Node2D
+class_name Playspace extends Node2D
 
 const CardBase = preload("res://Cards/CardBase.tscn")
 const PlayerHand = preload("res://Cards/PlayerHand.gd")
 const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
-@onready var deckNames = ["Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build"]
+@onready var deckNames = ["Manufacture", "Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build"]
 
 @onready var viewportSize = Vector2(get_viewport().size)
 
@@ -23,12 +23,16 @@ var numberOfFocusedCards = 0
 
 @onready var terrain:Terrain = $Terrain
 @onready var drawPileNode = $FixedElements/DrawPile
-@onready var cardFunctions = load("res://CardFunctions.gd").new(terrain)
+@onready var cardFunctions:CardFunctions = $CardFunctions
 
 
 var shiftHeld = false
 var building_rail = false
 
+var endingTurn = false
+
+signal handDrawn
+signal cardFunctionHappening(happening)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -58,6 +62,9 @@ func drawHand():
 	for i in range(5):
 		drawCard(drawPileNode.position, Vector2.ZERO)
 		await get_tree().create_timer(0.05).timeout
+		
+	handDrawn.emit()
+
 		
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -103,6 +110,7 @@ var focusedCardPosition = Vector2()
 
 func cardPressed(index, cardPosition, pointer):
 	if cardHeldPointer == null:
+		cardFunctionHappening.emit(true)
 		cardHeldPointer = pointer
 		focusedCardPosition = cardPosition
 		cardHeldIndex = index
@@ -121,6 +129,8 @@ func cardPressed(index, cardPosition, pointer):
 			cardDiscarded(cardHeldIndex)
 		else:	
 			cardReleased(cardHeldIndex)
+		
+		cardFunctionHappening.emit(false)
 
 func cardReleased(index):
 	cardHeldPointer = null
@@ -188,16 +198,26 @@ func _input(event):
 				var fake_mouse_motion = InputEventMouseMotion.new()
 				fake_mouse_motion.position = get_viewport().get_mouse_position()
 				_input(fake_mouse_motion)
+		
+		if event.key_label == KEY_ESCAPE:
+			if event.pressed:
+				# Fake mouse motion tells the tilemap to redraw the highlight
+				var fake_mouse_motion = InputEventMouseMotion.new()
+				fake_mouse_motion.position = get_viewport().get_mouse_position()
+				_input(fake_mouse_motion)
 			
 				
 
 func endTurn():
+	endingTurn = true
 	terrain.advanceTrain()
 	while cardsInHand.size() > 0:
 		cardDiscarded(0)
 		await get_tree().create_timer(0.05).timeout
 	await get_tree().create_timer(0.25).timeout
 	drawHand()
+	await handDrawn
+	endingTurn = false
 	
 	
 		
@@ -231,3 +251,4 @@ func drawCard(fromPosition, fromScale):
 	cardsInHand.append(new_card)
 	
 	angle += deg_to_rad(5)
+	

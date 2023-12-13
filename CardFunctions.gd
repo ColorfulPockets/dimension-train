@@ -1,9 +1,9 @@
-class_name CardFunctions
+class_name CardFunctions extends Node
 
-var tilemap:Terrain = null
+signal confirmed(confirmed)
 
-func _init(tilemap:TileMap):
-	self.tilemap = tilemap
+@onready var PLAYSPACE:Playspace = $".."
+@onready var tilemap:Terrain = $".."/Terrain
 
 func Chop(_cardInfo):
 	tilemap.targeting = true
@@ -72,3 +72,41 @@ func Build(cardInfo):
 	var discard = await tilemap.rail_built
 	
 	return discard
+	
+func Manufacture(cardInfo):
+	var numManufactured = cardInfo[Global.CARD_FIELDS.Arguments][0]
+	
+	var confirmed = await confirmed
+	
+	if confirmed == Global.FUNCTION_STATES.Success:
+		var num_to_manufacture = min(numManufactured, Stats.woodCount, Stats.metalCount)
+		for i in range(num_to_manufacture):
+			Stats.woodCount -= 1
+			Stats.metalCount -= 1
+			Stats.railCount += 1
+			
+	return confirmed
+	
+func _input(event):
+	if event is InputEventKey:
+		if event.key_label == KEY_ENTER:
+			confirmed.emit(Global.FUNCTION_STATES.Success)
+			
+		if event.key_label == KEY_ESCAPE:
+			confirmed.emit(Global.FUNCTION_STATES.Fail)
+			
+		if event.key_label == KEY_SHIFT:
+			if event.pressed:
+				confirmed.emit(Global.FUNCTION_STATES.Shift)
+			else:
+				confirmed.emit(Global.FUNCTION_STATES.Unshift)
+		
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
+	pass

@@ -1,8 +1,9 @@
-[gd_scene load_steps=23 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=24 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
 [ext_resource type="Texture2D" uid="uid://dqrs44ocueoyf" path="res://Assets/Tiles/Tileset_my_version.png" id="2_g6npi"]
+[ext_resource type="Script" path="res://CardFunctions.gd" id="2_tmeg0"]
 [ext_resource type="Texture2D" uid="uid://d3anf6ui5dklw" path="res://Assets/Icons/DrawPile_white.png" id="3_qwl87"]
 [ext_resource type="Script" path="res://DrawPile.gd" id="4_q8v2y"]
 [ext_resource type="Script" path="res://FixedElements.gd" id="6_tohbi"]
@@ -4125,6 +4126,9 @@ sources/0 = SubResource("TileSetAtlasSource_4y60x")
 
 [node name="Playspace" type="Node2D"]
 script = ExtResource("1_sx2pt")
+
+[node name="CardFunctions" type="Node" parent="."]
+script = ExtResource("2_tmeg0")
 
 [node name="Terrain" type="TileMap" parent="."]
 scale = Vector2(10, 10)

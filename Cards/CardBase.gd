@@ -84,7 +84,7 @@ func manualFocusRetrigger():
 		mouseEntered()
 
 func mouseEntered():
-	if card_pressed:
+	if card_pressed or PLAYSPACE.endingTurn:
 		return
 	mousedOver = true
 	if not other_card_pressed and not card_pressed:
@@ -95,7 +95,7 @@ func mouseEntered():
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
-	if state == states.InDiscardPile:
+	if state == states.InDiscardPile or PLAYSPACE.endingTurn:
 		return
 	if not manuallyTriggered:
 		mousedOver = false
@@ -175,7 +175,7 @@ func _process(delta):
 				out_of_place = false
 				currentPositionSet = false
 		states.FocusOtherInHand:
-			z_index = 0
+			z_index = index
 			moveTime = REORGTIME
 			if focusIndex == -1:
 				state = states.InHand
@@ -225,7 +225,7 @@ func _process(delta):
 
 
 func _input(event):
-	if mousedOver and not card_pressed:
+	if mousedOver and not card_pressed and not PLAYSPACE.endingTurn:
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:

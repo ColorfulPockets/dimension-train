@@ -54,6 +54,19 @@ var DATA = {
 			fields.BottomFunction: "Gather",
 			fields.TopMousePointer: load("res://Assets/Icons/Build_mouse.png"),
 			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
-			fields.Arguments: [10],
-		}
+			fields.Arguments: [2],
+		},
+	"Manufacture":
+		{
+			fields.Name: "Manufacture",
+			fields.Type: types.Logistics,
+			fields.TopText: "Manufacture 2",
+			fields.BottomText: "Gather 2x1",
+			fields.BottomTargetArea: Vector2i(2,1),
+			fields.TopFunction: "Manufacture",
+			fields.BottomFunction: "Gather",
+			fields.TopMousePointer: load("res://Assets/Icons/cursor.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
+			fields.Arguments: [2],
+		},
 }

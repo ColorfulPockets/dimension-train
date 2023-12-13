@@ -19,6 +19,8 @@ var originalRailEndpoint = railEndpoint
 var partialRailBuilt = []
 var trainLocations = [railEndpoint, railEndpoint + Vector2i(0,1), railEndpoint + Vector2i(0,2)]
 
+var trainCrashed = false
+
 @onready var fixedElements = $"../FixedElements"
 @onready var highlighted_tiles:Array[Vector2i] = []
 
@@ -57,7 +59,7 @@ func _ready():
 			incomingMap[i].append(DIRECTION.NONE)
 			cellTypeMap[i].append("")
 			set_cell(0,Vector2i(i,j),0,randomTerrainVector())
-			set_cell(0,Vector2i(i,j),0,Global.empty)
+			#set_cell(0,Vector2i(i,j),0,Global.empty)
 			
 	outgoingMap[railEndpoint.x][railEndpoint.y] = DIRECTION.UP
 	incomingMap[railEndpoint.x][railEndpoint.y] = DIRECTION.DOWN
@@ -78,6 +80,7 @@ func _ready():
 	makeMetalShine()
 
 func advanceTrain():
+	if trainCrashed: return
 	var nextTrainLocations = []
 	for i in range(trainLocations.size()):
 		var trainLocation = trainLocations.pop_front()
@@ -97,6 +100,7 @@ func advanceTrain():
 		
 		if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
 			print("TRAIN CRASHED")
+			trainCrashed = true
 			return
 		
 		var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
