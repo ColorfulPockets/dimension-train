@@ -54,6 +54,6 @@ var DATA = {
 			fields.BottomFunction: "Gather",
 			fields.TopMousePointer: load("res://Assets/Icons/Build_mouse.png"),
 			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
-			fields.Arguments: [2],
+			fields.Arguments: [10],
 		}
 }

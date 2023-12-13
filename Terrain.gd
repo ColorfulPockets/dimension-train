@@ -8,14 +8,16 @@ var numRailToBuild = 0
 
 var targeting = false
 
-enum FACING {LEFT, RIGHT, UP, DOWN}
+var DIRECTION = Global.DIRECTION
+var outgoingMap = []
+var incomingMap = []
+var cellTypeMap = []
 
 const MAP_SIZE = Vector2i(20,10)
-var railEndpoint = Vector2i(10,10)
-var railEndpointFacing = FACING.UP
+var railEndpoint = Vector2i(9,7)
 var originalRailEndpoint = railEndpoint
-var originalRailEndpointFacing = railEndpointFacing
 var partialRailBuilt = []
+var trainLocations = [railEndpoint, railEndpoint + Vector2i(0,1), railEndpoint + Vector2i(0,2)]
 
 @onready var fixedElements = $"../FixedElements"
 @onready var highlighted_tiles:Array[Vector2i] = []
@@ -36,6 +38,79 @@ var in_left_out_up = flipH | flipV | transpose
 var in_right_out_left = transpose | flipV
 var in_left_out_right = flipH | transpose
 var in_up_out_down = flipH | flipV
+
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	for i in range(4):
+		add_layer(i)
+		set_layer_enabled(i, true)
+		set_layer_z_index(i,0)
+	
+	for i in range(MAP_SIZE[0]):
+		outgoingMap.append([])
+		incomingMap.append([])
+		cellTypeMap.append([])
+		for j in range(MAP_SIZE[1]):
+			outgoingMap[i].append(DIRECTION.NONE)
+			incomingMap[i].append(DIRECTION.NONE)
+			cellTypeMap[i].append("")
+			set_cell(0,Vector2i(i,j),0,randomTerrainVector())
+			set_cell(0,Vector2i(i,j),0,Global.empty)
+			
+	outgoingMap[railEndpoint.x][railEndpoint.y] = DIRECTION.UP
+	incomingMap[railEndpoint.x][railEndpoint.y] = DIRECTION.DOWN
+	cellTypeMap[railEndpoint.x][railEndpoint.y] = Global.DIRECTIONAL_TILES.TRAIN_FRONT
+	
+	outgoingMap[railEndpoint.x][railEndpoint.y + 1] = DIRECTION.UP
+	incomingMap[railEndpoint.x][railEndpoint.y + 1] = DIRECTION.DOWN
+	cellTypeMap[railEndpoint.x][railEndpoint.y + 1] = Global.DIRECTIONAL_TILES.TRAIN_MIDDLE
+	
+	outgoingMap[railEndpoint.x][railEndpoint.y + 2] = DIRECTION.UP
+	incomingMap[railEndpoint.x][railEndpoint.y + 2] = DIRECTION.DOWN
+	cellTypeMap[railEndpoint.x][railEndpoint.y + 2] = Global.DIRECTIONAL_TILES.TRAIN_END
+			
+	set_cell(0, railEndpoint,0,Global.train_front_topview)
+	set_cell(0, railEndpoint + Vector2i(0,1), 0, Global.train_middle_topview)
+	set_cell(0, railEndpoint + Vector2i(0,2), 0, Global.train_end_topview)
+			
+	makeMetalShine()
+
+func advanceTrain():
+	var nextTrainLocations = []
+	for i in range(trainLocations.size()):
+		var trainLocation = trainLocations.pop_front()
+		var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
+		var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
+		var trainType = cellTypeMap[trainLocation.x][trainLocation.y]
+		var nextLocation = Vector2i.ZERO
+		
+		if trainOutgoing == DIRECTION.UP:
+			nextLocation = trainLocation + Vector2i(0,-1)
+		elif trainOutgoing == DIRECTION.DOWN:
+			nextLocation = trainLocation + Vector2i(0,1)
+		elif trainOutgoing == DIRECTION.RIGHT:
+			nextLocation = trainLocation + Vector2i(1,0)
+		else:
+			nextLocation = trainLocation + Vector2i(-1,0)
+		
+		if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
+			print("TRAIN CRASHED")
+			return
+		
+		var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
+		var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
+		
+		if trainType == Global.DIRECTIONAL_TILES.TRAIN_END:
+			set_tile_directional(trainLocation, Global.DIRECTIONAL_TILES.RAIL, trainIncoming, trainOutgoing)
+		
+		set_tile_directional(nextLocation, trainType, nextIncoming, nextOutgoing)
+		nextTrainLocations.append(nextLocation)
+		
+	
+	trainLocations = nextTrainLocations
+	
 
 func randomTerrainVector():
 	var selection = randi_range(0,2)
@@ -110,13 +185,25 @@ func highlightCells(mousePosition, targetArea:Vector2i):
 func buildRail(numRail):
 	emit_signal("building_rail")
 	originalRailEndpoint = railEndpoint
-	originalRailEndpointFacing = railEndpointFacing
 	if Stats.railCount > 0:
 		buildingRail = true
 		numRailToBuild = min(numRail, Stats.railCount)
 		highlightCells(get_viewport().get_mouse_position(), Vector2i.ONE)
 	else:
 		rail_built.emit(false)
+
+func set_tile_directional(mapPosition, cellType, incoming, outgoing):
+	var directional_info = Global.DIRECTIONAL_TILE_INOUT[cellType][incoming][outgoing]
+	
+	set_cell(0, mapPosition, 0, directional_info[0], directional_info[1])
+	cellTypeMap[mapPosition.x][mapPosition.y] = cellType
+	incomingMap[mapPosition.x][mapPosition.y] = incoming
+	outgoingMap[mapPosition.x][mapPosition.y] = outgoing
+
+func changeOutgoing(mapPosition, direction):
+	set_tile_directional(mapPosition, cellTypeMap[mapPosition.x][mapPosition.y],
+						incomingMap[mapPosition.x][mapPosition.y],
+						direction)
 
 func buildRailOn(mousePosition):
 	var mapPosition = screenPositionToMapPosition(mousePosition)
@@ -125,55 +212,37 @@ func buildRailOn(mousePosition):
 			if mapPosition + adjacent_coords == railEndpoint:
 				Stats.railCount -= 1
 				numRailToBuild -= 1
+				var endpointType = cellTypeMap[railEndpoint.x][railEndpoint.y]
 				#We are above it
 				if adjacent_coords.y == 1:
-					set_cell(0, mapPosition, 0, Global.rail_straight)
-					if railEndpointFacing == FACING.RIGHT:
-						set_cell(0, railEndpoint, 0, Global.rail_curve, in_left_out_up)
-					elif railEndpointFacing == FACING.LEFT:
-						set_cell(0, railEndpoint, 0, Global.rail_curve, in_right_out_up)
-					else:
-						#Rail is already facing up
-						pass
-					railEndpointFacing = FACING.UP
+					set_tile_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIRECTION.DOWN, DIRECTION.UP)
+					changeOutgoing(railEndpoint, DIRECTION.UP)
 				#We are below it
 				elif adjacent_coords.y == -1:
-					set_cell(0, mapPosition, 0, Global.rail_straight, in_up_out_down)
-					if railEndpointFacing == FACING.RIGHT:
-						set_cell(0, railEndpoint, 0, Global.rail_curve, in_left_out_down)
-					elif railEndpointFacing == FACING.LEFT:
-						set_cell(0, railEndpoint, 0, Global.rail_curve, in_right_out_down)
-					else:
-						#Rail is already facing down
-						pass
-					railEndpointFacing = FACING.DOWN
+					set_tile_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIRECTION.UP, DIRECTION.DOWN)
+					changeOutgoing(railEndpoint, DIRECTION.DOWN)
 				# We are to the right
 				elif adjacent_coords.x == -1:
-					set_cell(0, mapPosition, 0, Global.rail_straight, in_left_out_right)
-					if railEndpointFacing == FACING.UP:
-						set_cell(0, railEndpoint, 0, Global.rail_curve)
-					elif railEndpointFacing == FACING.DOWN:
-						set_cell(0, railEndpoint, 0, Global.rail_curve, in_up_out_right)
-					else:
-						#Rail is already facing right 
-						pass
-					railEndpointFacing = FACING.RIGHT
+					set_tile_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIRECTION.LEFT, DIRECTION.RIGHT)
+					changeOutgoing(railEndpoint, DIRECTION.RIGHT)
 				# We are to the left
 				else:
-					set_cell(0, mapPosition, 0, Global.rail_straight, in_right_out_left)
-					if railEndpointFacing == FACING.UP:
-						set_cell(0, railEndpoint, 0, Global.rail_curve, in_down_out_left)
-					elif railEndpointFacing == FACING.DOWN:
-						set_cell(0, railEndpoint, 0, Global.rail_curve, in_up_out_left)
-					else:
-						#Rail is already facing right
-						pass
-					railEndpointFacing = FACING.LEFT
+					set_tile_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIRECTION.RIGHT, DIRECTION.LEFT)
+					changeOutgoing(railEndpoint, DIRECTION.LEFT)
 					
 				railEndpoint = mapPosition
 				partialRailBuilt.append(mapPosition)
 	
 
+func resetPartialRail():
+	for rail in partialRailBuilt:
+		set_cell(0, rail, 0, Global.empty)
+		outgoingMap[rail.x][rail.y] = DIRECTION.NONE
+		incomingMap[rail.x][rail.y] = DIRECTION.NONE
+		Stats.railCount += 1
+	partialRailBuilt.clear()
+	railEndpoint = originalRailEndpoint
+	
 func _input(event):
 	if event is InputEventMouseButton and numRailToBuild > 0:
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -190,12 +259,7 @@ func _input(event):
 			if event.pressed:
 				buildingRail = false
 				numRailToBuild = 0
-				for rail in partialRailBuilt:
-					set_cell(0, rail, 0, Global.empty)
-					Stats.railCount += 1
-				partialRailBuilt.clear()
-				railEndpoint = originalRailEndpoint
-				railEndpointFacing = originalRailEndpointFacing
+				resetPartialRail()
 				rail_built.emit(Global.FUNCTION_STATES.Fail)
 		if event.key_label == KEY_ENTER:
 			if event.pressed:
@@ -206,12 +270,7 @@ func _input(event):
 		if event.key_label == KEY_SHIFT:
 			buildingRail = false
 			numRailToBuild = 0
-			for rail in partialRailBuilt:
-				set_cell(0, rail, 0, Global.empty)
-				Stats.railCount += 1
-			partialRailBuilt.clear()
-			railEndpoint = originalRailEndpoint
-			railEndpointFacing = originalRailEndpointFacing
+			resetPartialRail()
 			if event.pressed:
 				rail_built.emit(Global.FUNCTION_STATES.Shift)
 			else:
@@ -237,35 +296,6 @@ func _input(event):
 			if event.pressed:
 				confirmed.emit(Global.FUNCTION_STATES.Success)
 				
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	add_layer(0)
-	set_layer_enabled(0, true)
-	set_layer_z_index(0,0)
-	
-	add_layer(1)
-	set_layer_enabled(1, true)
-	set_layer_z_index(1,0)
-	
-	add_layer(2)
-	set_layer_enabled(2, true)
-	set_layer_z_index(2,0)
-	
-	add_layer(3)
-	set_layer_enabled(3, true)
-	set_layer_z_index(3,0)
-	
-	
-	for i in range(MAP_SIZE[0]):
-		for j in range(MAP_SIZE[1]):
-			set_cell(0,Vector2i(i,j),0,randomTerrainVector())
-			#set_cell(0,Vector2i(i,j),0,Global.empty)
-			
-	set_cell(0,railEndpoint,0,Global.rail_straight)
-			
-	makeMetalShine()
-
 func makeMetalShine():
 	var shine_time = 0.15
 	var shine_period = 2.5

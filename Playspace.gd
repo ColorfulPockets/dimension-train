@@ -21,7 +21,7 @@ var drawPile:Array[CardBase]		= []
 
 var numberOfFocusedCards = 0
 
-@onready var terrain = $Terrain
+@onready var terrain:Terrain = $Terrain
 @onready var drawPileNode = $FixedElements/DrawPile
 @onready var cardFunctions = load("res://CardFunctions.gd").new(terrain)
 
@@ -192,6 +192,7 @@ func _input(event):
 				
 
 func endTurn():
+	terrain.advanceTrain()
 	while cardsInHand.size() > 0:
 		cardDiscarded(0)
 		await get_tree().create_timer(0.05).timeout

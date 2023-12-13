@@ -84,6 +84,8 @@ func manualFocusRetrigger():
 		mouseEntered()
 
 func mouseEntered():
+	if card_pressed:
+		return
 	mousedOver = true
 	if not other_card_pressed and not card_pressed:
 		$HighlightBorder.visible = true
@@ -93,6 +95,8 @@ func mouseEntered():
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
+	if state == states.InDiscardPile:
+		return
 	if not manuallyTriggered:
 		mousedOver = false
 	if not card_pressed:
@@ -221,7 +225,7 @@ func _process(delta):
 
 
 func _input(event):
-	if mousedOver:
+	if mousedOver and not card_pressed:
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:

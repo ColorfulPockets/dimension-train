@@ -3,7 +3,7 @@ extends Node
 var woodCount = 0
 var metalCount = 0
 var etc = 20
-var railCount = 10
+var railCount = 20
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
