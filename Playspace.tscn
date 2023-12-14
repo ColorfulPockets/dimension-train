@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=25 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://dhiybsqjvdali" path="res://Assets/Icons/Metal.png" id="18_xfgll"]
 [ext_resource type="Texture2D" uid="uid://rcx7qkoeksij" path="res://Assets/Icons/Rail.png" id="19_allsf"]
 [ext_resource type="Script" path="res://RailLeftToPlace.gd" id="20_hbuuu"]
+[ext_resource type="Script" path="res://EnergyDisplay.gd" id="22_rrjhi"]
 [ext_resource type="Script" path="res://MiddleBarContainer.gd" id="22_whwbt"]
 [ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
 
@@ -4293,3 +4294,23 @@ theme_override_font_sizes/font_size = 65
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("23_wu33i")
+
+[node name="EnergyDisplayHolder" type="Sprite2D" parent="FixedElements"]
+texture = ExtResource("12_esqij")
+centered = false
+script = ExtResource("22_rrjhi")
+
+[node name="EnergyDisplay" type="Sprite2D" parent="FixedElements/EnergyDisplayHolder"]
+modulate = Color(0.886275, 0, 0.886275, 1)
+texture = ExtResource("12_esqij")
+centered = false
+
+[node name="Label" type="Label" parent="FixedElements/EnergyDisplayHolder"]
+offset_left = 65.0
+offset_top = 45.0
+offset_right = 235.0
+offset_bottom = 254.0
+theme_override_font_sizes/font_size = 100
+text = "3/3"
+horizontal_alignment = 1
+vertical_alignment = 1

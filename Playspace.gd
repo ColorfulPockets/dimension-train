@@ -60,8 +60,7 @@ func _ready():
 
 func drawHand():
 	for i in range(5):
-		drawCard(drawPileNode.position, Vector2.ZERO)
-		await get_tree().create_timer(0.05).timeout
+		await drawCard(drawPileNode.position, Vector2.ZERO)
 		
 	handDrawn.emit()
 
@@ -126,6 +125,7 @@ func cardPressed(index, cardPosition, pointer):
 				discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopFunction]).call(cardHeldPointer.CardInfo)
 			
 		if discard_card == Global.FUNCTION_STATES.Success:
+			Stats.currentEnergy -= cardHeldPointer.CardInfo[Global.CARD_FIELDS.EnergyCost]
 			cardDiscarded(cardHeldIndex)
 		else:	
 			cardReleased(cardHeldIndex)
@@ -198,6 +198,10 @@ func _input(event):
 				var fake_mouse_motion = InputEventMouseMotion.new()
 				fake_mouse_motion.position = get_viewport().get_mouse_position()
 				_input(fake_mouse_motion)
+				
+		if event.key_label == KEY_E:
+			if !event.pressed:
+				endTurn()
 		
 		if event.key_label == KEY_ESCAPE:
 			if event.pressed:
@@ -209,15 +213,17 @@ func _input(event):
 				
 
 func endTurn():
-	endingTurn = true
-	terrain.advanceTrain()
-	while cardsInHand.size() > 0:
-		cardDiscarded(0)
-		await get_tree().create_timer(0.05).timeout
-	await get_tree().create_timer(0.25).timeout
-	drawHand()
-	await handDrawn
-	endingTurn = false
+	if !endingTurn:
+		endingTurn = true
+		terrain.advanceTrain()
+		while cardsInHand.size() > 0:
+			cardDiscarded(0)
+			await get_tree().create_timer(0.05).timeout
+		await get_tree().create_timer(0.25).timeout
+		drawHand()
+		Stats.currentEnergy = Stats.maxEnergy
+		await handDrawn
+		endingTurn = false
 	
 	
 		
@@ -249,6 +255,8 @@ func drawCard(fromPosition, fromScale):
 	new_card.index = cardsInHand.size()
 	new_card.ellipseAngle = angle
 	cardsInHand.append(new_card)
+	
+	await get_tree().create_timer(0.05).timeout
 	
 	angle += deg_to_rad(5)
 	

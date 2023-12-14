@@ -74,6 +74,8 @@ func _ready():
 	if CardInfo.has(Global.CARD_FIELDS.BottomTargetArea):	
 		bottomTargetArea = CardInfo[Global.CARD_FIELDS.BottomTargetArea]
 		
+	$Name/Name/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
+		
 	
 	connect("mouse_entered",mouseEntered)
 	connect("mouse_exited", mouseExited)
@@ -229,6 +231,7 @@ func _input(event):
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				card_pressed = true
-				# Alert the playspace about which card has been clicked
-				PLAYSPACE.cardPressed(index, focuspos + size/2, self)
+				if Stats.currentEnergy >= CardInfo[Global.CARD_FIELDS.EnergyCost]:
+					card_pressed = true
+					# Alert the playspace about which card has been clicked
+					PLAYSPACE.cardPressed(index, focuspos + size/2, self)

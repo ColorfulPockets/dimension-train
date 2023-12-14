@@ -7,6 +7,7 @@ var DATA = {
 	"Chop":
 		{
 			fields.Name: "Chop",
+			fields.EnergyCost: 1,
 			fields.Type: types.Harvesting,
 			fields.TopText: "Chop 2x2",
 			fields.BottomText: "Gather 1x1",
@@ -20,6 +21,7 @@ var DATA = {
 	"Mine":
 		{
 			fields.Name: "Mine",
+			fields.EnergyCost: 1,
 			fields.Type: types.Harvesting,
 			fields.TopText: "Mine 2x2",
 			fields.BottomText: "Gather 1x1",
@@ -33,6 +35,7 @@ var DATA = {
 	"Gather":
 		{
 			fields.Name: "Gather",
+			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
 			fields.TopText: "Gather 2x2",
 			fields.BottomText: "Gather 2x2",
@@ -46,6 +49,7 @@ var DATA = {
 	"Build":
 		{
 			fields.Name: "Build",
+			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
 			fields.TopText: "Build 2",
 			fields.BottomText: "Gather 1x2",
@@ -59,6 +63,7 @@ var DATA = {
 	"Manufacture":
 		{
 			fields.Name: "Manufacture",
+			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
 			fields.TopText: "Manufacture 2",
 			fields.BottomText: "Gather 2x1",

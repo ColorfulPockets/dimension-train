@@ -9,6 +9,7 @@ const highlight_layer = 3
 const DRAW_PILE_POSITION = Vector2(30,1850)
 const DISCARD_PILE_POSITION = Vector2(3570,1850)
 const END_TURN_BUTTON_POSITION = Vector2(3470,1350)
+const ENERGY_DISPLAY_POSITION = Vector2(400,1350)
 
 const VIEWPORT_SIZE = Vector2(3840, 2160)
 
@@ -50,6 +51,7 @@ enum CARD_FIELDS {
 	Arguments,
 	TopMousePointer,
 	BottomMousePointer,
+	EnergyCost,
 	}
 
 enum CARD_STATES {

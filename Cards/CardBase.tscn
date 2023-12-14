@@ -101,6 +101,18 @@ text = "Testing"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="EnergyCost" type="Label" parent="Name/Name"]
+layout_mode = 2
+offset_left = 191.0
+offset_top = -7.0
+offset_right = 243.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
 [node name="TopText" type="MarginContainer" parent="."]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
