@@ -1,5 +1,7 @@
 class_name Terrain extends TileMap
 
+enum {E, T, M, R, W, L}
+
 signal confirmed(confirmed_or_cancelled)
 signal building_rail
 signal rail_built(built_or_not)
@@ -14,10 +16,19 @@ var incomingMap = []
 var cellTypeMap = []
 
 const MAP_SIZE = Vector2i(20,10)
-var railEndpoint = Vector2i(9,7)
-var originalRailEndpoint = railEndpoint
+var map:MapBase = Corridor.new()
+
+var trainLocations:Array[Vector2i]
+var railEndpoint:Vector2i
+var originalRailEndpoint:Vector2i
 var partialRailBuilt = []
-var trainLocations = [railEndpoint, railEndpoint + Vector2i(0,1), railEndpoint + Vector2i(0,2)]
+
+var trainCars = [
+	Global.DIRECTIONAL_TILES.TRAIN_FRONT,
+	Global.DIRECTIONAL_TILES.TRAIN_MIDDLE,
+	Global.DIRECTIONAL_TILES.TRAIN_END,
+	]
+
 
 var trainCrashed = false
 
@@ -49,39 +60,57 @@ func _ready():
 		add_layer(i)
 		set_layer_enabled(i, true)
 		set_layer_z_index(i,0)
+			
+	setUpMap()
 	
-	for i in range(MAP_SIZE[0]):
+	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
+	
+	makeMetalShine()
+
+func setUpMap():
+	var tiles:Array[Tile] = []
+	for tileOptions in map.tiles:
+		tileOptions.options.shuffle()
+		tiles.append(tileOptions.options[0])
+	
+	var fullMapShape = Vector2i(map.shape.x*Global.TILE_SHAPE.x, map.shape.y*Global.TILE_SHAPE.y)
+	for i in range(fullMapShape.x):
 		outgoingMap.append([])
 		incomingMap.append([])
 		cellTypeMap.append([])
-		for j in range(MAP_SIZE[1]):
+		for j in range(fullMapShape.y + trainCars.size()):
 			outgoingMap[i].append(DIRECTION.NONE)
 			incomingMap[i].append(DIRECTION.NONE)
-			cellTypeMap[i].append("")
-			set_cell(0,Vector2i(i,j),0,randomTerrainVector())
-			#set_cell(0,Vector2i(i,j),0,Global.empty)
-			
-	outgoingMap[railEndpoint.x][railEndpoint.y] = DIRECTION.UP
-	incomingMap[railEndpoint.x][railEndpoint.y] = DIRECTION.DOWN
-	cellTypeMap[railEndpoint.x][railEndpoint.y] = Global.DIRECTIONAL_TILES.TRAIN_FRONT
+			cellTypeMap[i].append(null)
 	
-	outgoingMap[railEndpoint.x][railEndpoint.y + 1] = DIRECTION.UP
-	incomingMap[railEndpoint.x][railEndpoint.y + 1] = DIRECTION.DOWN
-	cellTypeMap[railEndpoint.x][railEndpoint.y + 1] = Global.DIRECTIONAL_TILES.TRAIN_MIDDLE
-	
-	outgoingMap[railEndpoint.x][railEndpoint.y + 2] = DIRECTION.UP
-	incomingMap[railEndpoint.x][railEndpoint.y + 2] = DIRECTION.DOWN
-	cellTypeMap[railEndpoint.x][railEndpoint.y + 2] = Global.DIRECTIONAL_TILES.TRAIN_END
-			
-	set_cell(0, railEndpoint,0,Global.train_front_topview)
-	set_cell(0, railEndpoint + Vector2i(0,1), 0, Global.train_middle_topview)
-	set_cell(0, railEndpoint + Vector2i(0,2), 0, Global.train_end_topview)
-			
-	makeMetalShine()
+	for i in range(map.shape.x):
+		for j in range(map.shape.y):
+			var tile_cells:Array[Array] = tiles.pop_front().cells
+			for x in range(Global.TILE_SHAPE.x):
+				for y in range(Global.TILE_SHAPE.y):
+					var cellEnum = tile_cells[x][y]
+					var cellPosition = Vector2i(j*Global.TILE_SHAPE.y + y, i*Global.TILE_SHAPE.x + x)
+					if cellEnum == W:
+						set_cell(0,cellPosition, 0, Global.water)
+					elif cellEnum == T:
+						set_cell(0,cellPosition, 0, Global.tree)
+					elif cellEnum == M:
+						set_cell(0,cellPosition, 0, Global.rock)
+					elif cellEnum == E:
+						set_cell(0,cellPosition, 0, Global.empty)
+					#TODO: figure out how to handle existing rail
+					elif cellEnum == R:
+						set_tile_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, DIRECTION.DOWN, DIRECTION.UP)
+					elif cellEnum == L:
+						railEndpoint = cellPosition
+						
+	for i in range(trainCars.size()):
+		set_tile_directional(railEndpoint + Vector2i(0,i), trainCars[i], DIRECTION.DOWN, DIRECTION.UP)
+		trainLocations.append(railEndpoint + Vector2i(0,i))
 
 func advanceTrain():
 	if trainCrashed: return
-	var nextTrainLocations = []
+	var nextTrainLocations:Array[Vector2i] = []
 	for i in range(trainLocations.size()):
 		var trainLocation = trainLocations.pop_front()
 		var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]

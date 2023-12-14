@@ -10,6 +10,10 @@ const DRAW_PILE_POSITION = Vector2(30,1850)
 const DISCARD_PILE_POSITION = Vector2(3570,1850)
 const END_TURN_BUTTON_POSITION = Vector2(3470,1350)
 
+const VIEWPORT_SIZE = Vector2(3840, 2160)
+
+const TILE_SHAPE = Vector2i(10,10)
+
 const tree = Vector2i(4,2)
 const rock = Vector2i(0,3)
 const empty = Vector2i(0,0)
@@ -30,6 +34,7 @@ const train_end_topview = Vector2i(6,8)
 const train_front_turning = Vector2i(7,6)
 const train_middle_turning = Vector2i(8,6)
 const train_end_turning = Vector2i(9,6)
+const water = Vector2i(0,28)
 const delete = Vector2i(-1, -1)
 
 enum CARD_TYPES {Harvesting, Logistics, Technology}

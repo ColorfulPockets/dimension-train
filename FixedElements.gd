@@ -1,9 +1,11 @@
 extends Control
 
-const CAMERA_SPEED = 450
+const CAMERA_SPEED = 1200
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	size = Global.VIEWPORT_SIZE
+	
 	$DiscardPile.scale *= 0.45
 	$DiscardPile.position = Global.DISCARD_PILE_POSITION
 	
