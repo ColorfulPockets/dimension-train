@@ -6,10 +6,13 @@ const resource_counts_layer = 1
 const animation_layer = 2
 const highlight_layer = 3
 
+const TRAIN_MOVEMENT_TIME = 0.5
+
 const DRAW_PILE_POSITION = Vector2(30,1850)
 const DISCARD_PILE_POSITION = Vector2(3570,1850)
 const END_TURN_BUTTON_POSITION = Vector2(3470,1350)
 const ENERGY_DISPLAY_POSITION = Vector2(400,1350)
+const SPEED_CONTAINER_POSITION = Vector2(3450, 150)
 
 const VIEWPORT_SIZE = Vector2(3840, 2160)
 

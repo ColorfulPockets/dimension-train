@@ -5,3 +5,4 @@ enum {E, T, M, R, W, L}
 
 var tiles:Array[TileOptions]
 var shape:Vector2i
+var speedProgression:Array[int]

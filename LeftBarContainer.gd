@@ -25,7 +25,8 @@ func _ready():
 	layoutCounters([
 		[$WoodIcon, $WoodCount],
 		[$MetalIcon, $MetalCount],
-		[$RailIcon, $RailCount]
+		[$RailIcon, $RailCount],
+		[$EmergencyRailIcon, $EmergencyRailCount],
 	])
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -33,3 +34,4 @@ func _process(delta):
 	$WoodCount.text = str(Stats.woodCount)
 	$MetalCount.text = str(Stats.metalCount)
 	$RailCount.text = str(Stats.railCount)
+	$EmergencyRailCount.text = str(Stats.emergencyRailCount) + "\n/" + str(Stats.erc)

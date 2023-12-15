@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=27 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -21,7 +21,9 @@
 [ext_resource type="Script" path="res://RailLeftToPlace.gd" id="20_hbuuu"]
 [ext_resource type="Script" path="res://EnergyDisplay.gd" id="22_rrjhi"]
 [ext_resource type="Script" path="res://MiddleBarContainer.gd" id="22_whwbt"]
+[ext_resource type="Script" path="res://TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
+[ext_resource type="Script" path="res://NextSpeedContainer.gd" id="24_vpmll"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
 texture = ExtResource("2_g6npi")
@@ -4253,6 +4255,20 @@ offset_right = 40.0
 offset_bottom = 23.0
 theme_override_font_sizes/font_size = 100
 
+[node name="EmergencyRailIcon" type="Sprite2D" parent="FixedElements/LeftBarContainer"]
+modulate = Color(1, 0.54902, 0.486275, 1)
+texture = ExtResource("19_allsf")
+centered = false
+
+[node name="EmergencyRailCount" type="Label" parent="FixedElements/LeftBarContainer"]
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_constants/line_spacing = -20
+theme_override_font_sizes/font_size = 60
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="RailLeftToBuild" type="Label" parent="FixedElements"]
 visible = false
 z_index = 11
@@ -4285,9 +4301,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -20.0
-offset_top = -34.5
+offset_top = -45.0
 offset_right = -19.0
-offset_bottom = 34.5
+offset_bottom = 45.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 65
@@ -4312,5 +4328,69 @@ offset_right = 235.0
 offset_bottom = 254.0
 theme_override_font_sizes/font_size = 100
 text = "3/3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TrainSpeedContainer" type="Control" parent="FixedElements"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 3467.0
+offset_top = 134.0
+offset_right = 3663.0
+offset_bottom = 349.0
+script = ExtResource("23_hpgys")
+
+[node name="MiddleBar" type="Sprite2D" parent="FixedElements/TrainSpeedContainer"]
+modulate = Color(0.231373, 0.231373, 0.231373, 0.819608)
+texture = ExtResource("15_n5iw7")
+centered = false
+
+[node name="SpeedLabel" type="Label" parent="FixedElements/TrainSpeedContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -158.0
+offset_top = -100.0
+offset_right = -121.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 100
+text = "12"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TrainSpeedLabel" type="Label" parent="FixedElements/TrainSpeedContainer"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 50
+text = "Speed"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NextSpeedContainer" type="Control" parent="FixedElements"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 3457.0
+offset_top = 446.0
+offset_right = 3653.0
+offset_bottom = 514.0
+script = ExtResource("24_vpmll")
+
+[node name="MiddleBar" type="Sprite2D" parent="FixedElements/NextSpeedContainer"]
+modulate = Color(1, 0, 0, 0.607843)
+texture = ExtResource("15_n5iw7")
+centered = false
+
+[node name="NextSpeedLabel" type="Label" parent="FixedElements/NextSpeedContainer"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 45
+text = "Speed"
 horizontal_alignment = 1
 vertical_alignment = 1

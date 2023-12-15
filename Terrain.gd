@@ -17,6 +17,7 @@ var cellTypeMap = []
 
 const MAP_SIZE = Vector2i(20,10)
 var map:MapBase = Corridor.new()
+var turnCounter = 0
 
 var trainLocations:Array[Vector2i]
 var railEndpoint:Vector2i
@@ -65,6 +66,9 @@ func _ready():
 	
 	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
 	
+	Stats.trainSpeed = map.speedProgression[turnCounter]
+	Stats.nextTrainSpeed = map.speedProgression[turnCounter + 1]
+	
 	makeMetalShine()
 
 func setUpMap():
@@ -110,40 +114,45 @@ func setUpMap():
 
 func advanceTrain():
 	if trainCrashed: return
-	var nextTrainLocations:Array[Vector2i] = []
-	for i in range(trainLocations.size()):
-		var trainLocation = trainLocations.pop_front()
-		var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
-		var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
-		var trainType = cellTypeMap[trainLocation.x][trainLocation.y]
-		var nextLocation = Vector2i.ZERO
-		
-		if trainOutgoing == DIRECTION.UP:
-			nextLocation = trainLocation + Vector2i(0,-1)
-		elif trainOutgoing == DIRECTION.DOWN:
-			nextLocation = trainLocation + Vector2i(0,1)
-		elif trainOutgoing == DIRECTION.RIGHT:
-			nextLocation = trainLocation + Vector2i(1,0)
-		else:
-			nextLocation = trainLocation + Vector2i(-1,0)
-		
-		if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
-			print("TRAIN CRASHED")
-			trainCrashed = true
-			return
-		
-		var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
-		var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
-		
-		if trainType == Global.DIRECTIONAL_TILES.TRAIN_END:
-			set_tile_directional(trainLocation, Global.DIRECTIONAL_TILES.RAIL, trainIncoming, trainOutgoing)
-		
-		set_tile_directional(nextLocation, trainType, nextIncoming, nextOutgoing)
-		nextTrainLocations.append(nextLocation)
-		
 	
-	trainLocations = nextTrainLocations
+	for _i in range(Stats.trainSpeed):
+		var nextTrainLocations:Array[Vector2i] = []
+		for i in range(trainLocations.size()):
+			var trainLocation = trainLocations.pop_front()
+			var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
+			var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
+			var trainType = cellTypeMap[trainLocation.x][trainLocation.y]
+			var nextLocation = Vector2i.ZERO
+			
+			if trainOutgoing == DIRECTION.UP:
+				nextLocation = trainLocation + Vector2i(0,-1)
+			elif trainOutgoing == DIRECTION.DOWN:
+				nextLocation = trainLocation + Vector2i(0,1)
+			elif trainOutgoing == DIRECTION.RIGHT:
+				nextLocation = trainLocation + Vector2i(1,0)
+			else:
+				nextLocation = trainLocation + Vector2i(-1,0)
+			
+			if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
+				print("TRAIN CRASHED")
+				trainCrashed = true
+				return
+			
+			var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
+			var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
+			
+			if trainType == Global.DIRECTIONAL_TILES.TRAIN_END:
+				set_tile_directional(trainLocation, Global.DIRECTIONAL_TILES.RAIL, trainIncoming, trainOutgoing)
+			
+			set_tile_directional(nextLocation, trainType, nextIncoming, nextOutgoing)
+			nextTrainLocations.append(nextLocation)
+		await get_tree().create_timer(Global.TRAIN_MOVEMENT_TIME).timeout
 	
+		trainLocations = nextTrainLocations
+	
+	turnCounter += 1
+	Stats.trainSpeed = map.speedProgression[turnCounter]
+	Stats.nextTrainSpeed = map.speedProgression[turnCounter + 1]
 
 func randomTerrainVector():
 	var selection = randi_range(0,2)

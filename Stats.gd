@@ -2,9 +2,12 @@ extends Node
 
 var woodCount = 0
 var metalCount = 0
-var emergencyTrack = 20
-var etc = 20
-var railCount = 20
+var emergencyRailCount = 20
+var erc = 20
+var railCount = 5
+
+var trainSpeed = 0
+var nextTrainSpeed = 1
 
 var currentEnergy = 3
 var maxEnergy = 3
