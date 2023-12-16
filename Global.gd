@@ -4,6 +4,9 @@ extends Node
 signal cardFunctionStarted
 signal cardFunctionEnded
 
+signal overlayShowing
+signal overlayHidden
+
 # GLOBAL VARIABLES
 
 const base_layer = 0
@@ -13,6 +16,7 @@ const fog_layer = 3
 const highlight_layer = 4
 
 const TRAIN_MOVEMENT_TIME = 0.5
+const FADE_TIME = 0.2
 
 const DRAW_PILE_POSITION = Vector2(30,1850)
 const DISCARD_PILE_POSITION = Vector2(3570,1850)
@@ -72,7 +76,8 @@ enum CARD_STATES {
 	FocusInHand,
 	MoveDrawnCardToHand,
 	ReorganizeHand,
-	FocusOtherInHand
+	FocusOtherInHand,
+	InOverlay,
 }
 
 enum FUNCTION_STATES {Shift, Unshift, Success, Fail}

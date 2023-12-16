@@ -1,11 +1,13 @@
-[gd_scene load_steps=27 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=30 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
 [ext_resource type="Texture2D" uid="uid://dqrs44ocueoyf" path="res://Assets/Tiles/Tileset_my_version.png" id="2_g6npi"]
 [ext_resource type="Script" path="res://CardFunctions.gd" id="2_tmeg0"]
 [ext_resource type="Texture2D" uid="uid://d3anf6ui5dklw" path="res://Assets/Icons/DrawPile_white.png" id="3_qwl87"]
+[ext_resource type="Script" path="res://DrawPile.gd" id="4_q8v2y"]
 [ext_resource type="Script" path="res://FixedElements.gd" id="6_tohbi"]
+[ext_resource type="Script" path="res://DiscardPile.gd" id="8_1nc4h"]
 [ext_resource type="Script" path="res://Terrain.gd" id="8_krthj"]
 [ext_resource type="Texture2D" uid="uid://tfk6705h2sle" path="res://Assets/Icons/DiscardPile_black.png" id="8_m8g5r"]
 [ext_resource type="Texture2D" uid="uid://c5tfhn3wdxfnw" path="res://Assets/Icons/DiscardPile_white.png" id="9_35wxk"]
@@ -24,6 +26,7 @@
 [ext_resource type="Script" path="res://TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
 [ext_resource type="Script" path="res://NextSpeedContainer.gd" id="24_vpmll"]
+[ext_resource type="Script" path="res://OverlayManager.gd" id="26_mtkk4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
 texture = ExtResource("2_g6npi")
@@ -4160,10 +4163,12 @@ anchor_mode = 0
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
+focus_mode = 0
 texture_normal = ExtResource("2_1tsry")
 texture_pressed = ExtResource("3_qwl87")
 texture_hover = ExtResource("2_1tsry")
 texture_disabled = ExtResource("2_1tsry")
+script = ExtResource("4_q8v2y")
 
 [node name="Cards" type="Control" parent="FixedElements"]
 anchors_preset = 0
@@ -4175,10 +4180,12 @@ visible = false
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
+focus_mode = 0
 texture_normal = ExtResource("8_m8g5r")
 texture_pressed = ExtResource("9_35wxk")
 texture_hover = ExtResource("8_m8g5r")
 texture_disabled = ExtResource("8_m8g5r")
+script = ExtResource("8_1nc4h")
 
 [node name="DrawPileCardCount" type="Label" parent="FixedElements"]
 layout_mode = 0
@@ -4264,6 +4271,7 @@ texture = ExtResource("19_allsf")
 centered = false
 
 [node name="EmergencyRailCount" type="Label" parent="FixedElements/LeftBarContainer"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_constants/line_spacing = -20
@@ -4397,3 +4405,11 @@ theme_override_font_sizes/font_size = 45
 text = "Speed"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="DarkenedBackground" type="Sprite2D" parent="FixedElements"]
+modulate = Color(0, 0, 0, 0.792157)
+z_index = 12
+scale = Vector2(3840, 2160)
+texture = ExtResource("15_n5iw7")
+centered = false
+script = ExtResource("26_mtkk4")

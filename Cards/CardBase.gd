@@ -6,7 +6,7 @@ class_name CardBase extends Container
 
 
 @onready var PLAYSPACE = $"../../.."
-
+@onready var OVERLAY_MANAGER = $"../../../FixedElements/DarkenedBackground"
 
 @onready var CardDb = preload("res://CardDatabase.gd").new()
 
@@ -32,7 +32,8 @@ var focusscale = Vector2()
 var t = 0
 
 const DISCARD_PILE_ROTATION = 0
-const DISCARD_PILE_SCALE = Vector2.ZERO
+const DISCARD_PILE_SCALE = Vector2(0.2,0.2)
+const OVERLAY_SCALE = Vector2(1.75,1.75)
 
 # Tracks where it is in the hand
 var index = 0
@@ -51,6 +52,7 @@ const FOCUS_SCALE_AMOUNT = 1.5
 var card_pressed = false
 var other_card_pressed = false
 var mousedOver = false
+var cardPileShowing = false
 
 var DRAWTIME = 0.3
 var REORGTIME = 0.15
@@ -79,6 +81,9 @@ func _ready():
 	
 	connect("mouse_entered",mouseEntered)
 	connect("mouse_exited", mouseExited)
+	
+	Global.overlayShowing.connect(func(): cardPileShowing = true)
+	Global.overlayHidden.connect(func(): cardPileShowing = false)
 
 # When you release a card, other cards don't know if they should focus
 func manualFocusRetrigger():
@@ -86,6 +91,8 @@ func manualFocusRetrigger():
 		mouseEntered()
 
 func mouseEntered():
+	if cardPileShowing:
+		return
 	if card_pressed or PLAYSPACE.endingTurn:
 		return
 	mousedOver = true
@@ -97,6 +104,8 @@ func mouseEntered():
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
+	if cardPileShowing:
+		return
 	if state == states.InDiscardPile or PLAYSPACE.endingTurn:
 		return
 	if not manuallyTriggered:
@@ -141,12 +150,62 @@ func discard():
 	moveTime = DRAWTIME
 	state = states.InDiscardPile
 	
+func moveToDrawPile():
+	resetCurrentPosition()
+	visible = true
+	out_of_place = true
+	moveTime = DRAWTIME
+	state = states.InDrawPile
+
+func moveToOverlay():
+	t = 0
+	z_index = 13
+	state = states.InOverlay
+	scale = OVERLAY_SCALE
+	rotation = 0
+	fadeIn()
+
+func fadeIn():
+	modulate.a8 = 0
+	visible = true
+	var steps = 20
+	for i in range(steps):
+		modulate.a8 += 255/steps
+		await get_tree().create_timer(float(Global.FADE_TIME)/steps).timeout
+	
+	modulate.a8 = 255
+
+func fadeOut():
+	modulate.a8 = 255
+	var steps = 20
+	var time = float(Global.FADE_TIME)
+	for i in range(steps):
+		modulate.a8 -= 255/steps
+		await get_tree().create_timer(float(Global.FADE_TIME)/steps).timeout
+		
+	visible = false
+	modulate.a8 = 255
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	match state:
-		states.InDrawPile:
+		states.InOverlay:
 			pass
+		states.InDrawPile:
+			z_index = 0
+			if t <= 1 and out_of_place:
+				position = startpos.lerp(Global.DRAW_PILE_POSITION, t)
+				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
+				scale = startscale.lerp(DISCARD_PILE_SCALE, t)
+				t += delta/float(moveTime)
+			else:
+				t = 0
+				position = Global.DRAW_PILE_POSITION
+				rotation = DISCARD_PILE_ROTATION
+				scale = DISCARD_PILE_SCALE
+				visible = false
+				out_of_place = false
+				currentPositionSet = false
 		states.InDiscardPile:
 			z_index = 0
 			if t <= 1 and out_of_place:
@@ -228,11 +287,10 @@ func _process(delta):
 
 
 func _input(event):
-	if mousedOver and not card_pressed and not PLAYSPACE.endingTurn:
+	if mousedOver and not card_pressed and not PLAYSPACE.endingTurn and not cardPileShowing:
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				print(CardName)
 				if Stats.currentEnergy >= CardInfo[Global.CARD_FIELDS.EnergyCost]:
 					card_pressed = true
 					# Alert the playspace about which card has been clicked

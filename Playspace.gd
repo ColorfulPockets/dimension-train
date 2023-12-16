@@ -4,7 +4,7 @@ const CardBase = preload("res://Cards/CardBase.tscn")
 const PlayerHand = preload("res://Cards/PlayerHand.gd")
 const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
-@onready var deckNames = ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"]
+@onready var deckNames = ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"] + ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"] + ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"]
 
 @onready var viewportSize = Vector2(get_viewport().size)
 
@@ -17,7 +17,9 @@ var ovalAngleVector = Vector2()
 const HAND_LIMIT = 10
 var cardsInHand:Array[CardBase] = []
 var discardPile:Array[CardBase] = []
+var discardPileIndexCounter = 0
 var drawPile:Array[CardBase]		= []
+var drawPileIndexCounter = 0
 
 var numberOfFocusedCards = 0
 
@@ -49,6 +51,9 @@ func _ready():
 	for cardName in deckNames:
 		var new_card = CardBase.instantiate()
 		new_card.CardName = cardName
+		new_card.index = drawPileIndexCounter
+		drawPileIndexCounter += 1
+		$FixedElements/Cards.add_child(new_card)
 		drawPile.append(new_card)
 		
 	drawPile.shuffle()
@@ -160,6 +165,8 @@ func cardDiscarded(index):
 		cardsInHand[i].reorganize()
 	var card_discarded = cardsInHand.pop_at(index)
 	discardPile.append(card_discarded)
+	card_discarded.index = discardPileIndexCounter
+	discardPileIndexCounter += 1
 	card_discarded.discard()
 	angle -= deg_to_rad(5)
 	for i in range(cardsInHand.size()):
@@ -236,7 +243,12 @@ func endTurn():
 
 func drawCard(fromPosition, fromScale):
 	if drawPile.size() < 1:
-		drawPile = discardPile.duplicate()
+		for card in discardPile:
+			card.moveToDrawPile()
+			card.index = drawPileIndexCounter
+			drawPileIndexCounter += 1
+			await get_tree().create_timer(0.05).timeout
+			drawPile.append(card)
 		drawPile.shuffle()
 		discardPile = []
 	if drawPile.size() < 1 or cardsInHand.size() >= HAND_LIMIT:
@@ -254,7 +266,6 @@ func drawCard(fromPosition, fromScale):
 		# This lets the cards rotate a little bit, but still remain mostly upright.
 	new_card.targetrot = (-angle + deg_to_rad(90))*CARD_ANGLE
 	
-	$FixedElements/Cards.add_child(new_card)
 	new_card.state = Global.CARD_STATES.MoveDrawnCardToHand
 	reorganizeHand()
 	
