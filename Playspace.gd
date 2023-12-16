@@ -4,7 +4,7 @@ const CardBase = preload("res://Cards/CardBase.tscn")
 const PlayerHand = preload("res://Cards/PlayerHand.gd")
 const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
-@onready var deckNames = ["Manufacture", "Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build"]
+@onready var deckNames = ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"]
 
 @onready var viewportSize = Vector2(get_viewport().size)
 
@@ -86,7 +86,7 @@ func reorganizeHand():
 		card.ellipseAngle -= deg_to_rad(5)
 		card.reorganize()
 		
-var focusIndex = 0
+var focusIndex = -1
 # Tells each card where the focus is so they can move out of the way
 # -1 is signal for no card focused
 func focusCard(focusIndex):
@@ -109,7 +109,7 @@ var focusedCardPosition = Vector2()
 
 func cardPressed(index, cardPosition, pointer):
 	if cardHeldPointer == null:
-		cardFunctionHappening.emit(true)
+		Global.cardFunctionStarted.emit()
 		cardHeldPointer = pointer
 		focusedCardPosition = cardPosition
 		cardHeldIndex = index
@@ -130,11 +130,9 @@ func cardPressed(index, cardPosition, pointer):
 		else:	
 			cardReleased(cardHeldIndex)
 		
-		cardFunctionHappening.emit(false)
+		Global.cardFunctionEnded.emit()
 
 func cardReleased(index):
-	cardHeldPointer = null
-	cardHeldIndex = -1
 	$Terrain.clearHighlights()
 	for i in range(cardsInHand.size()):
 		cardsInHand[i].other_card_pressed = false
@@ -142,10 +140,11 @@ func cardReleased(index):
 		# mouseExited makes sure the card is unfocused and returns to hand
 		cardsInHand[i].mouseExited(true)
 		cardsInHand[i].manualFocusRetrigger()
-		
-func cardDiscarded(index):
+	
 	cardHeldPointer = null
 	cardHeldIndex = -1
+		
+func cardDiscarded(index):
 	$Terrain.clearHighlights()
 	for i in range(cardsInHand.size()):
 		cardsInHand[i].other_card_pressed = false
@@ -165,6 +164,11 @@ func cardDiscarded(index):
 	angle -= deg_to_rad(5)
 	for i in range(cardsInHand.size()):
 		cardsInHand[i].index = i
+	
+	card_discarded.mousedOver = false
+	
+	cardHeldPointer = null
+	cardHeldIndex = -1
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -174,7 +178,7 @@ func _input(event):
 			else:
 				Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer], 0, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer].get_size()/2)
 			if ((cardHeldPointer.bottomTargetArea != null) if shiftHeld else (cardHeldPointer.topTargetArea != null)):
-				terrain.highlightCells(event.position, cardHeldPointer.bottomTargetArea if shiftHeld else cardHeldPointer.topTargetArea)	
+				terrain.highlightCells(event.position, cardHeldPointer.bottomTargetArea if shiftHeld else cardHeldPointer.topTargetArea)
 		else:
 			Input.set_custom_mouse_cursor(NORMAL_CURSOR,0,NORMAL_CURSOR.get_size()/2)
 	
@@ -200,7 +204,7 @@ func _input(event):
 				_input(fake_mouse_motion)
 				
 		if event.key_label == KEY_E:
-			if !event.pressed:
+			if !event.pressed and cardHeldPointer == null:
 				endTurn()
 		
 		if event.key_label == KEY_ESCAPE:
@@ -209,13 +213,15 @@ func _input(event):
 				var fake_mouse_motion = InputEventMouseMotion.new()
 				fake_mouse_motion.position = get_viewport().get_mouse_position()
 				_input(fake_mouse_motion)
-			
+				
 				
 
 func endTurn():
 	if !endingTurn:
+		if focusIndex != -1:
+			cardsInHand[focusIndex].mouseExited(true)
 		endingTurn = true
-		terrain.advanceTrain()
+		await terrain.advanceTrain()
 		while cardsInHand.size() > 0:
 			cardDiscarded(0)
 			await get_tree().create_timer(0.05).timeout
@@ -236,6 +242,7 @@ func drawCard(fromPosition, fromScale):
 	if drawPile.size() < 1 or cardsInHand.size() >= HAND_LIMIT:
 		return
 	var new_card = drawPile.pop_front()
+	new_card.card_pressed = false
 	new_card.targetscale = CARDSIZE / new_card.size
 	
 	new_card.scale = fromScale

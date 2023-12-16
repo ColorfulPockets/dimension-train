@@ -10,7 +10,8 @@ var cardFunctionHappening = false
 func _ready():
 	position = Global.END_TURN_BUTTON_POSITION
 	PLAYSPACE.handDrawn.connect(func(): drawingHand = false; enableButton())
-	PLAYSPACE.cardFunctionHappening.connect(func(x): cardFunctionHappening = x; disableButton() if x else enableButton(), 1)
+	Global.cardFunctionStarted.connect(func(): cardFunctionHappening = true; disableButton())
+	Global.cardFunctionEnded.connect(func(): cardFunctionHappening = false; enableButton())
 	hoverTexture = texture_hover
 	clickedTexture = texture_pressed
 

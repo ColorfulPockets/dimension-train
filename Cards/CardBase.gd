@@ -136,6 +136,7 @@ func reorganize():
 
 func discard():
 	resetCurrentPosition()
+	$HighlightBorder.visible = false
 	out_of_place = true
 	moveTime = DRAWTIME
 	state = states.InDiscardPile
@@ -231,6 +232,7 @@ func _input(event):
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
+				print(CardName)
 				if Stats.currentEnergy >= CardInfo[Global.CARD_FIELDS.EnergyCost]:
 					card_pressed = true
 					# Alert the playspace about which card has been clicked
