@@ -103,6 +103,18 @@ var in_up_out_down = flipH | flipV
 
 enum DIR {NONE, L, R, U, D}
 
+func oppositeDir(dir):
+	if dir == DIR.L:
+		return DIR.R
+	elif dir == DIR.R:
+		return DIR.L
+	elif dir == DIR.U:
+		return DIR.D
+	elif dir == DIR.D:
+		return DIR.U
+	else:
+		return DIR.NONE
+
 enum DIRECTIONAL_TILES {TRAIN_FRONT, TRAIN_MIDDLE, TRAIN_END, RAIL, RAIL_END}
 
 # Access with DIRECTIONAL_TILES[tileName][in_direction][out_direction]
@@ -110,16 +122,28 @@ enum DIRECTIONAL_TILES {TRAIN_FRONT, TRAIN_MIDDLE, TRAIN_END, RAIL, RAIL_END}
 var DIRECTIONAL_TILE_INOUT = {
 	DIRECTIONAL_TILES.RAIL_END: {
 		DIR.L: {
-			DIR.R: [rail_endpoint, in_left_out_right]
+			DIR.R: [rail_endpoint, in_left_out_right],
+			DIR.L: [rail_endpoint, in_left_out_right],
+			DIR.U: [rail_endpoint, in_left_out_right],
+			DIR.D: [rail_endpoint, in_left_out_right],
 		},
 		DIR.R: {
-			DIR.L: [rail_endpoint, in_right_out_left]
+			DIR.L: [rail_endpoint, in_right_out_left],
+			DIR.R: [rail_endpoint, in_right_out_left],
+			DIR.U: [rail_endpoint, in_right_out_left],
+			DIR.D: [rail_endpoint, in_right_out_left],
 		},
 		DIR.U:{
-			DIR.D: [rail_endpoint, in_up_out_down]
+			DIR.D: [rail_endpoint, in_up_out_down],
+			DIR.U: [rail_endpoint, in_up_out_down],
+			DIR.R: [rail_endpoint, in_up_out_down],
+			DIR.L: [rail_endpoint, in_up_out_down],
 		},
 		DIR.D:{
-			DIR.U: [rail_endpoint, 0]
+			DIR.U: [rail_endpoint, 0],
+			DIR.D: [rail_endpoint, 0],
+			DIR.R: [rail_endpoint, 0],
+			DIR.L: [rail_endpoint, 0],
 		},	
 	},
 	DIRECTIONAL_TILES.TRAIN_FRONT: {
@@ -127,21 +151,25 @@ var DIRECTIONAL_TILE_INOUT = {
 			DIR.U: [train_front_turning, in_left_out_up],
 			DIR.D: [train_front_turning, in_left_out_down],
 			DIR.R: [train_front_topview, in_left_out_right],
+			DIR.L: [train_front_topview, in_left_out_right],
 		},
 		DIR.R: {
 			DIR.U: [train_front_turning, in_right_out_up],
 			DIR.D: [train_front_turning, in_right_out_down],
-			DIR.L: [train_front_topview, in_right_out_left]
+			DIR.L: [train_front_topview, in_right_out_left],
+			DIR.R: [train_front_topview, in_right_out_left],
 		},
 		DIR.U: {
 			DIR.R: [train_front_turning, in_up_out_right],
 			DIR.L: [train_front_turning, in_up_out_left],
-			DIR.D: [train_front_topview, in_up_out_down]
+			DIR.D: [train_front_topview, in_up_out_down],
+			DIR.U: [train_front_topview, in_up_out_down],
 		},
 		DIR.D: {
 			DIR.R: [train_front_turning, 0],
 			DIR.L: [train_front_turning, in_down_out_left],
-			DIR.U: [train_front_topview, 0]
+			DIR.U: [train_front_topview, 0],
+			DIR.D: [train_front_topview, 0],
 		}	
 	},
 	DIRECTIONAL_TILES.TRAIN_MIDDLE: {
@@ -149,21 +177,25 @@ var DIRECTIONAL_TILE_INOUT = {
 			DIR.U: [train_middle_turning, in_left_out_up],
 			DIR.D: [train_middle_turning, in_left_out_down],
 			DIR.R: [train_middle_topview, in_left_out_right],
+			DIR.L: [train_middle_topview, in_left_out_right],
 		},
 		DIR.R: {
 			DIR.U: [train_middle_turning, in_right_out_up],
 			DIR.D: [train_middle_turning, in_right_out_down],
-			DIR.L: [train_middle_topview, in_right_out_left]
+			DIR.L: [train_middle_topview, in_right_out_left],
+			DIR.R: [train_middle_topview, in_right_out_left],
 		},
 		DIR.U: {
 			DIR.R: [train_middle_turning, in_up_out_right],
 			DIR.L: [train_middle_turning, in_up_out_left],
-			DIR.D: [train_middle_topview, in_up_out_down]
+			DIR.D: [train_middle_topview, in_up_out_down],
+			DIR.U: [train_middle_topview, in_up_out_down],
 		},
 		DIR.D: {
 			DIR.R: [train_middle_turning, 0],
 			DIR.L: [train_middle_turning, in_down_out_left],
-			DIR.U: [train_middle_topview, 0]
+			DIR.U: [train_middle_topview, 0],
+			DIR.D: [train_middle_topview, 0],
 		}	
 	},
 	DIRECTIONAL_TILES.TRAIN_END: {
@@ -171,21 +203,25 @@ var DIRECTIONAL_TILE_INOUT = {
 			DIR.U: [train_end_turning, in_left_out_up],
 			DIR.D: [train_end_turning, in_left_out_down],
 			DIR.R: [train_middle_topview, in_left_out_right],
+			DIR.L: [train_middle_topview, in_left_out_right],
 		},
 		DIR.R: {
 			DIR.U: [train_end_turning, in_right_out_up],
 			DIR.D: [train_end_turning, in_right_out_down],
-			DIR.L: [train_middle_topview, in_right_out_left]
+			DIR.L: [train_middle_topview, in_right_out_left],
+			DIR.R: [train_middle_topview, in_right_out_left],
 		},
 		DIR.U: {
 			DIR.R: [train_end_turning, in_up_out_right],
 			DIR.L: [train_end_turning, in_up_out_left],
-			DIR.D: [train_end_topview, in_up_out_down]
+			DIR.D: [train_end_topview, in_up_out_down],
+			DIR.U: [train_end_topview, in_up_out_down]
 		},
 		DIR.D: {
 			DIR.R: [train_end_turning, 0],
 			DIR.L: [train_end_turning, in_down_out_left],
-			DIR.U: [train_end_topview, 0]
+			DIR.U: [train_end_topview, 0],
+			DIR.D: [train_end_topview, 0],
 		}
 	},	
 	DIRECTIONAL_TILES.RAIL: {
@@ -193,21 +229,25 @@ var DIRECTIONAL_TILE_INOUT = {
 			DIR.U: [rail_curve, in_left_out_up],
 			DIR.D: [rail_curve, in_left_out_down],
 			DIR.R: [rail_straight, in_left_out_right],
+			DIR.L: [rail_straight, in_left_out_right],
 		},
 		DIR.R: {
 			DIR.U: [rail_curve, in_right_out_up],
 			DIR.D: [rail_curve, in_right_out_down],
-			DIR.L: [rail_straight, in_right_out_left]
+			DIR.L: [rail_straight, in_right_out_left],
+			DIR.R: [rail_straight, in_right_out_left],
 		},
 		DIR.U: {
 			DIR.R: [rail_curve, in_up_out_right],
 			DIR.L: [rail_curve, in_up_out_left],
-			DIR.D: [rail_straight, in_up_out_down]
+			DIR.D: [rail_straight, in_up_out_down],
+			DIR.U: [rail_straight, in_up_out_down],
 		},
 		DIR.D: {
 			DIR.R: [rail_curve, 0],
 			DIR.L: [rail_curve, in_down_out_left],
-			DIR.U: [rail_straight, 0]
+			DIR.U: [rail_straight, 0],
+			DIR.D: [rail_straight, 0]
 		}
 	}	
 }

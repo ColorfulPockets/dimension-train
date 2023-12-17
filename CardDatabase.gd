@@ -52,13 +52,12 @@ var DATA = {
 			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
 			fields.TopText: "Build 2",
-			fields.BottomText: "Gather 1x2",
-			fields.BottomTargetArea: Vector2i(1,2),
+			fields.BottomText: "Reduce the train's speed by 2 this turn",
 			fields.TopFunction: "Build",
-			fields.BottomFunction: "Gather",
+			fields.BottomFunction: "Slow",
 			fields.TopMousePointer: load("res://Assets/Icons/Build_mouse.png"),
 			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
-			fields.Arguments: {"Build": 2},
+			fields.Arguments: {"Build": 2, "Slow":2},
 		},
 	"Manufacture":
 		{
@@ -71,7 +70,7 @@ var DATA = {
 			fields.BottomFunction: "Reveal",
 			fields.TopMousePointer: load("res://Assets/Icons/cursor.png"),
 			fields.BottomMousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
-			fields.Arguments: {"Manufacture": 4, "Reveal": 4}
+			fields.Arguments: {"Manufacture": 4, "Reveal": 1}
 		},
 	"Factory":
 		{

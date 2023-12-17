@@ -3,6 +3,8 @@ class_name MiddleBarContainer extends Control
 enum POSITIONS {TOP, ABOVE_CARDS}
 @onready var middleBarText:MiddleBarText = $Text
 
+var TEXT_BUFFER = Vector2(50,0)
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	position = (get_viewport().size - Vector2i(size)) / 2 + Vector2i(0,150)
@@ -15,6 +17,7 @@ func textChanged():
 
 func setText(text):
 	middleBarText.setText(text)
+	
 
 func setPosition(location):
 	if location == POSITIONS.ABOVE_CARDS:

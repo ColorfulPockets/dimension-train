@@ -13,7 +13,8 @@ var targeting = false
 var DIR = Global.DIR
 var outgoingMap = []
 var incomingMap = []
-var cellTypeMap = []
+var directionalCellMap = []
+var connectedCells:Array[Vector2i] = []
 
 var fullMapShape:Vector2i = Vector2i(0,0)
 var revealedTiles:Array[Vector2i] = []
@@ -69,11 +70,11 @@ func setUpMap():
 	for i in range(fullMapShape.x):
 		outgoingMap.append([])
 		incomingMap.append([])
-		cellTypeMap.append([])
+		directionalCellMap.append([])
 		for j in range(fullMapShape.y + trainCars.size()):
 			outgoingMap[i].append(DIR.NONE)
 			incomingMap[i].append(DIR.NONE)
-			cellTypeMap[i].append(null)
+			directionalCellMap[i].append(null)
 	
 	# Draws the tiles in order starting from the top left
 	for i in range(map.shape.x):
@@ -113,6 +114,7 @@ func setUpMap():
 	
 	for i in range(trainCars.size()):
 		set_cell_directional(railEndpoint + Vector2i(0,i), trainCars[i], DIR.D, DIR.U)
+		connectedCells.append(railEndpoint + Vector2i(0,i))
 		trainLocations.append(railEndpoint + Vector2i(0,i))
 
 func revealTiles():
@@ -135,7 +137,7 @@ func advanceTrain():
 			var trainLocation = trainLocations.pop_front()
 			var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
 			var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
-			var trainType = cellTypeMap[trainLocation.x][trainLocation.y]
+			var trainType = directionalCellMap[trainLocation.x][trainLocation.y]
 			var nextLocation = Vector2i.ZERO
 			
 			if trainOutgoing == DIR.U:
@@ -146,6 +148,9 @@ func advanceTrain():
 				nextLocation = trainLocation + Vector2i(1,0)
 			else:
 				nextLocation = trainLocation + Vector2i(-1,0)
+			
+			if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
+				print("LEVEL COMPLETE")
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
 			if not emergencyTrackUsed and trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
@@ -296,14 +301,31 @@ func set_cell_directional(mapPosition, cellType, incoming, outgoing):
 	var directional_info = Global.DIRECTIONAL_TILE_INOUT[cellType][incoming][outgoing]
 	
 	set_cell(0, mapPosition, 0, directional_info[0], directional_info[1])
-	cellTypeMap[mapPosition.x][mapPosition.y] = cellType
+	directionalCellMap[mapPosition.x][mapPosition.y] = cellType
 	incomingMap[mapPosition.x][mapPosition.y] = incoming
 	outgoingMap[mapPosition.x][mapPosition.y] = outgoing
 
 func changeOutgoing(mapPosition, direction):
-	set_cell_directional(mapPosition, cellTypeMap[mapPosition.x][mapPosition.y],
+	if mapPosition.x < directionalCellMap.size() \
+		and mapPosition.y  < directionalCellMap[0].size() \
+		and directionalCellMap[mapPosition.x][mapPosition.y] != null:
+			set_cell_directional(mapPosition, directionalCellMap[mapPosition.x][mapPosition.y],
 						incomingMap[mapPosition.x][mapPosition.y],
 						direction)
+			return true
+	else:
+		return false
+
+func changeIncoming(mapPosition, direction):
+	if mapPosition.x < directionalCellMap.size() \
+		and mapPosition.y  < directionalCellMap[0].size() \
+		and directionalCellMap[mapPosition.x][mapPosition.y] != null:
+			set_cell_directional(mapPosition, directionalCellMap[mapPosition.x][mapPosition.y],
+						direction,
+						outgoingMap[mapPosition.x][mapPosition.y])
+			return true
+	else:
+		return false
 
 func get_tile(mapPosition:Vector2i):
 	return Vector2i(mapPosition / Global.TILE_SHAPE)
@@ -318,7 +340,7 @@ func buildRailOn(mousePosition):
 				else:
 					Stats.railCount -= 1
 				numRailToBuild -= 1
-				var endpointType = cellTypeMap[railEndpoint.x][railEndpoint.y]
+				connectedCells.append(mapPosition)
 				#We are above it
 				if adjacent_coords.y == 1:
 					set_cell_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIR.D, DIR.U)
@@ -343,6 +365,12 @@ func buildRailOn(mousePosition):
 					changeOutgoing(railEndpoint, DIR.L)
 					if not (get_tile(mapPosition + Vector2i(-1,0)) in revealedTiles):
 						revealedTiles.append(get_tile(mapPosition + Vector2i(-1,0)))
+				
+				for pair in [[Vector2i(1,0), DIR.L], [Vector2i(-1,0), DIR.R],[Vector2i(0,-1), DIR.D], [Vector2i(0,1), DIR.U]]:
+					if mapPosition + pair[0] not in connectedCells:
+						if changeIncoming(mapPosition + pair[0], pair[1]):
+							changeOutgoing(mapPosition, Global.oppositeDir(pair[1]))
+							connectedCells.append(mapPosition + pair[0])
 					
 				railEndpoint = mapPosition
 				partialRailBuilt.append(mapPosition)

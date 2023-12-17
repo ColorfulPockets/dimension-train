@@ -4,7 +4,7 @@ const CardBase = preload("res://Cards/CardBase.tscn")
 const PlayerHand = preload("res://Cards/PlayerHand.gd")
 const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
-@onready var deckNames = ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"] + ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"] + ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"]
+@onready var deckNames = ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"]
 
 @onready var viewportSize = Vector2(get_viewport().size)
 
@@ -226,7 +226,8 @@ func _input(event):
 func endTurn():
 	if !endingTurn:
 		if focusIndex != -1:
-			cardsInHand[focusIndex].mouseExited(true)
+			for card in cardsInHand:
+				card.mouseExited(true)
 		endingTurn = true
 		await terrain.advanceTrain()
 		while cardsInHand.size() > 0:

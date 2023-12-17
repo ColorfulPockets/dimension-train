@@ -51,3 +51,11 @@ func _pressed():
 		drawPile.fadeOutCards()
 		start_showing()
 		Global.overlayShowing.emit()
+		
+func _input(event):
+	if event is InputEventKey:
+		if event.keycode == KEY_ESCAPE:
+			if event.pressed:
+				if showing:
+					stop_showing()
+					Global.overlayHidden.emit()

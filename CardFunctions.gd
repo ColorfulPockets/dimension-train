@@ -1,6 +1,6 @@
 class_name CardFunctions extends Node
 
-signal confirmed(confirmed)
+signal confirmation(confirmed)
 signal selection(selected_or_cancelled)
 
 @onready var PLAYSPACE:Playspace = $".."
@@ -120,7 +120,7 @@ func Manufacture(cardInfo):
 	middleBarContainer.visible = true
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	
-	var confirmed = await confirmed
+	var confirmed = await confirmation
 	
 	middleBarContainer.visible = false
 	
@@ -148,7 +148,7 @@ func Reveal(cardInfo):
 	var selected
 	
 	while numToReveal > 0:
-		middleBarContainer.setText("Reveal "+ str(numToReveal) + " tiles.\n(Esc to cancel)")
+		middleBarContainer.setText("Choose "+ str(numToReveal) + " more tiles to reveal.\n(Enter to confirm, Esc to cancel)")
 		
 		selected = await selection
 		
@@ -172,12 +172,15 @@ func Reveal(cardInfo):
 			numToReveal -= 1
 			numHighlightedTiles = terrain.highlighted_cells.size()
 		
+	middleBarContainer.setText("Choose "+ str(numToReveal) + " more tiles to reveal.\n(Enter to confirm, Esc to cancel)")
+	
 	highlight_tiles = false
 	
 	var confirmed
 	
+	
 	if selected != Global.FUNCTION_STATES.Success:
-		confirmed = await confirmed
+		confirmed = await confirmation
 	else:
 		confirmed = Global.FUNCTION_STATES.Success
 	
@@ -190,28 +193,48 @@ func Reveal(cardInfo):
 	middleBarContainer.visible = false
 	return confirmed
 
+func Slow(cardInfo):
+	terrain.clearHighlights()
+	
+	var amountSlowed
+
+	amountSlowed = cardInfo[Global.CARD_FIELDS.Arguments]["Slow"]
+	
+	middleBarContainer.setText("Temporarily reduce train speed to " + str(max(0, Stats.trainSpeed - amountSlowed)) + "\n(Enter to confirm, Esc to cancel)")
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	
+	var confirmed = await confirmation
+	
+	middleBarContainer.visible = false
+	
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.trainSpeed = max(0, Stats.trainSpeed - amountSlowed)
+		
+	return confirmed
+
 func _input(event):
 	if event is InputEventKey:
 		if event.key_label == KEY_ENTER:
-			confirmed.emit(Global.FUNCTION_STATES.Success)
+			confirmation.emit(Global.FUNCTION_STATES.Success)
 			selection.emit(Global.FUNCTION_STATES.Success)
 			
 		if event.key_label == KEY_ESCAPE:
-			confirmed.emit(Global.FUNCTION_STATES.Fail)
+			confirmation.emit(Global.FUNCTION_STATES.Fail)
 			selection.emit(Global.FUNCTION_STATES.Fail)
 			
 		if event.key_label == KEY_SHIFT:
 			if event.pressed:
-				confirmed.emit(Global.FUNCTION_STATES.Shift)
+				confirmation.emit(Global.FUNCTION_STATES.Shift)
 				selection.emit(Global.FUNCTION_STATES.Shift)
 			else:
-				confirmed.emit(Global.FUNCTION_STATES.Unshift)
+				confirmation.emit(Global.FUNCTION_STATES.Unshift)
 				selection.emit(Global.FUNCTION_STATES.Unshift)
 				
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				selection.emit(null)
+				selection.emit(-1)
 				
 	if event is InputEventMouseMotion:
 		if highlight_tiles:

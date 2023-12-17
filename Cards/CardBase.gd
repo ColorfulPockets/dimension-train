@@ -154,6 +154,9 @@ func moveToDrawPile():
 	resetCurrentPosition()
 	visible = true
 	out_of_place = true
+	card_pressed = false
+	other_card_pressed = false
+	mousedOver = false
 	moveTime = DRAWTIME
 	state = states.InDrawPile
 
