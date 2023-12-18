@@ -1,0 +1,55 @@
+[gd_scene load_steps=10 format=3 uid="uid://du2javvixcoh7"]
+
+[ext_resource type="Script" path="res://SceneSwitcher.gd" id="1_4s6fu"]
+[ext_resource type="PackedScene" uid="uid://bnur704ugkxqv" path="res://overworld.tscn" id="2_eev2n"]
+[ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="3_iq88p"]
+[ext_resource type="Texture2D" uid="uid://bblsfuib0bw1k" path="res://Assets/Particles/Swirl.png" id="4_u18r4"]
+
+[sub_resource type="Curve" id="Curve_qhcmh"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.483444, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_50jpj"]
+curve = SubResource("Curve_qhcmh")
+
+[sub_resource type="Gradient" id="Gradient_2rggw"]
+offsets = PackedFloat32Array(0, 0.381148, 1)
+colors = PackedColorArray(0.252736, 5.3016e-05, 0.260521, 1, 0.40508, 0.000121241, 0.408817, 1, 1, 0, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ebwis"]
+gradient = SubResource("Gradient_2rggw")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1xyxc"]
+particle_flag_disable_z = true
+angular_velocity_min = 30.0
+angular_velocity_max = 50.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.2
+scale_max = 4.0
+color = Color(1, 0.0509804, 1, 1)
+color_ramp = SubResource("GradientTexture1D_ebwis")
+alpha_curve = SubResource("CurveTexture_50jpj")
+
+[node name="SceneSwitcher" type="Node"]
+script = ExtResource("1_4s6fu")
+
+[node name="Overworld" parent="." instance=ExtResource("2_eev2n")]
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -1
+offset = Vector2(1920, 1080)
+transform = Transform2D(1, 0, 0, 1, 1920, 1080)
+
+[node name="Black" type="Sprite2D" parent="Background"]
+modulate = Color(0, 0, 0, 1)
+scale = Vector2(3840, 2160)
+texture = ExtResource("3_iq88p")
+
+[node name="Swirl" type="GPUParticles2D" parent="Background"]
+emitting = false
+amount = 12
+process_material = SubResource("ParticleProcessMaterial_1xyxc")
+texture = ExtResource("4_u18r4")
+lifetime = 15.0
+preprocess = 7.0
+randomness = 1.0

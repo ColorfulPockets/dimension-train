@@ -35,6 +35,7 @@ var endingTurn = false
 
 signal handDrawn
 signal cardFunctionHappening(happening)
+signal terrainLoaded
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -42,6 +43,8 @@ func _ready():
 	#line.z_index = 2
 	#line.default_color = Color("#777777")
 	#add_child(line)
+	
+	terrainLoaded.emit()
 	
 	var discardPileNode = $FixedElements/DiscardPile
 	
@@ -57,11 +60,14 @@ func _ready():
 		drawPile.append(new_card)
 		
 	drawPile.shuffle()
-	drawHand()
 	
 	terrain.building_rail.connect(func(): building_rail = true)
 	terrain.rail_built.connect(func(_x): building_rail = false, 1)
+	
 
+func setMap(mapName):
+	terrain.setMap(mapName)
+	drawHand()
 
 func drawHand():
 	for i in range(5):

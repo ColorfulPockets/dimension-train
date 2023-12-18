@@ -1,5 +1,7 @@
 extends Node2D
 
+signal map_selected(mapName)
+
 var map = [
 	["Plains"],
 	["Mountain", "Plains"],
@@ -10,8 +12,11 @@ var map = [
 ]
 var numConnectionsBackward = []
 var numConnectionsForward = []
-var positions = []
+var sprites = []
 var verticalDistanceFromCenter = []
+var forwardConnections = []
+
+var currentLocation:Vector2i = Vector2i(1,0)
 
 const MARGIN_SIDES = 200
 const MARGIN_VERTICAL = 400
@@ -21,7 +26,6 @@ const NUM_CONNECTION_DISTRIBUTION = [1,1,1,1,1,1,1,1,2,3]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
 	var horizontalSpread = (get_viewport().size.x - 2*MARGIN_SIDES) / map.size()
 	var largestLayer = 0
 	for layer in map:
@@ -31,14 +35,14 @@ func _ready():
 	var verticalSpread = mapHeight / largestLayer
 	
 	var viewportCenter = get_viewport_rect().size / 2
-	print(viewportCenter)
 	
 	for i in range(map.size()):
 		var layer = map[i]
 		numConnectionsBackward.append([])
 		numConnectionsForward.append([])
 		verticalDistanceFromCenter.append([])
-		positions.append([])
+		forwardConnections.append([])
+		sprites.append([])
 		for j in range(layer.size()):
 			var locationName = layer[j]
 			numConnectionsForward[i].append(
@@ -48,13 +52,28 @@ func _ready():
 			verticalDistanceFromCenter[i].append(
 				proximityToCenter(j, layer)
 			)
-			var iconSprite = Sprite2D.new()
+			forwardConnections[i].append([])
+			var iconSprite = MapNode.new()
 			iconSprite.texture = load("res://Assets/Icons/" + locationName + ".png")
 			iconSprite.position = Vector2(
 				viewportCenter.x - horizontalSpread * ((float(map.size()-1)/2 - i) ),
 				viewportCenter.y - verticalSpread * ((float(layer.size()-1)/2 - j) )
 			)
-			positions[i].append(iconSprite.position)
+			
+			var maps = ["Corridor"]
+			match locationName:
+				"Plains":
+					maps = ["Corridor"]
+				"Mountain":
+					pass
+				"Forest":
+					pass
+				_:
+					push_error("Error: No map found for " + locationName)
+			
+			iconSprite.map = maps[randi_range(0,maps.size()-1)]
+			iconSprite.map_selected.connect(func(mapPath): map_selected.emit(mapPath), 1)
+			sprites[i].append(iconSprite)
 			add_child(iconSprite)
 			
 	for i in range(map.size()):
@@ -67,7 +86,9 @@ func _ready():
 			var neighbors = find_n_closest_indices(distanceFromCenter, nextLayerDistances, numConnectionsForward[i][j])
 			
 			for k in neighbors:
-				drawLine(positions[i][j], positions[i+1][k])
+				drawLine(sprites[i][j].position, sprites[i+1][k].position)
+				forwardConnections[i][j].append(k)
+				
 				numConnectionsBackward[i+1][k] += 1
 	
 	for i in range(map.size()-1, 0, -1):
@@ -79,10 +100,14 @@ func _ready():
 				var prevLayerDistances = fuzzValues(verticalDistanceFromCenter[i-1])
 				var neighbors = find_n_closest_indices(distanceFromCenter, prevLayerDistances, 1)
 				for k in neighbors:
-					drawLine(positions[i][j], positions[i-1][k])
+					drawLine(sprites[i][j].position, sprites[i-1][k].position)
+					forwardConnections[i-1][k].append(j)
 				numConnectionsBackward[i][j] = neighbors.size()
 				
+	for j in forwardConnections[currentLocation.x][currentLocation.y]:
+		sprites[currentLocation.x+1][j].clickable = true
 	
+	sprites[currentLocation.x][currentLocation.y].scale *= 2
 
 func fuzzValues(array:Array):
 	var newArray = array.duplicate()
@@ -163,6 +188,12 @@ func proximityToCenter(index: int, array: Array) -> float:
 
 	return proximity
 
+var time = 0.0
+const PULSE_PERIOD = 2
+const PULSE_SIZE = 0.25
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	time = wrapf(time+delta/PULSE_PERIOD, -PULSE_SIZE,PULSE_SIZE)
+	
+	for j in forwardConnections[currentLocation.x][currentLocation.y]:
+		sprites[currentLocation.x+1][j].scale = abs(time)*Vector2.ONE + Vector2(1-PULSE_SIZE, 1-PULSE_SIZE)

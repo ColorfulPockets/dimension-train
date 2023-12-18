@@ -19,7 +19,7 @@ var connectedCells:Array[Vector2i] = []
 var fullMapShape:Vector2i = Vector2i(0,0)
 var revealedTiles:Array[Vector2i] = []
 var originalRevealedTiles
-var map:MapBase = Corridor.new()
+var map:MapBase
 var turnCounter = 0
 
 var trainLocations:Array[Vector2i]
@@ -51,6 +51,10 @@ func _ready():
 		set_layer_enabled(i, true)
 		set_layer_z_index(i,0)
 			
+
+func setMap(mapName):
+	map = load("res://Mapping/" + mapName + ".gd").new()
+	
 	setUpMap()
 	
 	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
