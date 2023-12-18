@@ -2,12 +2,13 @@ class_name MapNode extends Sprite2D
 
 var clickable = false
 var map = null
-signal map_selected(mapName)
+var location = null
+signal map_selected(mapName, location)
 
 # This function is called when the sprite is clicked
 func clicked():
 	if clickable:
-		map_selected.emit(map)
+		map_selected.emit(map, location)
 
 func _input(event):
 	if event is InputEventMouseButton:

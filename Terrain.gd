@@ -40,6 +40,7 @@ var trainCrashed = false
 
 @onready var fixedElements = $"../FixedElements"
 @onready var cardFunctions = $"../CardFunctions"
+@onready var PLAYSPACE = $".."
 
 var highlighted_cells:Array[Vector2i] = []
 var locked_highlights:Array[Vector2i] = []
@@ -154,7 +155,7 @@ func advanceTrain():
 				nextLocation = trainLocation + Vector2i(-1,0)
 			
 			if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
-				print("LEVEL COMPLETE")
+				PLAYSPACE.levelComplete.emit()
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
 			if not emergencyTrackUsed and trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:

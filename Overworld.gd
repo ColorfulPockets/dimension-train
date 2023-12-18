@@ -1,6 +1,6 @@
 extends Node2D
 
-signal map_selected(mapName)
+signal map_selected(mapName, location)
 
 var map = [
 	["Plains"],
@@ -16,7 +16,7 @@ var sprites = []
 var verticalDistanceFromCenter = []
 var forwardConnections = []
 
-var currentLocation:Vector2i = Vector2i(1,0)
+var currentLocation = Vector2i(0,0)
 
 const MARGIN_SIDES = 200
 const MARGIN_VERTICAL = 400
@@ -26,6 +26,10 @@ const NUM_CONNECTION_DISTRIBUTION = [1,1,1,1,1,1,1,1,2,3]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	pass
+
+func drawMap(currentLocation):
+	self.currentLocation = currentLocation
 	var horizontalSpread = (get_viewport().size.x - 2*MARGIN_SIDES) / map.size()
 	var largestLayer = 0
 	for layer in map:
@@ -72,7 +76,8 @@ func _ready():
 					push_error("Error: No map found for " + locationName)
 			
 			iconSprite.map = maps[randi_range(0,maps.size()-1)]
-			iconSprite.map_selected.connect(func(mapPath): map_selected.emit(mapPath), 1)
+			iconSprite.map_selected.connect(func(mapPath, location): map_selected.emit(mapPath, location), 2)
+			iconSprite.location = Vector2i(i,j)
 			sprites[i].append(iconSprite)
 			add_child(iconSprite)
 			
