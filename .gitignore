@@ -2,7 +2,5 @@
 .godot/
 
 Assets/
-*.svg
-*.png
 *.svg.import
 *.png.import
