@@ -30,7 +30,7 @@ func _ready():
 
 func drawMap(currentLocation):
 	self.currentLocation = currentLocation
-	var horizontalSpread = (get_viewport().size.x - 2*MARGIN_SIDES) / map.size()
+	var horizontalSpread = (get_viewport_rect().size.x - 2*MARGIN_SIDES) / map.size()
 	var largestLayer = 0
 	for layer in map:
 		if layer.size() > largestLayer:
@@ -69,7 +69,7 @@ func drawMap(currentLocation):
 				"Plains":
 					maps = ["Corridor"]
 				"Mountain":
-					pass
+					maps = ["ManyTracks"]
 				"Forest":
 					pass
 				_:

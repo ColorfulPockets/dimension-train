@@ -1,6 +1,6 @@
 class_name Terrain extends TileMap
 
-enum {E, T, M, R, W, L, G}
+enum {E, T, M, R, W, L, G, X}
 
 signal confirmed(confirmed_or_cancelled)
 signal building_rail
@@ -24,16 +24,13 @@ var turnCounter = 0
 
 var trainLocations:Array[Vector2i]
 var railEndpoint:Vector2i
+var railStartpoint:Vector2i
 var originalRailEndpoint:Vector2i
 var partialRailBuilt:Array[Vector2i] = []
 
 var useEmergencyRail = false
 
-var trainCars = [
-	Global.DIRECTIONAL_TILES.TRAIN_FRONT,
-	Global.DIRECTIONAL_TILES.TRAIN_MIDDLE,
-	Global.DIRECTIONAL_TILES.TRAIN_END,
-	]
+var trainCars = []
 
 
 var trainCrashed = false
@@ -47,6 +44,8 @@ var locked_highlights:Array[Vector2i] = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	
+	
 	for i in range(5):
 		add_layer(i)
 		set_layer_enabled(i, true)
@@ -54,6 +53,23 @@ func _ready():
 			
 
 func setMap(mapName):
+	var trainFront = Sprite2D.new()
+	trainFront.centered = true
+	trainFront.texture = load("res://Assets/Icons/Train_front.png")
+	add_child(trainFront)
+	
+	var trainMiddle = Sprite2D.new()
+	trainMiddle.centered = true
+	trainMiddle.texture = load("res://Assets/Icons/Train_middle.png")
+	add_child(trainMiddle)
+	
+	var trainBack = Sprite2D.new()
+	trainBack.centered = true
+	trainBack.texture = load("res://Assets/Icons/Train_back.png")
+	add_child(trainBack)
+	
+	trainCars = [trainFront, trainMiddle, trainBack]
+	
 	map = load("res://Mapping/" + mapName + ".gd").new()
 	
 	setUpMap()
@@ -106,8 +122,12 @@ func setUpMap():
 						set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cellDirections[0], cellDirections[1])
 					elif cellEnum == L:
 						railEndpoint = cellPosition
+						railStartpoint = cellPosition
 					elif cellEnum == G:
 						set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1])
+					elif cellEnum == X:
+						var randomTile = [Global.tree, Global.rock, Global.empty]
+						set_cell(0, cellPosition, 0, randomTile[randi_range(0,2)])
 						
 	for i:int in range(fullMapShape.x):
 		for j:int in range(fullMapShape.y):
@@ -118,7 +138,8 @@ func setUpMap():
 	revealTiles()
 	
 	for i in range(trainCars.size()):
-		set_cell_directional(railEndpoint + Vector2i(0,i), trainCars[i], DIR.D, DIR.U)
+		set_cell_directional(railEndpoint + Vector2i(0,i), Global.DIRECTIONAL_TILES.RAIL, DIR.D, DIR.U)
+		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(0,i)) / scale
 		connectedCells.append(railEndpoint + Vector2i(0,i))
 		trainLocations.append(railEndpoint + Vector2i(0,i))
 
@@ -377,9 +398,14 @@ func buildRailOn(mousePosition):
 							changeOutgoing(mapPosition, Global.oppositeDir(pair[1]))
 							connectedCells.append(mapPosition + pair[0])
 					
-				railEndpoint = mapPosition
+				recalculateRailRoute()
 				partialRailBuilt.append(mapPosition)
-	
+
+#Traces rail route to determine which tiles are connected and where the endpoint is
+func recalculateRailRoute():
+	var currentPosition:Vector2i = railStartpoint
+	while get_cell_atlas_coords(0, currentPosition) in Global.DIRECTIONAL_TILES:
+		pass
 
 func resetPartialRail():
 	for rail in partialRailBuilt:

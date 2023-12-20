@@ -23,12 +23,9 @@ func loadMapBackground():
 func fadeInMap():
 	var map = loaderThread.wait_to_finish()
 	add_child(map)
-	map.modulate.a = 0
 	map.setMap(mapName)
 	
-	for i in range(100*LOAD_TIME):
-		map.modulate.a += 0.01/LOAD_TIME
-		await get_tree().create_timer(0.01).timeout
+	fadeInScene(map)
 	
 	mapScene = map
 	mapScene.levelComplete.connect(returnToOverworld)
@@ -39,23 +36,50 @@ func mapSelected(mapName, newLocation:Vector2i):
 	self.currentLocation = newLocation
 	loaderThread.start(loadMapBackground)
 	
-	for i in range(100*LOAD_TIME):
-		overworldScene.modulate.a -= 0.01/LOAD_TIME
-		await get_tree().create_timer(0.01).timeout
+	await fadeOutScene(overworldScene)
 		
 	overworldScene.queue_free()
-	
 
-func returnToOverworld():
-	var overworld = load("res://overworld.tscn").instantiate()
-	
-	add_child(overworld)
+func fadeOutScene(scene):
+	scene.modulate.a = 1
+	for i in range(100*LOAD_TIME):
+		scene.modulate.a -= 0.01/LOAD_TIME
+		await get_tree().create_timer(0.01).timeout
+	scene.modulate.a = 0
+
+func fadeInScene(scene):
+	scene.modulate.a = 0
+	for i in range(100*LOAD_TIME):
+		scene.modulate.a += 0.01/LOAD_TIME
+		await get_tree().create_timer(0.01).timeout
+		
+	scene.modulate.a = 1
+
+func fadeInOverworld():
+	var overworld = loaderThread.wait_to_finish()
 	
 	overworldScene = overworld
 	
 	overworldScene.map_selected.connect(mapSelected,1)
 	
+	add_child(overworld)
+	
 	overworldScene.drawMap(currentLocation)
+	
+	fadeInScene(overworld)
+	
+	
+func loadOverworldBackground():
+	var overworld = load("res://overworld.tscn").instantiate()
+	
+	call_deferred("fadeInOverworld")
+	
+	return overworld
+
+func returnToOverworld():
+	loaderThread.start(loadOverworldBackground)
+	
+	await fadeOutScene(mapScene)
 	
 	mapScene.queue_free()
 	
