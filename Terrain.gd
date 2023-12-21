@@ -56,16 +56,19 @@ func setMap(mapName):
 	var trainFront = Sprite2D.new()
 	trainFront.centered = true
 	trainFront.texture = load("res://Assets/Icons/Train_front.png")
+	trainFront.scale *= 0.75
 	add_child(trainFront)
 	
 	var trainMiddle = Sprite2D.new()
 	trainMiddle.centered = true
 	trainMiddle.texture = load("res://Assets/Icons/Train_middle.png")
+	trainMiddle.scale *= 0.75
 	add_child(trainMiddle)
 	
 	var trainBack = Sprite2D.new()
 	trainBack.centered = true
 	trainBack.texture = load("res://Assets/Icons/Train_back.png")
+	trainBack.scale *= 0.75
 	add_child(trainBack)
 	
 	trainCars = [trainFront, trainMiddle, trainBack]
@@ -153,6 +156,30 @@ func revealTiles():
 					), 0, Global.delete)
 						
 
+func getTrainRotation(incoming, outgoing):
+	match incoming:
+		DIR.D:
+			match outgoing:
+				DIR.U: return 0
+				DIR.R: return PI/4
+				DIR.L: return -PI/4
+		DIR.U:
+			match outgoing:
+				DIR.D: return PI
+				DIR.R: return PI - PI/4
+				DIR.L: return PI + PI/4
+		DIR.L:
+			match outgoing:
+				DIR.R: return PI/2
+				DIR.D: return PI/2 + PI/4
+				DIR.U: return PI/2 - PI/4
+		DIR.R:
+			match outgoing:
+				DIR.L: return -PI/2
+				DIR.U: return -PI/2 + PI/4
+				DIR.D: return -PI/2 - PI/4
+	return 0
+
 func advanceTrain():
 	if trainCrashed: return
 	
@@ -164,22 +191,13 @@ func advanceTrain():
 			var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
 			var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
 			var trainType = directionalCellMap[trainLocation.x][trainLocation.y]
-			var nextLocation = Vector2i.ZERO
+			var nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
 			
-			if trainOutgoing == DIR.U:
-				nextLocation = trainLocation + Vector2i(0,-1)
-			elif trainOutgoing == DIR.D:
-				nextLocation = trainLocation + Vector2i(0,1)
-			elif trainOutgoing == DIR.R:
-				nextLocation = trainLocation + Vector2i(1,0)
-			else:
-				nextLocation = trainLocation + Vector2i(-1,0)
-			
-			if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
+			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
 				PLAYSPACE.levelComplete.emit()
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
-			if not emergencyTrackUsed and trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
+			if not emergencyTrackUsed and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
 				useEmergencyRail = true
 				Global.cardFunctionStarted.emit()
 				#Calling through cardFunctions because that displays the text
@@ -187,19 +205,12 @@ func advanceTrain():
 				await rail_built
 				Global.cardFunctionEnded.emit()
 				trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
-				if trainOutgoing == DIR.U:
-					nextLocation = trainLocation + Vector2i(0,-1)
-				elif trainOutgoing == DIR.D:
-					nextLocation = trainLocation + Vector2i(0,1)
-				elif trainOutgoing == DIR.R:
-					nextLocation = trainLocation + Vector2i(1,0)
-				else:
-					nextLocation = trainLocation + Vector2i(-1,0)
+				nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
 				
 				useEmergencyRail = false
 				emergencyTrackUsed = true
 				
-			if trainType == Global.DIRECTIONAL_TILES.TRAIN_FRONT and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
+			if get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
 				print("TRAIN CRASHED")
 				trainCrashed = true
 				return
@@ -207,10 +218,10 @@ func advanceTrain():
 			var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
 			var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
 			
-			if trainType == Global.DIRECTIONAL_TILES.TRAIN_END:
-				set_cell_directional(trainLocation, Global.DIRECTIONAL_TILES.RAIL, trainIncoming, trainOutgoing)
+			print(nextLocation)
+			trainCars[i].position = map_to_local(nextLocation)
+			trainCars[i].rotation = getTrainRotation(nextIncoming, nextOutgoing)
 			
-			set_cell_directional(nextLocation, trainType, nextIncoming, nextOutgoing)
 			nextTrainLocations.append(nextLocation)
 		await get_tree().create_timer(Global.TRAIN_MOVEMENT_TIME).timeout
 	
@@ -403,9 +414,12 @@ func buildRailOn(mousePosition):
 
 #Traces rail route to determine which tiles are connected and where the endpoint is
 func recalculateRailRoute():
+	connectedCells = []
 	var currentPosition:Vector2i = railStartpoint
-	while get_cell_atlas_coords(0, currentPosition) in Global.DIRECTIONAL_TILES:
-		pass
+	while get_cell_atlas_coords(0, currentPosition) in Global.rail_tiles and currentPosition not in connectedCells:
+		connectedCells.append(currentPosition)
+		railEndpoint = currentPosition
+		currentPosition = Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])
 
 func resetPartialRail():
 	for rail in partialRailBuilt:
@@ -414,8 +428,8 @@ func resetPartialRail():
 		incomingMap[rail.x][rail.y] = DIR.NONE
 		Stats.railCount += 1
 	partialRailBuilt.clear()
-	railEndpoint = originalRailEndpoint
 	revealedTiles = originalRevealedTiles
+	recalculateRailRoute()
 	
 func _input(event):
 	if event is InputEventMouseButton and numRailToBuild > 0:

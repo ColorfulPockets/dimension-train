@@ -114,6 +114,19 @@ func oppositeDir(dir):
 		return DIR.U
 	else:
 		return DIR.NONE
+		
+func stepInDirection(position, dir):
+	match dir:
+		DIR.L:
+			return position + Vector2i(-1,0)
+		DIR.R:
+			return position + Vector2i(1,0)
+		DIR.D:
+			return position + Vector2i(0,1)
+		DIR.U:
+			return position + Vector2i(0,-1)
+		
+	return Vector2i(-1,-1)
 
 enum DIRECTIONAL_TILES {TRAIN_FRONT, TRAIN_MIDDLE, TRAIN_END, RAIL, RAIL_END}
 
