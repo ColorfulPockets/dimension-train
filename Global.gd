@@ -115,7 +115,7 @@ func oppositeDir(dir):
 	else:
 		return DIR.NONE
 		
-func stepInDirection(position, dir):
+func stepInDirection(position:Vector2i, dir):
 	match dir:
 		DIR.L:
 			return position + Vector2i(-1,0)

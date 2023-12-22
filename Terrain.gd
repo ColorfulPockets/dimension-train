@@ -156,6 +156,18 @@ func revealTiles():
 					), 0, Global.delete)
 						
 
+#GPT
+func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_segments: int = 10) -> Array:
+	var curve_points = []
+
+	for i in range(num_segments + 1):
+		var t = i / float(num_segments)
+		var u = 1.0 - t
+
+		var p = p0 * u * u + p1 * 2 * u * t + p2 * t * t
+		curve_points.append(p)
+	return curve_points
+
 func getTrainRotation(incoming, outgoing):
 	match incoming:
 		DIR.D:
@@ -180,10 +192,21 @@ func getTrainRotation(incoming, outgoing):
 				DIR.D: return -PI/2 - PI/4
 	return 0
 
+func moveSpriteAlongPoints(sprite, points:Array, speed):
+	for point in points:
+		while sprite.position.distance_to(point) > 1:
+			var direction = (point - sprite.position).normalized()
+			sprite.position += direction * speed
+			sprite.rotation = direction.angle() + PI/2
+			await get_tree().create_timer(0.01).timeout
+
 func advanceTrain():
 	if trainCrashed: return
 	
 	var emergencyTrackUsed = false
+	var pointsToMoveThrough = {}
+	for i in range(trainLocations.size()):
+		pointsToMoveThrough[i] = []
 	for stepNumber in range(Stats.trainSpeed):
 		var nextTrainLocations:Array[Vector2i] = []
 		for i in range(trainLocations.size()):
@@ -218,14 +241,38 @@ func advanceTrain():
 			var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
 			var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
 			
-			print(nextLocation)
-			trainCars[i].position = map_to_local(nextLocation)
-			trainCars[i].rotation = getTrainRotation(nextIncoming, nextOutgoing)
+			var nextPosition = map_to_local(nextLocation)
+			var currentPosition = map_to_local(trainLocation)
+			var prevPosition = map_to_local(Global.stepInDirection(trainLocation, trainIncoming))
+			var nextNextPosition = map_to_local(Global.stepInDirection(nextLocation, nextOutgoing))
+			
+			const NUM_ANIMATION_POINTS:int = 100
+			var firstCurve = interpolate_quadratic_bezier(
+				(currentPosition + prevPosition) / 2,
+				currentPosition,
+				(currentPosition + nextPosition) / 2,
+				NUM_ANIMATION_POINTS
+			)
+			var secondCurve = interpolate_quadratic_bezier(
+				(nextPosition + currentPosition) /2,
+				nextPosition,
+				(nextPosition + nextNextPosition) /2,
+				NUM_ANIMATION_POINTS
+			)
+			
+			for _i in range(NUM_ANIMATION_POINTS / 3):
+				pointsToMoveThrough[i].append(firstCurve[_i+2*NUM_ANIMATION_POINTS/3])
+			
+			for _i in range(NUM_ANIMATION_POINTS / 2):
+				pointsToMoveThrough[i].append(secondCurve[_i])
 			
 			nextTrainLocations.append(nextLocation)
-		await get_tree().create_timer(Global.TRAIN_MOVEMENT_TIME).timeout
+		#await get_tree().create_timer(Global.TRAIN_MOVEMENT_TIME).timeout
 	
 		trainLocations = nextTrainLocations
+	
+	for i in range(trainLocations.size()):
+		moveSpriteAlongPoints(trainCars[i], pointsToMoveThrough[i], 0.2)
 	
 	turnCounter += 1
 	Stats.trainSpeed = map.speedProgression[turnCounter]
