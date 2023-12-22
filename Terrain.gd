@@ -27,6 +27,7 @@ var railEndpoint:Vector2i
 var railStartpoint:Vector2i
 var originalRailEndpoint:Vector2i
 var partialRailBuilt:Array[Vector2i] = []
+var lastRailPlaced:Vector2i
 
 var useEmergencyRail = false
 
@@ -126,6 +127,7 @@ func setUpMap():
 					elif cellEnum == L:
 						railEndpoint = cellPosition
 						railStartpoint = cellPosition
+						lastRailPlaced = cellPosition
 					elif cellEnum == G:
 						set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1])
 					elif cellEnum == X:
@@ -267,16 +269,16 @@ func advanceTrain():
 				pointsToMoveThrough[i].append(secondCurve[_i])
 			
 			nextTrainLocations.append(nextLocation)
-		#await get_tree().create_timer(Global.TRAIN_MOVEMENT_TIME).timeout
 	
 		trainLocations = nextTrainLocations
 	
 	for i in range(trainLocations.size()):
 		moveSpriteAlongPoints(trainCars[i], pointsToMoveThrough[i], 0.2)
 	
-	turnCounter += 1
-	Stats.trainSpeed = map.speedProgression[turnCounter]
-	Stats.nextTrainSpeed = map.speedProgression[turnCounter + 1]
+	if turnCounter < map.speedProgression.size()-2:
+		turnCounter += 1
+		Stats.trainSpeed = map.speedProgression[turnCounter]
+		Stats.nextTrainSpeed = map.speedProgression[turnCounter + 1]
 
 func randomTerrainVector():
 	var selection = randi_range(0,2)
@@ -458,13 +460,17 @@ func buildRailOn(mousePosition):
 					
 				recalculateRailRoute()
 				partialRailBuilt.append(mapPosition)
+				lastRailPlaced = mapPosition
 
 #Traces rail route to determine which tiles are connected and where the endpoint is
 func recalculateRailRoute():
 	connectedCells = []
 	var currentPosition:Vector2i = railStartpoint
+	var prev_outgoing = DIR.U
 	while get_cell_atlas_coords(0, currentPosition) in Global.rail_tiles and currentPosition not in connectedCells:
 		connectedCells.append(currentPosition)
+		changeIncoming(currentPosition, Global.oppositeDir(prev_outgoing))
+		prev_outgoing = outgoingMap[currentPosition.x][currentPosition.y]
 		railEndpoint = currentPosition
 		currentPosition = Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])
 
@@ -473,18 +479,33 @@ func resetPartialRail():
 		set_cell(0, rail, 0, Global.empty)
 		outgoingMap[rail.x][rail.y] = DIR.NONE
 		incomingMap[rail.x][rail.y] = DIR.NONE
+		directionalCellMap[rail.x][rail.y] = null
 		Stats.railCount += 1
 	partialRailBuilt.clear()
 	revealedTiles = originalRevealedTiles
 	recalculateRailRoute()
 	
+
+func toggleRailOutput(mousePosition):
+	var clicked_cell = screenPositionToMapPosition(mousePosition)
+	if clicked_cell == lastRailPlaced:
+		var nextDir = Global.nextDirClockwise(outgoingMap[clicked_cell.x][clicked_cell.y])
+		if nextDir == incomingMap[clicked_cell.x][clicked_cell.y]:
+			nextDir = Global.nextDirClockwise(nextDir)
+		changeOutgoing(clicked_cell, nextDir)
+	
+	recalculateRailRoute()
+
 func _input(event):
-	if event is InputEventMouseButton and numRailToBuild > 0:
+	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				buildRailOn(get_viewport().get_mouse_position())
-				if numRailToBuild == 0:
-					clearHighlights()
+				if buildingRail:
+					toggleRailOutput(get_viewport().get_mouse_position())
+					if numRailToBuild > 0:
+						buildRailOn(get_viewport().get_mouse_position())
+						if numRailToBuild == 0:
+							clearHighlights()
 				
 	if event is InputEventMouseMotion:
 		if numRailToBuild > 0:

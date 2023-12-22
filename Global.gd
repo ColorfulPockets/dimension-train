@@ -115,6 +115,19 @@ func oppositeDir(dir):
 	else:
 		return DIR.NONE
 		
+	
+func nextDirClockwise(dir):
+	if dir == DIR.L:
+		return DIR.U
+	elif dir == DIR.R:
+		return DIR.D
+	elif dir == DIR.U:
+		return DIR.R
+	elif dir == DIR.D:
+		return DIR.L
+	else:
+		return DIR.NONE
+	
 func stepInDirection(position:Vector2i, dir):
 	match dir:
 		DIR.L:
