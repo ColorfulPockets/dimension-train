@@ -4,7 +4,7 @@ var woodCount = 0
 var metalCount = 0
 var emergencyRailCount = 20
 var erc = 20
-var railCount = 5
+var railCount = 10
 
 var trainSpeed = 0
 var nextTrainSpeed = 1

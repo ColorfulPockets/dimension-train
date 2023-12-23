@@ -12,8 +12,9 @@ signal overlayHidden
 const base_layer = 0
 const resource_counts_layer = 1
 const animation_layer = 2
-const fog_layer = 3
-const highlight_layer = 4
+const temporary_rail_layer = 3
+const fog_layer = 4
+const highlight_layer = 5
 
 const TRAIN_MOVEMENT_TIME = 0.5
 const FADE_TIME = 0.2
@@ -143,7 +144,7 @@ func stepInDirection(position:Vector2i, dir):
 
 enum DIRECTIONAL_TILES {TRAIN_FRONT, TRAIN_MIDDLE, TRAIN_END, RAIL, RAIL_END}
 
-# Access with DIRECTIONAL_TILES[tileName][in_direction][out_direction]
+# Access with DIRECTIONAL_TILE_INOUT[tileName][in_direction][out_direction]
 # Return value is [tile_atlas, transform_code]
 var DIRECTIONAL_TILE_INOUT = {
 	DIRECTIONAL_TILES.RAIL_END: {

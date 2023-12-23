@@ -92,6 +92,9 @@ func Build(cardInfo):
 	
 	var discard = await buildRail(numBuilt)
 	
+	if discard == Global.FUNCTION_STATES.Success:
+		terrain.revealFromRail()
+	
 	return discard
 
 # note helper function, not capitalized

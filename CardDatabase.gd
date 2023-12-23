@@ -57,7 +57,7 @@ var DATA = {
 			fields.BottomFunction: "Slow",
 			fields.TopMousePointer: load("res://Assets/Icons/Build_mouse.png"),
 			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
-			fields.Arguments: {"Build": 2, "Slow":2},
+			fields.Arguments: {"Build": 10, "Slow":2},
 		},
 	"Manufacture":
 		{

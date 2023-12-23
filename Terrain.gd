@@ -11,10 +11,14 @@ var numRailToBuild = 0
 var targeting = false
 
 var DIR = Global.DIR
+var DIRS = [DIR.U, DIR.R, DIR.D, DIR.L]
 var outgoingMap = []
 var incomingMap = []
 var directionalCellMap = []
 var connectedCells:Array[Vector2i] = []
+# Contains a map of cells' distances and direction to the railEndpoint for purpose of adding rails
+var directionToStartMap = []
+var legalToPlaceRail = false
 
 var fullMapShape:Vector2i = Vector2i(0,0)
 var revealedTiles:Array[Vector2i] = []
@@ -169,30 +173,6 @@ func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_seg
 		var p = p0 * u * u + p1 * 2 * u * t + p2 * t * t
 		curve_points.append(p)
 	return curve_points
-
-func getTrainRotation(incoming, outgoing):
-	match incoming:
-		DIR.D:
-			match outgoing:
-				DIR.U: return 0
-				DIR.R: return PI/4
-				DIR.L: return -PI/4
-		DIR.U:
-			match outgoing:
-				DIR.D: return PI
-				DIR.R: return PI - PI/4
-				DIR.L: return PI + PI/4
-		DIR.L:
-			match outgoing:
-				DIR.R: return PI/2
-				DIR.D: return PI/2 + PI/4
-				DIR.U: return PI/2 - PI/4
-		DIR.R:
-			match outgoing:
-				DIR.L: return -PI/2
-				DIR.U: return -PI/2 + PI/4
-				DIR.D: return -PI/2 - PI/4
-	return 0
 
 func moveSpriteAlongPoints(sprite, points:Array, speed):
 	for point in points:
@@ -417,50 +397,16 @@ func get_tile(mapPosition:Vector2i):
 	return Vector2i(mapPosition / Global.TILE_SHAPE)
 
 func buildRailOn(mousePosition):
-	var mapPosition:Vector2i = screenPositionToMapPosition(mousePosition)
-	if get_cell_atlas_coords(0, mapPosition) == Global.empty and get_cell_atlas_coords(Global.fog_layer, mapPosition) != Global.fog:
-		for adjacent_coords in [Vector2i(1,0), Vector2i(0,1), Vector2i(-1,0), Vector2i(0,-1)]:
-			if mapPosition + adjacent_coords == railEndpoint:
-				if useEmergencyRail:
-					Stats.emergencyRailCount -= 1
-				else:
-					Stats.railCount -= 1
-				numRailToBuild -= 1
-				connectedCells.append(mapPosition)
-				#We are above it
-				if adjacent_coords.y == 1:
-					set_cell_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIR.D, DIR.U)
-					changeOutgoing(railEndpoint, DIR.U)
-					if not (get_tile(mapPosition + Vector2i(0,-1)) in revealedTiles):
-						revealedTiles.append(get_tile(mapPosition + Vector2i(0,-1)))
-				#We are below it
-				elif adjacent_coords.y == -1:
-					set_cell_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIR.U, DIR.D)
-					changeOutgoing(railEndpoint, DIR.D)
-					if not (get_tile(mapPosition + Vector2i(0,1)) in revealedTiles):
-						revealedTiles.append(get_tile(mapPosition + Vector2i(0,1)))
-				# We are to the right
-				elif adjacent_coords.x == -1:
-					set_cell_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIR.L, DIR.R)
-					changeOutgoing(railEndpoint, DIR.R)
-					if not (get_tile(mapPosition + Vector2i(1,0)) in revealedTiles):
-						revealedTiles.append(get_tile(mapPosition + Vector2i(1,0)))
-				# We are to the left
-				else:
-					set_cell_directional(mapPosition, Global.DIRECTIONAL_TILES.RAIL, DIR.R, DIR.L)
-					changeOutgoing(railEndpoint, DIR.L)
-					if not (get_tile(mapPosition + Vector2i(-1,0)) in revealedTiles):
-						revealedTiles.append(get_tile(mapPosition + Vector2i(-1,0)))
-				
-				for pair in [[Vector2i(1,0), DIR.L], [Vector2i(-1,0), DIR.R],[Vector2i(0,-1), DIR.D], [Vector2i(0,1), DIR.U]]:
-					if mapPosition + pair[0] not in connectedCells:
-						if changeIncoming(mapPosition + pair[0], pair[1]):
-							changeOutgoing(mapPosition, Global.oppositeDir(pair[1]))
-							connectedCells.append(mapPosition + pair[0])
-					
-				recalculateRailRoute()
-				partialRailBuilt.append(mapPosition)
-				lastRailPlaced = mapPosition
+	if legalToPlaceRail:
+		var mapPosition:Vector2i = screenPositionToMapPosition(mousePosition)
+		var amountAdded = addRailLineToMap(railEndpoint, mapPosition, Global.base_layer)
+		recalculateRailRoute()
+		lastRailPlaced = mapPosition
+		numRailToBuild -= amountAdded
+		if useEmergencyRail:
+			Stats.emergencyRailCount -= amountAdded
+		else:
+			Stats.railCount -= amountAdded
 
 #Traces rail route to determine which tiles are connected and where the endpoint is
 func recalculateRailRoute():
@@ -492,9 +438,90 @@ func toggleRailOutput(mousePosition):
 		var nextDir = Global.nextDirClockwise(outgoingMap[clicked_cell.x][clicked_cell.y])
 		if nextDir == incomingMap[clicked_cell.x][clicked_cell.y]:
 			nextDir = Global.nextDirClockwise(nextDir)
+			
 		changeOutgoing(clicked_cell, nextDir)
 	
 	recalculateRailRoute()
+
+
+func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
+	directionToStartMap = []
+	legalToPlaceRail = false
+	if get_cell_atlas_coords(0, endLoc) != Global.empty:
+		return
+	
+	for i in range(fullMapShape.x):
+		directionToStartMap.append([])
+		for j in range(fullMapShape.y):
+			directionToStartMap[i].append(null)
+	
+	var outermostLocations = [startLoc]
+	directionToStartMap[startLoc.x][startLoc.y] = [incomingMap[startLoc.x][startLoc.y],0]
+	var steps = 0
+	
+	while directionToStartMap[endLoc.x][endLoc.y] == null:
+		steps += 1
+		if steps > distance:
+			break
+		var nextOutermost = []
+		for loc in outermostLocations:
+			for dir in DIRS:
+				var nextLoc = Global.stepInDirection(loc, dir)
+				if get_cell_atlas_coords(0, nextLoc) == Global.empty and directionToStartMap[nextLoc.x][nextLoc.y] == null:
+					directionToStartMap[nextLoc.x][nextLoc.y] = [Global.oppositeDir(dir), steps]
+					nextOutermost.append(nextLoc)
+				
+		outermostLocations = nextOutermost
+		
+	legalToPlaceRail = directionToStartMap[endLoc.x][endLoc.y] != null
+	addRailLineToMap(startLoc, endLoc, Global.temporary_rail_layer)
+
+#Returns amount of rail added
+func addRailLineToMap(startLoc, endLoc, layer):
+	if get_cell_atlas_coords(0, endLoc) != Global.empty:
+		return 0
+		
+	var directionMap = directionToStartMap.duplicate(true)
+	if directionMap[endLoc.x][endLoc.y] == null:
+		return 0
+	
+	var recordTempRail = false
+	if layer == Global.base_layer:
+		recordTempRail = true
+
+	var currentLoc = endLoc
+	var currentDir = (directionMap[currentLoc.x][currentLoc.y])[0]
+	var currentCellVals = Global.DIRECTIONAL_TILE_INOUT[Global.DIRECTIONAL_TILES.RAIL][currentDir][Global.oppositeDir(currentDir)]
+	set_cell(layer, currentLoc, 0, currentCellVals[0], currentCellVals[1])
+	if recordTempRail:
+		incomingMap[currentLoc.x][currentLoc.y] = currentDir
+		outgoingMap[currentLoc.x][currentLoc.y] = Global.oppositeDir(currentDir)
+		directionalCellMap[currentLoc.x][currentLoc.y] = Global.DIRECTIONAL_TILES.RAIL
+	while currentLoc != startLoc:
+		if recordTempRail:
+			partialRailBuilt.append(currentLoc)
+		currentDir = (directionMap[currentLoc.x][currentLoc.y])[0]
+		var nextLoc = Global.stepInDirection(currentLoc, currentDir)
+		var nextDir = (directionMap[nextLoc.x][nextLoc.y])[0]
+		var nextCellVals = Global.DIRECTIONAL_TILE_INOUT[Global.DIRECTIONAL_TILES.RAIL][nextDir][Global.oppositeDir(currentDir)]
+		if recordTempRail:
+			incomingMap[nextLoc.x][nextLoc.y] = nextDir
+			outgoingMap[nextLoc.x][nextLoc.y] = Global.oppositeDir(currentDir)
+			directionalCellMap[nextLoc.x][nextLoc.y] = Global.DIRECTIONAL_TILES.RAIL
+		#if recordTempRail or (not nextLoc == startLoc):
+		set_cell(layer, nextLoc, 0, nextCellVals[0], nextCellVals[1])
+			
+		currentLoc = nextLoc
+		
+	return (directionMap[endLoc.x][endLoc.y])[1]
+
+func revealFromRail():
+	for dir in DIRS:
+		var nextCell:Vector2i = Global.stepInDirection(railEndpoint, dir)
+		var nextTile = Vector2i(nextCell.x/Global.TILE_SHAPE.x, nextCell.y/Global.TILE_SHAPE.y)
+		if nextTile not in revealedTiles:
+			revealedTiles.append(nextTile)
+			revealTiles()
 
 func _input(event):
 	if event is InputEventMouseButton:
@@ -508,10 +535,13 @@ func _input(event):
 							clearHighlights()
 				
 	if event is InputEventMouseMotion:
+		clear_layer(Global.temporary_rail_layer)
 		if numRailToBuild > 0:
 			highlightCells(event.position, Vector2i.ONE)
+			drawRailLine(railEndpoint, screenPositionToMapPosition(event.position), numRailToBuild)
 		
 	if event is InputEventKey and buildingRail:
+		clear_layer(Global.temporary_rail_layer)
 		if event.key_label == KEY_ESCAPE:
 			if event.pressed:
 				buildingRail = false
