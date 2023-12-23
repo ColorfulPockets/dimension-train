@@ -130,6 +130,7 @@ func setUpMap():
 						set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cellDirections[0], cellDirections[1])
 					elif cellEnum == L:
 						railEndpoint = cellPosition
+						print(railEndpoint)
 						railStartpoint = cellPosition
 						lastRailPlaced = cellPosition
 					elif cellEnum == G:
@@ -375,7 +376,10 @@ func changeOutgoing(mapPosition, direction):
 	if mapPosition.x < directionalCellMap.size() \
 		and mapPosition.y  < directionalCellMap[0].size() \
 		and directionalCellMap[mapPosition.x][mapPosition.y] != null:
-			set_cell_directional(mapPosition, directionalCellMap[mapPosition.x][mapPosition.y],
+			if direction == incomingMap[mapPosition.x][mapPosition.y]:
+				swapInOut(mapPosition)
+			else:
+				set_cell_directional(mapPosition, directionalCellMap[mapPosition.x][mapPosition.y],
 						incomingMap[mapPosition.x][mapPosition.y],
 						direction)
 			return true
@@ -386,7 +390,10 @@ func changeIncoming(mapPosition, direction):
 	if mapPosition.x < directionalCellMap.size() \
 		and mapPosition.y  < directionalCellMap[0].size() \
 		and directionalCellMap[mapPosition.x][mapPosition.y] != null:
-			set_cell_directional(mapPosition, directionalCellMap[mapPosition.x][mapPosition.y],
+			if direction == outgoingMap[mapPosition.x][mapPosition.y]:
+				swapInOut(mapPosition)
+			else:
+				set_cell_directional(mapPosition, directionalCellMap[mapPosition.x][mapPosition.y],
 						direction,
 						outgoingMap[mapPosition.x][mapPosition.y])
 			return true
@@ -408,17 +415,41 @@ func buildRailOn(mousePosition):
 		else:
 			Stats.railCount -= amountAdded
 
+func swapInOut(location):
+	set_cell_directional(location, directionalCellMap[location.x][location.y], outgoingMap[location.x][location.y], incomingMap[location.x][location.y])
+
 #Traces rail route to determine which tiles are connected and where the endpoint is
 func recalculateRailRoute():
 	connectedCells = []
 	var currentPosition:Vector2i = railStartpoint
 	var prev_outgoing = DIR.U
-	while get_cell_atlas_coords(0, currentPosition) in Global.rail_tiles and currentPosition not in connectedCells:
+	while get_cell_atlas_coords(0, currentPosition) in Global.rail_tiles:
 		connectedCells.append(currentPosition)
 		changeIncoming(currentPosition, Global.oppositeDir(prev_outgoing))
 		prev_outgoing = outgoingMap[currentPosition.x][currentPosition.y]
 		railEndpoint = currentPosition
 		currentPosition = Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])
+		if currentPosition in connectedCells:
+			break
+		#If the cell is a rail connected on both sides, but neither side is part of the connected cells, can't continue the line
+		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles \
+			and get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
+				if not (
+					Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y]) in connectedCells
+					or
+					Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y]) in connectedCells
+					):
+						break
+		#If this cell has an outgoing connection to a new part of existing rail line, it's fine to continue to use that,
+		#so we continue, skipping the next check to reverse the direction
+		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
+			if Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y]) not in connectedCells:
+				continue
+		#If this cell's incoming is a rail that's not currently part of the connected line, reverse its direction
+		#(this allows for connecting to either side of an existing rail line)
+		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
+			if Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y]) not in connectedCells:
+				swapInOut(currentPosition)
 
 func resetPartialRail():
 	for rail in partialRailBuilt:
