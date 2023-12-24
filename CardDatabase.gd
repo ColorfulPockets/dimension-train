@@ -7,6 +7,7 @@ var DATA = {
 	"Chop":
 		{
 			fields.Name: "Chop",
+			fields.Rarity: "Starter",
 			fields.EnergyCost: 1,
 			fields.Type: types.Harvesting,
 			fields.TopText: "Chop 2x2",
@@ -21,6 +22,7 @@ var DATA = {
 	"Mine":
 		{
 			fields.Name: "Mine",
+			fields.Rarity: "Starter",
 			fields.EnergyCost: 1,
 			fields.Type: types.Harvesting,
 			fields.TopText: "Mine 2x2",
@@ -35,6 +37,7 @@ var DATA = {
 	"Gather":
 		{
 			fields.Name: "Gather",
+			fields.Rarity: "Starter",
 			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
 			fields.TopText: "Gather 2x2",
@@ -49,6 +52,7 @@ var DATA = {
 	"Build":
 		{
 			fields.Name: "Build",
+			fields.Rarity: "Starter",
 			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
 			fields.TopText: "Build 2",
@@ -62,6 +66,7 @@ var DATA = {
 	"Manufacture":
 		{
 			fields.Name: "Manufacture",
+			fields.Rarity: "Starter",
 			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
 			fields.TopText: "Manufacture 4",
@@ -75,6 +80,7 @@ var DATA = {
 	"Factory":
 		{
 			fields.Name: "Factory",
+			fields.Rarity: "Starter",
 			fields.EnergyCost: 2,
 			fields.Type: types.Logistics,
 			fields.TopText: "Manufacture 8",
@@ -85,5 +91,137 @@ var DATA = {
 			fields.TopMousePointer: load("res://Assets/Icons/cursor.png"),
 			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
 			fields.Arguments: {"Manufacture": 8}
+		},
+	"Drill":
+		{
+			fields.Name: "Drill",
+			fields.Rarity: "Common",
+			fields.EnergyCost: 1,
+			fields.Type: types.Harvesting,
+			fields.TopText: "Mine 3x2",
+			fields.BottomText: "Gather 2x2",
+			fields.TopTargetArea: Vector2i(3,2),
+			fields.BottomTargetArea: Vector2i(2,2),
+			fields.TopFunction: "Mine",
+			fields.BottomFunction: "Gather",
+			fields.TopMousePointer: load("res://Assets/Icons/Mine_mouse.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
+		},
+	"Gust":
+		{
+			fields.Name: "Gust",
+			fields.Rarity: "Common",
+			fields.EnergyCost: 1,
+			fields.Type: types.Harvesting,
+			fields.TopText: "Chop 2x2 and draw a card.",
+			fields.BottomText: "Gather 1x4",
+			fields.TopTargetArea: Vector2i(2,2),
+			fields.BottomTargetArea: Vector2i(1,4),
+			fields.TopFunction: "Chop Draw",
+			fields.BottomFunction: "Gather",
+			fields.TopMousePointer: load("res://Assets/Icons/Chop_mouse.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Gather_mouse.png"),
+			fields.Arguments: {"Draw": 1}
+		},
+	"Bridge":
+		{
+			fields.Name: "Bridge",
+			fields.Rarity: "Common",
+			fields.EnergyCost: 1,
+			fields.Type: types.Logistics,
+			fields.TopText: "Bridge 1",
+			fields.BottomText: "Reveal 1",
+			fields.TopTargetArea: Vector2i(1,1),
+			fields.TopFunction: "Bridge",
+			fields.BottomFunction: "Reveal",
+			fields.TopMousePointer: load("res://Assets/Icons/Bridge_mouse.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
+			fields.Arguments: {"Draw": 1}
+		},
+	"Bolster":
+		{
+			fields.Name: "Bolster",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: types.Logistics,
+			fields.TopText: "Increase all numbers on another card in your hand by 1 for this level.",
+			fields.BottomText: "Decrease the cost of another card in your hand by 1 for this level.",
+			fields.TopTargetArea: Vector2i(2,2),
+			fields.BottomTargetArea: Vector2i(2,1),
+			fields.TopFunction: "NumbersUp",
+			fields.BottomFunction: "CostDown",
+			fields.TopMousePointer: load("res://Assets/Icons/Bolster_cursor.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/EnergyDown_cursor.png"),
+		},
+	"Freeze":
+		{
+			fields.Name: "Freeze",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: types.Logistics,
+			fields.TopText: "Bridge 5x5",
+			fields.BottomText: "Chop/Mine 2x2",
+			fields.TopTargetArea: Vector2i(5,5),
+			fields.BottomTargetArea: Vector2i(2,2),
+			fields.TopFunction: "Bridge",
+			fields.BottomFunction: "Chop Mine",
+			fields.TopMousePointer: load("res://Assets/Icons/Bridge_mouse.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Chop_mouse.png"),
+		},
+	"Dynamite":
+		{
+			fields.Name: "Dynamite",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: types.Harvesting,
+			fields.TopText: "Mine 4x4",
+			fields.BottomText: "Draw 2.",
+			fields.TopTargetArea: Vector2i(4,4),
+			fields.TopFunction: "Mine",
+			fields.BottomFunction: "Draw",
+			fields.TopMousePointer: load("res://Assets/Icons/Bridge_mouse.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Chop_mouse.png"),
+			fields.Arguments: {"Draw": 2}
+		},
+	"Levitate":
+		{
+			fields.Name: "Levitate",
+			fields.Rarity: "Rare",
+			fields.EnergyCost: 2,
+			fields.Type: types.Logistics,
+			fields.TopText: "Build 6, even over Trees and Boulders.",
+			fields.BottomText: "Manufacture 4, paying only 1 Wood and 1 Metal.",
+			fields.TopFunction: "Build",
+			fields.BottomFunction: "Manufacture",
+			fields.TopMousePointer: load("res://Assets/Icons/Bolster_cursor.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/EnergyDown_cursor.png"),
+			fields.Arguments: {"Manufacture": 4, "ManufactureCost": 1, "Build": 6, "BuildOver": [Global.tree, Global.rock]}
+		},
+	"Headlight":
+		{
+			fields.Name: "Headlight",
+			fields.Rarity: "Rare",
+			fields.EnergyCost: 1,
+			fields.Type: types.Technology,
+			fields.TopText: "Reveal all.",
+			fields.BottomText: "(None)",
+			fields.TopFunction: "Reveal",
+			fields.BottomFunction: "Reveal",
+			fields.TopMousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
+			fields.Arguments: {"Reveal": "All"}
+		},
+	"AutoBuild":
+		{
+			fields.Name: "AutoBuild",
+			fields.Rarity: "Rare",
+			fields.EnergyCost: 3,
+			fields.Type: types.Technology,
+			fields.TopText: "Whenever you reach the end of the track with speed remaining, place a rail in a straight line.",
+			fields.BottomText: "(None)",
+			fields.TopFunction: "AutoBuild",
+			fields.BottomFunction: "AutoBuild",
+			fields.TopMousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
+			fields.BottomMousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
 		},
 }

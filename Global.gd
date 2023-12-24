@@ -68,6 +68,7 @@ enum CARD_FIELDS {
 	TopMousePointer,
 	BottomMousePointer,
 	EnergyCost,
+	Rarity,
 	}
 
 enum CARD_STATES {
