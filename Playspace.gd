@@ -1,7 +1,6 @@
 class_name Playspace extends Node2D
 
 const CardBase = preload("res://Cards/CardBase.tscn")
-const PlayerHand = preload("res://Cards/PlayerHand.gd")
 const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
 @onready var deckNames = Stats.deck.duplicate()
@@ -39,23 +38,18 @@ signal levelComplete()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	#line.visible = false
-	#line.z_index = 2
-	#line.default_color = Color("#777777")
-	#add_child(line)
-	
 	var discardPileNode = $FixedElements/DiscardPile
 	
 	$FixedElements/DiscardPileCardCount.position = Global.DISCARD_PILE_POSITION + (discardPileNode.size*discardPileNode.scale / 2)
 	$FixedElements/DrawPileCardCount.position = Global.DRAW_PILE_POSITION + (drawPileNode.size*drawPileNode.scale / 2)
 	
-	for cardName in deckNames:
-		var new_card = CardBase.instantiate()
-		new_card.CardName = cardName
-		new_card.index = drawPileIndexCounter
+	var deckCopy = Stats.deck.duplicate(true)
+	
+	for card in deckCopy:
+		card.index = drawPileIndexCounter
 		drawPileIndexCounter += 1
-		$FixedElements/Cards.add_child(new_card)
-		drawPile.append(new_card)
+		$FixedElements/Cards.add_child(card)
+		drawPile.append(card)
 		
 	drawPile.shuffle()
 	

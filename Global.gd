@@ -21,6 +21,7 @@ const FADE_TIME = 0.2
 
 const DRAW_PILE_POSITION = Vector2(30,1850)
 const DISCARD_PILE_POSITION = Vector2(3570,1850)
+const DECK_POSITION = Vector2(3570,50)
 const END_TURN_BUTTON_POSITION = Vector2(3470,1350)
 const ENERGY_DISPLAY_POSITION = Vector2(400,1350)
 const SPEED_CONTAINER_POSITION = Vector2(3450, 150)
@@ -80,6 +81,7 @@ enum CARD_STATES {
 	ReorganizeHand,
 	FocusOtherInHand,
 	InOverlay,
+	InDeck,
 }
 
 enum FUNCTION_STATES {Shift, Unshift, Success, Fail}

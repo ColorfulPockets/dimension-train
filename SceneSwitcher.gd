@@ -2,6 +2,7 @@ extends Node
 
 @onready var overworldScene = $Overworld
 var mapScene = null
+var rewardsScene = null
 var loaderThread = Thread.new()
 var mapName
 var currentLocation = Vector2i(0,0)
@@ -28,8 +29,37 @@ func fadeInMap():
 	fadeInScene(map)
 	
 	mapScene = map
-	mapScene.levelComplete.connect(returnToOverworld)
+	mapScene.levelComplete.connect(moveToRewards)
 	
+func moveToRewards():
+	loaderThread.start(loadRewardsBackground)
+	await fadeOutScene(mapScene)
+	mapScene.queue_free()
+
+func loadRewardsBackground():
+	var rewards = load("res://card_reward.tscn").instantiate()
+	
+	call_deferred("fadeInRewards")
+	
+	return rewards
+	
+func fadeInRewards():
+	var rewards = loaderThread.wait_to_finish()
+	
+	rewardsScene = rewards
+	
+	rewardsScene.card_selected.connect(card_selected)
+	
+	add_child(rewardsScene)
+	
+	fadeInScene(rewards)
+
+func card_selected():
+	loaderThread.start(loadOverworldBackground)
+	
+	await fadeOutScene(rewardsScene)
+	
+	rewardsScene.queue_free()
 
 func mapSelected(mapName, newLocation:Vector2i):
 	self.mapName = mapName

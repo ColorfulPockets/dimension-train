@@ -1,5 +1,7 @@
 class_name CardBase extends Container
 
+signal rewardSelected(card)
+
 @onready var types = Global.CARD_TYPES
 @onready var fields = Global.CARD_FIELDS
 @onready var states = Global.CARD_STATES
@@ -53,6 +55,7 @@ var card_pressed = false
 var other_card_pressed = false
 var mousedOver = false
 var cardPileShowing = false
+var inReward = false
 
 var DRAWTIME = 0.3
 var REORGTIME = 0.15
@@ -91,6 +94,10 @@ func manualFocusRetrigger():
 		mouseEntered()
 
 func mouseEntered():
+	if inReward:
+		$HighlightBorder.visible = true
+		mousedOver = true
+		return
 	if cardPileShowing:
 		return
 	if card_pressed or PLAYSPACE.endingTurn:
@@ -104,6 +111,10 @@ func mouseEntered():
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
+	if inReward:
+		$HighlightBorder.visible = false
+		mousedOver = false
+		return
 	if cardPileShowing:
 		return
 	if state == states.InDiscardPile or PLAYSPACE.endingTurn:
@@ -160,6 +171,16 @@ func moveToDrawPile():
 	moveTime = DRAWTIME
 	state = states.InDrawPile
 
+func moveToDeck():
+	resetCurrentPosition()
+	visible = true
+	out_of_place = true
+	card_pressed = false
+	other_card_pressed = false
+	mousedOver = false
+	moveTime = DRAWTIME
+	state = states.InDeck
+
 func moveToOverlay():
 	t = 0
 	z_index = 13
@@ -194,6 +215,21 @@ func _process(delta):
 	match state:
 		states.InOverlay:
 			pass
+		states.InDeck:
+			z_index = 0
+			if t <= 1 and out_of_place:
+				position = startpos.lerp(Global.DECK_POSITION, t)
+				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
+				scale = startscale.lerp(DISCARD_PILE_SCALE, t)
+				t += delta/float(moveTime)
+			else:
+				t = 0
+				position = Global.DECK_POSITION
+				rotation = DISCARD_PILE_ROTATION
+				scale = DISCARD_PILE_SCALE
+				visible = false
+				out_of_place = false
+				currentPositionSet = false
 		states.InDrawPile:
 			z_index = 0
 			if t <= 1 and out_of_place:
@@ -290,7 +326,12 @@ func _process(delta):
 
 
 func _input(event):
-	if mousedOver and not card_pressed and not PLAYSPACE.endingTurn and not cardPileShowing:
+	if mousedOver and inReward:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				rewardSelected.emit(self)
+				moveToDeck()
+	elif mousedOver and not card_pressed and not PLAYSPACE.endingTurn and not cardPileShowing and not inReward:
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
@@ -298,3 +339,4 @@ func _input(event):
 					card_pressed = true
 					# Alert the playspace about which card has been clicked
 					PLAYSPACE.cardPressed(index, focuspos + size/2, self)
+
