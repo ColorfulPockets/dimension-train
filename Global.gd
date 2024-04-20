@@ -59,15 +59,11 @@ enum CARD_TYPES {Harvesting, Logistics, Technology}
 enum CARD_FIELDS {
 	Name, 
 	Type, 
-	TopText, 
-	BottomText, 
-	TopTargetArea, 
-	BottomTargetArea, 
-	TopFunction, 
-	BottomFunction,
+	Text,
+	TargetArea,
+	Function,
 	Arguments,
-	TopMousePointer,
-	BottomMousePointer,
+	MousePointer,
 	EnergyCost,
 	Rarity,
 	}
@@ -84,7 +80,7 @@ enum CARD_STATES {
 	InDeck,
 }
 
-enum FUNCTION_STATES {Shift, Unshift, Success, Fail}
+enum FUNCTION_STATES {Waiting, Success, Fail}
 
 var flipH = TileSetAtlasSource.TRANSFORM_FLIP_H
 var flipV = TileSetAtlasSource.TRANSFORM_FLIP_V

@@ -27,7 +27,6 @@ var numberOfFocusedCards = 0
 @onready var cardFunctions:CardFunctions = $CardFunctions
 
 
-var shiftHeld = false
 var building_rail = false
 
 var endingTurn = false
@@ -120,12 +119,10 @@ func cardPressed(index, cardPosition, pointer):
 			if i != index:
 				cardsInHand[i].other_card_pressed = true
 			
-		var discard_card = Global.FUNCTION_STATES.Unshift if not shiftHeld else Global.FUNCTION_STATES.Shift
-		while discard_card == Global.FUNCTION_STATES.Unshift or discard_card == Global.FUNCTION_STATES.Shift:
-			if discard_card == Global.FUNCTION_STATES.Shift:
-				discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomFunction]).call(cardHeldPointer.CardInfo)
-			else:
-				discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopFunction]).call(cardHeldPointer.CardInfo)
+		var discard_card = Global.FUNCTION_STATES.Waiting
+		while discard_card == Global.FUNCTION_STATES.Waiting:
+			
+			discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.Function]).call(cardHeldPointer.CardInfo)
 			
 		if discard_card == Global.FUNCTION_STATES.Success:
 			Stats.currentEnergy -= cardHeldPointer.CardInfo[Global.CARD_FIELDS.EnergyCost]
@@ -178,12 +175,9 @@ func cardDiscarded(index):
 func _input(event):
 	if event is InputEventMouseMotion:
 		if cardHeldIndex > -1:
-			if shiftHeld:
-				Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomMousePointer], 0, cardHeldPointer.CardInfo[Global.CARD_FIELDS.BottomMousePointer].get_size()/2)
-			else:
-				Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer], 0, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TopMousePointer].get_size()/2)
-			if ((cardHeldPointer.bottomTargetArea != null) if shiftHeld else (cardHeldPointer.topTargetArea != null)):
-				terrain.highlightCells(event.position, cardHeldPointer.bottomTargetArea if shiftHeld else cardHeldPointer.topTargetArea)
+			Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.MousePointer], 0, cardHeldPointer.CardInfo[Global.CARD_FIELDS.MousePointer].get_size()/2)
+			if cardHeldPointer.targetArea != null:
+				terrain.highlightCells(event.position, cardHeldPointer.targetArea)
 		else:
 			Input.set_custom_mouse_cursor(NORMAL_CURSOR,0,NORMAL_CURSOR.get_size()/2)
 	
@@ -195,18 +189,6 @@ func _input(event):
 				_input(fake_mouse_motion)
 	
 	if event is InputEventKey:
-		if event.key_label == KEY_SHIFT:
-			if event.pressed:
-				shiftHeld = true
-				# Fake mouse motion tells the tilemap to redraw the highlight
-				var fake_mouse_motion = InputEventMouseMotion.new()
-				fake_mouse_motion.position = get_viewport().get_mouse_position()
-				_input(fake_mouse_motion)
-			else:
-				shiftHeld = false
-				var fake_mouse_motion = InputEventMouseMotion.new()
-				fake_mouse_motion.position = get_viewport().get_mouse_position()
-				_input(fake_mouse_motion)
 				
 		if event.key_label == KEY_E:
 			if !event.pressed and cardHeldPointer == null:

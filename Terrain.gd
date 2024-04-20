@@ -20,10 +20,10 @@ var connectedCells:Array[Vector2i] = []
 var directionToStartMap = []
 var legalToPlaceRail = false
 
-var fullMapShape:Vector2i = Vector2i(0,0)
+var mapShape:Vector2i = Vector2i(0,0)
 var revealedTiles:Array[Vector2i] = []
 var originalRevealedTiles
-var map:MapBase
+var map:Tile
 var turnCounter = 0
 
 var trainLocations:Array[Vector2i]
@@ -84,83 +84,57 @@ func setMap(mapName):
 	
 	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
 	
-	Stats.trainSpeed = map.speedProgression[turnCounter]
-	Stats.nextTrainSpeed = map.speedProgression[turnCounter + 1]
+	Stats.trainSpeed = Stats.speedProgression[turnCounter]
+	Stats.nextTrainSpeed = Stats.speedProgression[turnCounter + 1]
 	
 	makeMetalShine()
 
 func setUpMap():
-	var tiles:Array[Tile] = []
-	for tileOptions in map.tiles:
-		tileOptions.options.shuffle()
-		tiles.append(tileOptions.options[0])
 	
-	fullMapShape = Vector2i(map.shape.x*Global.TILE_SHAPE.x, map.shape.y*Global.TILE_SHAPE.y)
-	for i in range(fullMapShape.x):
+	mapShape = Vector2i(map.cells.size(), map.cells[0].size())
+	for i in range(mapShape.x):
 		outgoingMap.append([])
 		incomingMap.append([])
 		directionalCellMap.append([])
-		for j in range(fullMapShape.y + trainCars.size()):
+		for j in range(mapShape.y + trainCars.size()):
 			outgoingMap[i].append(DIR.NONE)
 			incomingMap[i].append(DIR.NONE)
 			directionalCellMap[i].append(null)
 	
-	# Draws the tiles in order starting from the top left
-	for i in range(map.shape.x):
-		for j in range(map.shape.y):
-			var tile:Tile = tiles.pop_front()
-			var tile_cells:Array[Array] = tile.cells
-			var tile_directions:Array[Array] = tile.directions
-			for x in range(Global.TILE_SHAPE.x):
-				for y in range(Global.TILE_SHAPE.y):
-					# The indexing is backwards because it's row, column (which is y, x)
-					var cellEnum = tile_cells[y][x]
-					var cellDirections = tile_directions[y][x]
-					var cellPosition = Vector2i(i*Global.TILE_SHAPE.x + x, j*Global.TILE_SHAPE.y + y)
-					if cellEnum == W:
-						set_cell(0,cellPosition, 0, Global.water)
-					elif cellEnum == T:
-						set_cell(0,cellPosition, 0, Global.tree)
-					elif cellEnum == M:
-						set_cell(0,cellPosition, 0, Global.rock)
-					elif cellEnum == E:
-						set_cell(0,cellPosition, 0, Global.empty)
-					#TODO: figure out how to handle existing rail as bidirectional
-					elif cellEnum == R:
-						set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cellDirections[0], cellDirections[1])
-					elif cellEnum == L:
-						railEndpoint = cellPosition
-						print(railEndpoint)
-						railStartpoint = cellPosition
-						lastRailPlaced = cellPosition
-					elif cellEnum == G:
-						set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1])
-					elif cellEnum == X:
-						var randomTile = [Global.tree, Global.rock, Global.empty]
-						set_cell(0, cellPosition, 0, randomTile[randi_range(0,2)])
-						
-	for i:int in range(fullMapShape.x):
-		for j:int in range(fullMapShape.y):
-			#Cover in fog
-			set_cell(Global.fog_layer, Vector2i(i,j), 0, Global.fog)
-			
-	revealedTiles.append(map.startTile)
-	revealTiles()
+	for x in range(mapShape.x):
+		for y in range(mapShape.y):
+			# The indexing is backwards because it's row, column (which is y, x)
+			var cellEnum = map.cells[y][x]
+			var cellDirections = map.directions[y][x]
+			var cellPosition = Vector2i(x, y)
+			if cellEnum == W:
+				set_cell(0,cellPosition, 0, Global.water)
+			elif cellEnum == T:
+				set_cell(0,cellPosition, 0, Global.tree)
+			elif cellEnum == M:
+				set_cell(0,cellPosition, 0, Global.rock)
+			elif cellEnum == E:
+				set_cell(0,cellPosition, 0, Global.empty)
+			#TODO: figure out how to handle existing rail as bidirectional
+			elif cellEnum == R:
+				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cellDirections[0], cellDirections[1])
+			elif cellEnum == L:
+				railEndpoint = cellPosition
+				print(railEndpoint)
+				railStartpoint = cellPosition
+				lastRailPlaced = cellPosition
+			elif cellEnum == G:
+				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1])
+			elif cellEnum == X:
+				var randomTile = [Global.tree, Global.rock, Global.empty]
+				set_cell(0, cellPosition, 0, randomTile[randi_range(0,2)])
+
 	
 	for i in range(trainCars.size()):
 		set_cell_directional(railEndpoint + Vector2i(0,i), Global.DIRECTIONAL_TILES.RAIL, DIR.D, DIR.U)
 		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(0,i)) / scale
 		connectedCells.append(railEndpoint + Vector2i(0,i))
 		trainLocations.append(railEndpoint + Vector2i(0,i))
-
-func revealTiles():
-	for revealedTile in revealedTiles:
-		for i in range(Global.TILE_SHAPE.x):
-			for j in range(Global.TILE_SHAPE.y):
-				set_cell(Global.fog_layer, Vector2i(
-					i + Global.TILE_SHAPE.x*revealedTile.x,
-					j + Global.TILE_SHAPE.y*revealedTile.y
-					), 0, Global.delete)
 						
 
 #GPT
@@ -256,10 +230,10 @@ func advanceTrain():
 	for i in range(trainLocations.size()):
 		moveSpriteAlongPoints(trainCars[i], pointsToMoveThrough[i], 0.2)
 	
-	if turnCounter < map.speedProgression.size()-2:
+	if turnCounter < Stats.speedProgression.size()-2:
 		turnCounter += 1
-		Stats.trainSpeed = map.speedProgression[turnCounter]
-		Stats.nextTrainSpeed = map.speedProgression[turnCounter + 1]
+		Stats.trainSpeed = Stats.speedProgression[turnCounter]
+		Stats.nextTrainSpeed = Stats.speedProgression[turnCounter + 1]
 
 func randomTerrainVector():
 	var selection = randi_range(0,2)
@@ -336,9 +310,9 @@ func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 	var containsOutOfBoundsCell = false
 	for highlighted_tile in currently_highlighted_tiles:
 		if not( 0 <= highlighted_tile[0] \
-			and highlighted_tile[0] < fullMapShape[0] \
+			and highlighted_tile[0] < mapShape[0] \
 			and 0 <= highlighted_tile[1] \
-			and highlighted_tile[1] < fullMapShape[1]):
+			and highlighted_tile[1] < mapShape[1]):
 				containsOutOfBoundsCell = true
 	
 	if not containsOutOfBoundsCell:
@@ -357,12 +331,15 @@ func buildRail(numRail):
 		buildingRail = true
 		numRailToBuild = min(numRail, Stats.emergencyRailCount)
 		highlightCells(get_viewport().get_mouse_position(), Vector2i.ONE)
+		return true
 	elif !useEmergencyRail and Stats.railCount > 0:
 		buildingRail = true
 		numRailToBuild = min(numRail, Stats.railCount)
 		highlightCells(get_viewport().get_mouse_position(), Vector2i.ONE)
+		return true
 	else:
-		rail_built.emit(false)
+		rail_built.emit(Global.FUNCTION_STATES.Fail)
+		return false
 
 func set_cell_directional(mapPosition, cellType, incoming, outgoing):
 	var directional_info = Global.DIRECTIONAL_TILE_INOUT[cellType][incoming][outgoing]
@@ -481,9 +458,9 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 	if get_cell_atlas_coords(0, endLoc) != Global.empty:
 		return
 	
-	for i in range(fullMapShape.x):
+	for i in range(mapShape.x):
 		directionToStartMap.append([])
-		for j in range(fullMapShape.y):
+		for j in range(mapShape.y):
 			directionToStartMap[i].append(null)
 	
 	var outermostLocations = [startLoc]
@@ -546,14 +523,6 @@ func addRailLineToMap(startLoc, endLoc, layer):
 		
 	return (directionMap[endLoc.x][endLoc.y])[1]
 
-func revealFromRail():
-	for dir in DIRS:
-		var nextCell:Vector2i = Global.stepInDirection(railEndpoint, dir)
-		var nextTile = Vector2i(nextCell.x/Global.TILE_SHAPE.x, nextCell.y/Global.TILE_SHAPE.y)
-		if nextTile not in revealedTiles:
-			revealedTiles.append(nextTile)
-			revealTiles()
-
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -584,16 +553,8 @@ func _input(event):
 				buildingRail = false
 				numRailToBuild = 0
 				partialRailBuilt.clear()
-				revealTiles()
 				rail_built.emit(Global.FUNCTION_STATES.Success)
-		if event.key_label == KEY_SHIFT:
-			buildingRail = false
-			numRailToBuild = 0
-			resetPartialRail()
-			if event.pressed:
-				rail_built.emit(Global.FUNCTION_STATES.Shift)
-			else:
-				rail_built.emit(Global.FUNCTION_STATES.Unshift)
+		
 	
 	if event is InputEventKey and targeting:
 		if event.key_label == KEY_ESCAPE:
@@ -603,12 +564,7 @@ func _input(event):
 		if event.key_label == KEY_ENTER:
 			if event.pressed:
 				confirmed.emit(Global.FUNCTION_STATES.Success)
-				
-		if event.key_label == KEY_SHIFT:
-			if event.pressed:
-				confirmed.emit(Global.FUNCTION_STATES.Shift)
-			else:
-				confirmed.emit(Global.FUNCTION_STATES.Unshift)
+
 				
 	if event is InputEventMouseButton and targeting and highlighted_cells.size() > 0:
 		if event.button_index == MOUSE_BUTTON_LEFT:

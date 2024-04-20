@@ -18,8 +18,7 @@ var CardName = "Chop"
 
 @onready var CardImg = str("res://Assets/Icons/",CardInfo[0],".png")
 
-var topTargetArea = null
-var bottomTargetArea = null
+var targetArea = null
 
 @onready var state = states.InHand
 var startpos = Vector2()
@@ -70,14 +69,12 @@ func _ready():
 	$Icon.scale *= 0.09766
 	$Icon.position = Vector2(125,195)
 	
-	$TopText/TopText.text = CardInfo[fields.TopText]
-	$BottomText/BottomText.text = CardInfo[fields.BottomText]
+	#$TopText/TopText.text = CardInfo[fields.Text]
+	$BottomText/BottomText.text = CardInfo[fields.Text]
 	$Name/Name.text = CardInfo[fields.Name]
 	
-	if CardInfo.has(Global.CARD_FIELDS.TopTargetArea):
-		topTargetArea = CardInfo[Global.CARD_FIELDS.TopTargetArea]
-	if CardInfo.has(Global.CARD_FIELDS.BottomTargetArea):	
-		bottomTargetArea = CardInfo[Global.CARD_FIELDS.BottomTargetArea]
+	if CardInfo.has(Global.CARD_FIELDS.TargetArea):
+		targetArea = CardInfo[Global.CARD_FIELDS.TargetArea]
 		
 	$Name/Name/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
 		

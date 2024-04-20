@@ -92,14 +92,10 @@ func Build(cardInfo):
 	
 	var discard = await buildRail(numBuilt)
 	
-	if discard == Global.FUNCTION_STATES.Success:
-		terrain.revealFromRail()
-	
 	return discard
 
 # note helper function, not capitalized
 func buildRail(numBuilt):
-	terrain.buildRail(numBuilt)
 	if terrain.useEmergencyRail:
 		middleBarContainer.middleBarText.buildingEmergencyRail()
 	else:
@@ -107,7 +103,11 @@ func buildRail(numBuilt):
 	middleBarContainer.visible = true
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	
-	var discard = await terrain.rail_built
+	var discard
+	if terrain.buildRail(numBuilt):
+		discard = await terrain.rail_built
+	else:
+		discard = Global.FUNCTION_STATES.Fail
 	
 	middleBarContainer.visible = false
 	
@@ -155,7 +155,7 @@ func Reveal(cardInfo):
 		
 		selected = await selection
 		
-		if selected in [Global.FUNCTION_STATES.Shift, Global.FUNCTION_STATES.Unshift, Global.FUNCTION_STATES.Fail]:
+		if selected in [Global.FUNCTION_STATES.Waiting, Global.FUNCTION_STATES.Fail]:
 			highlight_tiles = false
 			terrain.clearHighlights()
 			terrain.clearLockedHighlights()
@@ -225,14 +225,6 @@ func _input(event):
 		if event.key_label == KEY_ESCAPE:
 			confirmation.emit(Global.FUNCTION_STATES.Fail)
 			selection.emit(Global.FUNCTION_STATES.Fail)
-			
-		if event.key_label == KEY_SHIFT:
-			if event.pressed:
-				confirmation.emit(Global.FUNCTION_STATES.Shift)
-				selection.emit(Global.FUNCTION_STATES.Shift)
-			else:
-				confirmation.emit(Global.FUNCTION_STATES.Unshift)
-				selection.emit(Global.FUNCTION_STATES.Unshift)
 				
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:

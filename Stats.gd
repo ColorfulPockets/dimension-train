@@ -18,6 +18,8 @@ var startingDeckNames = ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop"
 var deck = []
 var rareChance = 0.1
 
+var speedProgression = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
 func _ready():
 	for cardName in startingDeckNames:
 		var new_card = CardBase.instantiate()
