@@ -195,6 +195,26 @@ func advanceTrain():
 				trainCrashed = true
 				return
 			
+			# If there is something that can be collected near the train, but not in front, collect it
+			match outgoingMap[nextLocation.x][nextLocation.y]:
+				Global.DIR.U:
+					for x in range(-Stats.collectRadius, Stats.collectRadius + 1):
+						for y in range(0, Stats.collectRadius + 1):
+							collect(nextLocation + Vector2i(x, y))
+				Global.DIR.D:
+					for x in range(-Stats.collectRadius, Stats.collectRadius + 1):
+						for y in range(-Stats.collectRadius, 1):
+							collect(nextLocation + Vector2i(x, y))
+				Global.DIR.R:
+					for x in range(-Stats.collectRadius, 1):
+						for y in range(-Stats.collectRadius, Stats.collectRadius + 1):
+							collect(nextLocation + Vector2i(x, y))
+				Global.DIR.L:
+					for x in range(0, Stats.collectRadius + 1):
+						for y in range(-Stats.collectRadius, Stats.collectRadius + 1):
+							collect(nextLocation + Vector2i(x, y))
+					
+			
 			var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
 			var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
 			
@@ -235,6 +255,15 @@ func advanceTrain():
 		Stats.trainSpeed = Stats.speedProgression[turnCounter]
 		Stats.nextTrainSpeed = Stats.speedProgression[turnCounter + 1]
 
+func collect(cell):
+	match get_cell_atlas_coords(0, cell):
+		Global.wood:
+			Stats.woodCount += 1
+			set_cell(0, cell, 0, Global.empty)
+		Global.metal:
+			Stats.metalCount += 1
+			set_cell(0, cell, 0, Global.empty)
+			
 func randomTerrainVector():
 	var selection = randi_range(0,2)
 	if selection == 0:

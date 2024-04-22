@@ -14,11 +14,13 @@ var nextTrainSpeed = 1
 var currentEnergy = 3
 var maxEnergy = 3
 
-var startingDeckNames = ["Factory","Manufacture", "Mine", "Mine", "Mine", "Chop", "Chop", "Chop", "Build", "Build", "Build"]
+var collectRadius = 1
+
+var startingDeckNames = ["Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
 var rareChance = 0.1
 
-var speedProgression = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+var speedProgression = [0, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1]
 
 func _ready():
 	for cardName in startingDeckNames:

@@ -36,6 +36,7 @@ const empty = Vector2i(0,0)
 const highlight = Vector2i(2,4)
 const wood = Vector2i(4,4)
 const metal = Vector2i(10,4)
+const collectable = [wood, metal]
 const metal_shine1 = Vector2i(8,4)
 const metal_shine2 = Vector2i(9,4)
 const rail_straight = Vector2i(6,4)
