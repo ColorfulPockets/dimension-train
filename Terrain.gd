@@ -18,6 +18,7 @@ var directionalCellMap = []
 var connectedCells:Array[Vector2i] = []
 # Contains a map of cells' distances and direction to the railEndpoint for purpose of adding rails
 var directionToStartMap = []
+var goalCells = []
 var legalToPlaceRail = false
 
 var mapShape:Vector2i = Vector2i(0,0)
@@ -105,8 +106,10 @@ func setUpMap():
 		for y in range(mapShape.y):
 			# The indexing is backwards because it's row, column (which is y, x)
 			var cellEnum = map.cells[y][x]
-			var cellDirections = map.directions[y][x]
 			var cellPosition = Vector2i(x, y)
+			var cellDirections = [DIR.D, DIR.U]
+			if map.directions.has(cellPosition):
+				cellDirections = map.directions[cellPosition]
 			if cellEnum == W:
 				set_cell(0,cellPosition, 0, Global.water)
 			elif cellEnum == T:
@@ -120,11 +123,11 @@ func setUpMap():
 				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cellDirections[0], cellDirections[1])
 			elif cellEnum == L:
 				railEndpoint = cellPosition
-				print(railEndpoint)
 				railStartpoint = cellPosition
 				lastRailPlaced = cellPosition
 			elif cellEnum == G:
 				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1])
+				goalCells.append(cellPosition)
 			elif cellEnum == X:
 				var randomTile = [Global.tree, Global.rock, Global.empty]
 				set_cell(0, cellPosition, 0, randomTile[randi_range(0,2)])
@@ -135,6 +138,11 @@ func setUpMap():
 		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(0,i)) / scale
 		connectedCells.append(railEndpoint + Vector2i(0,i))
 		trainLocations.append(railEndpoint + Vector2i(0,i))
+		
+	for cell in goalCells:
+		var rewardPosition = mapPositionToScreenPosition(Vector2(cell.x, cell.y-1))
+		rewardPosition.y += scale.y*tile_set.tile_size.y / 4
+		PLAYSPACE.spawnRewardBox(rewardPosition, map.rewardValues[cell])
 						
 
 #GPT
@@ -248,7 +256,7 @@ func advanceTrain():
 		trainLocations = nextTrainLocations
 	
 	for i in range(trainLocations.size()):
-		moveSpriteAlongPoints(trainCars[i], pointsToMoveThrough[i], 0.2)
+		moveSpriteAlongPoints(trainCars[i], pointsToMoveThrough[i], 1.0)
 	
 	if turnCounter < Stats.speedProgression.size()-2:
 		turnCounter += 1
@@ -289,7 +297,7 @@ func clearLockedHighlights():
 func screenPositionToMapPosition(screenPosition):
 	return local_to_map((screenPosition + fixedElements.position) / scale)
 	
-func mapPositionToScreenPosition(mapPosition):
+func mapPositionToScreenPosition(mapPosition:Vector2i):
 	return map_to_local(mapPosition)*scale - fixedElements.position
 
 # Draws the highlight and updates which cells are highlighted
