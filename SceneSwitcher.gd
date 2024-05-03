@@ -55,7 +55,10 @@ func fadeInRewards():
 	fadeInScene(rewards)
 
 func card_selected():
-	loaderThread.start(loadOverworldBackground)
+	# TODO: This is where next map logic goes
+	self.mapName = "Corridor"
+	
+	loaderThread.start(loadMapBackground)
 	
 	await fadeOutScene(rewardsScene)
 	
@@ -115,5 +118,5 @@ func returnToOverworld():
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass

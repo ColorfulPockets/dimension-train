@@ -19,7 +19,7 @@ func _ready():
 	clickedTexture = texture_pressed
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 	
 func enableButton():

@@ -9,6 +9,6 @@ func _ready():
 	
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	$SpeedLabel.text = str(Stats.trainSpeed)
 	$SpeedLabel.position = size / 2 - $SpeedLabel.size / 2 + Vector2(0, 40)

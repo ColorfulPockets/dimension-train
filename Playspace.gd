@@ -17,7 +17,7 @@ const HAND_LIMIT = 10
 var cardsInHand:Array[CardBase] = []
 var discardPile:Array[CardBase] = []
 var discardPileIndexCounter = 0
-var drawPile:Array[CardBase]		= []
+var drawPile:Array[CardBase] = []
 var drawPileIndexCounter = 0
 
 var numberOfFocusedCards = 0
@@ -37,17 +37,21 @@ signal levelComplete()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Passing the current node as the current playspace for Stats.
+	# I couldn't figure out how to simply get a reference to this node, so I got the parent of one of its children.
+	Stats.set_playspace(cardFunctions.get_parent())
+	
 	var discardPileNode = $FixedElements/DiscardPile
 	
 	$FixedElements/DiscardPileCardCount.position = Global.DISCARD_PILE_POSITION + (discardPileNode.size*discardPileNode.scale / 2)
 	$FixedElements/DrawPileCardCount.position = Global.DRAW_PILE_POSITION + (drawPileNode.size*drawPileNode.scale / 2)
 	
-	var deckCopy = Stats.deck.duplicate(true)
-	
-	for card in deckCopy:
+	for cardName in Stats.deck:
+		var card = CardBase.instantiate()
+		card.CardName = cardName
+		$FixedElements/Cards.add_child(card)
 		card.index = drawPileIndexCounter
 		drawPileIndexCounter += 1
-		$FixedElements/Cards.add_child(card)
 		drawPile.append(card)
 		
 	drawPile.shuffle()
@@ -55,10 +59,11 @@ func _ready():
 	terrain.building_rail.connect(func(): building_rail = true)
 	terrain.rail_built.connect(func(_x): building_rail = false, 1)
 	
+	drawHand()
+	
 
 func setMap(mapName):
 	terrain.setMap(mapName)
-	drawHand()
 
 func drawHand():
 	for i in range(5):
@@ -68,7 +73,7 @@ func drawHand():
 
 		
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	$FixedElements/DiscardPileCardCount.text = str(discardPile.size())
 	$FixedElements/DrawPileCardCount.text = str(drawPile.size())
 
@@ -91,8 +96,8 @@ func reorganizeHand():
 var focusIndex = -1
 # Tells each card where the focus is so they can move out of the way
 # -1 is signal for no card focused
-func focusCard(focusIndex):
-	self.focusIndex = focusIndex
+func focusCard(newFocusIndex):
+	self.focusIndex = newFocusIndex
 	for i in range(cardsInHand.size()):
 		if i != focusIndex:
 			cardsInHand[i].updateFocusIndex(focusIndex)

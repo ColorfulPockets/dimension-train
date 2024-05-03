@@ -170,7 +170,7 @@ func advanceTrain():
 			var trainLocation = trainLocations.pop_front()
 			var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
 			var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
-			var trainType = directionalCellMap[trainLocation.x][trainLocation.y]
+			#var trainType = directionalCellMap[trainLocation.x][trainLocation.y]
 			var nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
 			
 			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
@@ -216,7 +216,7 @@ func advanceTrain():
 					
 			
 			var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
-			var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
+			#var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
 			
 			var nextPosition = map_to_local(nextLocation)
 			var currentPosition = map_to_local(trainLocation)
@@ -639,5 +639,5 @@ func makeMetalShine():
 			set_cell(Global.animation_layer, cell, 0, Global.delete)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass

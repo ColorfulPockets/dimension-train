@@ -7,7 +7,7 @@ signal rewardSelected(card)
 @onready var states = Global.CARD_STATES
 
 
-@onready var PLAYSPACE = $"../../.."
+@onready var current_playspace = Stats.current_playspace
 @onready var OVERLAY_MANAGER = $"../../../FixedElements/DarkenedBackground"
 
 @onready var CardDb = preload("res://CardDatabase.gd").new()
@@ -85,6 +85,11 @@ func _ready():
 	Global.overlayShowing.connect(func(): cardPileShowing = true)
 	Global.overlayHidden.connect(func(): cardPileShowing = false)
 
+# Since the cards are children of Stats, we need to reset some variables when adding them to the playspace
+func resetPlayspace():
+	current_playspace = $"../../.."
+	print("Playspace Reset")
+
 # When you release a card, other cards don't know if they should focus
 func manualFocusRetrigger():
 	if mousedOver:
@@ -97,14 +102,14 @@ func mouseEntered():
 		return
 	if cardPileShowing:
 		return
-	if card_pressed or PLAYSPACE.endingTurn:
+	if card_pressed or current_playspace.endingTurn:
 		return
 	mousedOver = true
 	if not other_card_pressed and not card_pressed:
 		$HighlightBorder.visible = true
 		out_of_place = true
 		resetCurrentPosition()
-		PLAYSPACE.focusCard(index)
+		current_playspace.focusCard(index)
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
@@ -114,13 +119,13 @@ func mouseExited(manuallyTriggered=false):
 		return
 	if cardPileShowing:
 		return
-	if state == states.InDiscardPile or PLAYSPACE.endingTurn:
+	if state == states.InDiscardPile or current_playspace.endingTurn:
 		return
 	if not manuallyTriggered:
 		mousedOver = false
 	if not card_pressed:
 		# unFocus returns false if the current card isn't already focused
-		if PLAYSPACE.unFocus(index) or manuallyTriggered:
+		if current_playspace.unFocus(index) or manuallyTriggered:
 			$HighlightBorder.visible = false
 			out_of_place = true
 			resetCurrentPosition()
@@ -144,8 +149,8 @@ func resetCurrentPosition():
 
 func reorganize():
 	resetCurrentPosition()
-	inHandPosition = PLAYSPACE.posForAngle(ellipseAngle)
-	inHandRotation = PLAYSPACE.rotForAngle(ellipseAngle)
+	inHandPosition = current_playspace.posForAngle(ellipseAngle)
+	inHandRotation = current_playspace.rotForAngle(ellipseAngle)
 	inHandScale = targetscale
 	moveTime = REORGTIME
 	out_of_place = true
@@ -199,7 +204,6 @@ func fadeIn():
 func fadeOut():
 	modulate.a8 = 255
 	var steps = 20
-	var time = float(Global.FADE_TIME)
 	for i in range(steps):
 		modulate.a8 -= 255/steps
 		await get_tree().create_timer(float(Global.FADE_TIME)/steps).timeout
@@ -280,8 +284,8 @@ func _process(delta):
 			else:
 				var index_difference:float = index - focusIndex
 				var newAngle = ellipseAngle+(deg_to_rad(2.5)*(1.0/(index_difference)))
-				var focusOtherPos = PLAYSPACE.posForAngle(newAngle)
-				var focusOtherRot = PLAYSPACE.rotForAngle(newAngle)
+				var focusOtherPos = current_playspace.posForAngle(newAngle)
+				var focusOtherRot = current_playspace.rotForAngle(newAngle)
 				if t <= 1 and out_of_place:
 					position = startpos.lerp(focusOtherPos, t)
 					rotation = startrot + (focusOtherRot - startrot)*t
@@ -328,12 +332,12 @@ func _input(event):
 			if event.pressed:
 				rewardSelected.emit(self)
 				moveToDeck()
-	elif mousedOver and not card_pressed and not PLAYSPACE.endingTurn and not cardPileShowing and not inReward:
+	elif mousedOver and not card_pressed and not current_playspace.endingTurn and not cardPileShowing and not inReward:
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				if Stats.currentEnergy >= CardInfo[Global.CARD_FIELDS.EnergyCost]:
 					card_pressed = true
 					# Alert the playspace about which card has been clicked
-					PLAYSPACE.cardPressed(index, focuspos + size/2, self)
+					current_playspace.cardPressed(index, focuspos + size/2, self)
 

@@ -4,7 +4,7 @@ class_name Corridor extends Tile
 
 func _init():
 	cells = [
-		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
+		[T, T, T, E, E, M, M, M, M, M, E, G, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
@@ -21,7 +21,7 @@ func _init():
 		[E, E, E, E, E, E, E, L, E, E, E, E, E, E, E]]
 	
 	directions = [
-		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
+		[T, T, T, E, E, M, M, M, M, M, E, [DIR.D, DIR.U], T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],

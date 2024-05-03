@@ -8,6 +8,6 @@ func _ready():
 	$NextSpeedLabel.position = size / 2 - $NextSpeedLabel.size / 2
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	$NextSpeedLabel.text = "Next: " + str(Stats.nextTrainSpeed)
 	$NextSpeedLabel.position = size / 2 - $NextSpeedLabel.size / 2

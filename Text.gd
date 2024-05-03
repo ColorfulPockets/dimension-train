@@ -30,7 +30,7 @@ func buildingEmergencyRail():
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	if building_rail:
 		setText("Rail left to build: " + str(terrain.numRailToBuild) + "\n (Enter to confirm, Esc to cancel)")
 	elif building_emergency_rail:

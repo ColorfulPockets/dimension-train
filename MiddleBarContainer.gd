@@ -27,5 +27,5 @@ func setPosition(location):
 		position.y = 0 + size.y/2 + 50
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass

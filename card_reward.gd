@@ -52,7 +52,8 @@ func chooseCards():
 		card_shown.fadeIn()
 
 func cardSelected(card):
-	Stats.deck.append(card)
+	# Reparent card node so it isn't freed when we free the reward scene
+	Stats.deck.append(card.CardName)
 	card_selected.emit()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

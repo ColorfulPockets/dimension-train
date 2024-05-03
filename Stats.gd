@@ -6,7 +6,7 @@ var woodCount = 0
 var metalCount = 0
 var emergencyRailCount = 20
 var erc = 20
-var railCount = 5
+var railCount = 100
 
 var trainSpeed = 0
 var nextTrainSpeed = 1
@@ -20,11 +20,14 @@ var startingDeckNames = ["Factory","Manufacture", "Mine", "Mine", "Chop", "Chop"
 var deck = []
 var rareChance = 0.1
 
-var speedProgression = [0, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1]
+var speedProgression = [0, 5, 5]
+
+var current_playspace
+
+func set_playspace(playspace):
+	current_playspace = playspace
 
 func _ready():
 	for cardName in startingDeckNames:
-		var new_card = CardBase.instantiate()
-		new_card.CardName = cardName
-		deck.append(new_card)
+		deck.append(cardName)
 		
