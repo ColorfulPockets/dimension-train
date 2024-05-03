@@ -139,10 +139,13 @@ func setUpMap():
 		connectedCells.append(railEndpoint + Vector2i(0,i))
 		trainLocations.append(railEndpoint + Vector2i(0,i))
 		
+	Global.clearRewards()
+	
 	for cell in goalCells:
+		Global.addReward(cell, map.rewardValues[cell])
 		var rewardPosition = mapPositionToScreenPosition(Vector2(cell.x, cell.y-1))
 		rewardPosition.y += scale.y*tile_set.tile_size.y / 4
-		PLAYSPACE.spawnRewardBox(rewardPosition, map.rewardValues[cell])
+		PLAYSPACE.spawnRewardBox(cell, rewardPosition)
 						
 
 #GPT

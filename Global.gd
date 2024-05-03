@@ -278,3 +278,69 @@ var DIRECTIONAL_TILE_INOUT = {
 		}
 	}	
 }
+
+
+var rewards = {}
+
+func clearRewards():
+	rewards = {}
+
+const CARD_VALUE = 6
+const EMERGENCY_TRACK_VALUE = 1
+const GOLD_VALUE = 2
+const SHOP_VALUE = 6
+
+func addReward(cell:Vector2i, rewardValue:float):
+	var reward = []
+	if rewardValue >= CARD_VALUE:
+		reward.append("Card")
+		rewardValue -= CARD_VALUE
+	
+	while rewardValue > 0:
+		var extra_reward = randi_range(0,4)
+		match extra_reward:
+			0:
+				if rewardValue >= CARD_VALUE:
+					reward.append("Card")
+					rewardValue -= CARD_VALUE
+			1:
+				reward.append("ET")
+				rewardValue -= EMERGENCY_TRACK_VALUE
+			2:
+				if rewardValue >= GOLD_VALUE:
+					reward.append("Gold")
+					rewardValue -= GOLD_VALUE
+			4:
+				if rewardValue >= SHOP_VALUE and "Shop" not in reward:
+					reward.append("Shop")
+					rewardValue -= SHOP_VALUE
+					
+	rewards[cell] = reward
+
+func getRewardText(cell):
+	var card_count = 0
+	var shop_count = 0
+	var gold_count = 0
+	var et_count = 0
+	
+	for reward in rewards[cell]:
+		match reward:
+			"Card": card_count += 1
+			"Shop": shop_count += 1
+			"Gold": gold_count += 1
+			"ET": et_count += 1
+			
+	var reward_string = ""
+	if card_count == 1:
+		reward_string += "+1 Card"
+	elif card_count > 1:
+		reward_string += "+" + str(card_count) + " Cards"
+	if shop_count > 0:
+		reward_string += "\n+Shop"
+	if gold_count > 0:
+		reward_string += "\n+" + str(gold_count) + " Gold"
+	if et_count >0:
+		reward_string += "\n+" + str(et_count) + " ET"
+		
+	return reward_string
+

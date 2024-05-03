@@ -71,13 +71,13 @@ func drawHand():
 		
 	handDrawn.emit()
 
-func spawnRewardBox(location: Vector2, rewardValue: float):
+func spawnRewardBox(cell:Vector2i, location: Vector2):
 	var rewardsLabel = Label.new()
 	rewardsLabel.size = Vector2(200,200)
 	rewardsLabel.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rewardsLabel.position.x = location.x - rewardsLabel.size.x / 2
 	rewardsLabel.position.y = location.y - rewardsLabel.size.y
-	rewardsLabel.text = "Test text over multiple lines"
+	rewardsLabel.text = Global.getRewardText(cell)
 	rewardsLabel.add_theme_font_size_override("font_size", 40)
 	rewardsLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	rewardsLabel.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM

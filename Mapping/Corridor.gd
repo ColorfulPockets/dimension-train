@@ -27,8 +27,8 @@ func _init():
 	
 		
 	rewardValues = {
-		Vector2i(3,0) : 0.25,
-		Vector2i(11,0) : 1.0,
+		Vector2i(3,0) : 5,
+		Vector2i(11,0) : 15,
 	}
 	
 	

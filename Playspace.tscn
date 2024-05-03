@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=34 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://Terrain.gd" id="8_krthj"]
 [ext_resource type="Texture2D" uid="uid://tfk6705h2sle" path="res://Assets/Icons/DiscardPile_black.png" id="8_m8g5r"]
 [ext_resource type="Texture2D" uid="uid://c5tfhn3wdxfnw" path="res://Assets/Icons/DiscardPile_white.png" id="9_35wxk"]
+[ext_resource type="Texture2D" uid="uid://btljyw1kj563m" path="res://Assets/Particles/spotlight_1_256.png" id="9_agjnd"]
 [ext_resource type="Texture2D" uid="uid://bdflvy3n3a0yy" path="res://Assets/Icons/EndTurnCircle_blue.png" id="11_roanm"]
 [ext_resource type="Texture2D" uid="uid://dpnwgr1lfoj42" path="res://Assets/Icons/EndTurnCircle_white.png" id="12_esqij"]
 [ext_resource type="Texture2D" uid="uid://dj4iwdkmj7hvc" path="res://Assets/Icons/EndTurnCircle_red.png" id="13_12f88"]
@@ -4133,6 +4134,22 @@ texture = ExtResource("2_g6npi")
 [sub_resource type="TileSet" id="TileSet_bwcht"]
 sources/0 = SubResource("TileSetAtlasSource_4y60x")
 
+[sub_resource type="Curve" id="Curve_1bqdx"]
+_data = [Vector2(0.00662251, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0.654607), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_m0xxu"]
+curve = SubResource("Curve_1bqdx")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sqdg5"]
+particle_flag_disable_z = true
+direction = Vector3(0, 1, 0)
+radial_velocity_max = 30.0
+gravity = Vector3(0, -15, 0)
+linear_accel_max = 6.74
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_m0xxu")
+
 [node name="Playspace" type="Node2D"]
 script = ExtResource("1_sx2pt")
 
@@ -4159,6 +4176,15 @@ script = ExtResource("6_tohbi")
 [node name="Camera" type="Camera2D" parent="FixedElements"]
 anchor_mode = 0
 
+[node name="DrawPileParticles" type="GPUParticles2D" parent="FixedElements"]
+process_material = SubResource("ParticleProcessMaterial_sqdg5")
+texture = ExtResource("9_agjnd")
+lifetime = 4.0
+preprocess = 2.0
+randomness = 0.49
+local_coords = true
+trail_lifetime = 0.1
+
 [node name="DrawPile" type="TextureButton" parent="FixedElements"]
 layout_mode = 0
 offset_right = 512.0
@@ -4175,6 +4201,15 @@ anchors_preset = 0
 
 [node name="CardTargetLine" type="Line2D" parent="FixedElements"]
 visible = false
+
+[node name="DiscardPileParticles" type="GPUParticles2D" parent="FixedElements"]
+process_material = SubResource("ParticleProcessMaterial_sqdg5")
+texture = ExtResource("9_agjnd")
+lifetime = 4.0
+preprocess = 2.0
+randomness = 0.49
+local_coords = true
+trail_lifetime = 0.1
 
 [node name="DiscardPile" type="TextureButton" parent="FixedElements"]
 layout_mode = 0
