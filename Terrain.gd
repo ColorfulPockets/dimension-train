@@ -185,6 +185,7 @@ func advanceTrain():
 			var nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
 			
 			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
+				Global.selectedReward = Global.rewards[nextLocation]
 				PLAYSPACE.levelComplete.emit()
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
@@ -448,6 +449,8 @@ func recalculateRailRoute():
 		currentPosition = Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])
 		if currentPosition in connectedCells:
 			break
+		if currentPosition.x >= len(outgoingMap) or currentPosition.y >= len(outgoingMap[0]):
+			break 
 		#If the cell is a rail connected on both sides, but neither side is part of the connected cells, can't continue the line
 		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles \
 			and get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:

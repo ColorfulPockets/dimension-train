@@ -16,7 +16,10 @@ func layoutCounters(counters:Array):
 		var count = counters[i][1]
 		
 		icon.position = Vector2(MARGIN_LEFT, MARGIN_TOP	+ i*(SPRITE_SIZE + VERTICAL_SPACE))
-		icon.scale = SPRITE_SCALE*Vector2.ONE
+		if icon.texture.get_width() == SPRITE_PIXELS:
+			icon.scale = SPRITE_SCALE*Vector2.ONE
+		else:
+			icon.scale = 0.3*Vector2.ONE
 		count.position = Vector2(MARGIN_LEFT + COUNT_SPACE + SPRITE_SIZE,
 							MARGIN_TOP + i*(SPRITE_SIZE + VERTICAL_SPACE))
 
@@ -27,6 +30,7 @@ func _ready():
 		[$MetalIcon, $MetalCount],
 		[$RailIcon, $RailCount],
 		[$EmergencyRailIcon, $EmergencyRailCount],
+		[$CoinIcon, $CoinCount]
 	])
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -35,3 +39,4 @@ func _process(_delta):
 	$MetalCount.text = str(Stats.metalCount)
 	$RailCount.text = str(Stats.railCount)
 	$EmergencyRailCount.text = str(Stats.emergencyRailCount) + "\n/" + str(Stats.erc)
+	$CoinCount.text = str(Stats.coinCount)

@@ -6,7 +6,15 @@ var woodCount = 0
 var metalCount = 0
 var emergencyRailCount = 20
 var erc = 20
+
+func addEmergencyRail(num:int): 
+	if emergencyRailCount + num <= erc:
+		emergencyRailCount += num
+	else:
+		emergencyRailCount = erc
+
 var railCount = 100
+var coinCount = 0
 
 var trainSpeed = 0
 var nextTrainSpeed = 1

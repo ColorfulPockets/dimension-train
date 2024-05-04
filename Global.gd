@@ -281,6 +281,7 @@ var DIRECTIONAL_TILE_INOUT = {
 
 
 var rewards = {}
+var selectedReward
 
 func clearRewards():
 	rewards = {}
@@ -304,7 +305,7 @@ func addReward(cell:Vector2i, rewardValue:float):
 					reward.append("Card")
 					rewardValue -= CARD_VALUE
 			1:
-				reward.append("ET")
+				reward.append("ER")
 				rewardValue -= EMERGENCY_TRACK_VALUE
 			2:
 				if rewardValue >= GOLD_VALUE:
@@ -321,14 +322,14 @@ func getRewardText(cell):
 	var card_count = 0
 	var shop_count = 0
 	var gold_count = 0
-	var et_count = 0
+	var er_count = 0
 	
 	for reward in rewards[cell]:
 		match reward:
 			"Card": card_count += 1
 			"Shop": shop_count += 1
 			"Gold": gold_count += 1
-			"ET": et_count += 1
+			"ER": er_count += 1
 			
 	var reward_string = ""
 	if card_count == 1:
@@ -339,8 +340,8 @@ func getRewardText(cell):
 		reward_string += "\n+Shop"
 	if gold_count > 0:
 		reward_string += "\n+" + str(gold_count) + " Gold"
-	if et_count >0:
-		reward_string += "\n+" + str(et_count) + " ET"
+	if er_count >0:
+		reward_string += "\n+" + str(er_count) + " ER"
 		
 	return reward_string
 

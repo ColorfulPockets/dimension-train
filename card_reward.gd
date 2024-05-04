@@ -10,6 +10,12 @@ var rares = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	print(Global.selectedReward)
+	for reward in Global.selectedReward:
+		if reward == "Gold":
+			Stats.coinCount += 1
+		elif reward == "ER":
+			Stats.addEmergencyRail(1)
 	for cardName in CardDb.DATA.keys():
 		match CardDb.DATA[cardName][Global.CARD_FIELDS.Rarity]:
 			"Common":
