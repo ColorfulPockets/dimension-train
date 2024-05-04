@@ -188,6 +188,11 @@ func advanceTrain():
 			
 			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
 				Global.selectedReward = Global.rewards[nextLocation]
+				for reward in Global.selectedReward:
+					if reward == "Gold":
+						Stats.coinCount += 1
+					elif reward == "ER":
+						Stats.addEmergencyRail(1)
 				PLAYSPACE.levelComplete.emit()
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
@@ -531,6 +536,7 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 
 #Returns amount of rail added
 func addRailLineToMap(startLoc, endLoc, layer):
+	# Prevents a bug where it tries to find a path to start based on old map, when card is clicked
 	if directionToStartMap == []: return 0
 	if get_cell_atlas_coords(0, endLoc) != Global.empty:
 		return 0
