@@ -108,6 +108,8 @@ func setUpMap():
 			var cellEnum = map.cells[y][x]
 			var cellPosition = Vector2i(x, y)
 			var cellDirections = [DIR.D, DIR.U]
+			# Add the grid overlay to everything
+			set_cell(Global.grid_layer, cellPosition, 0, Global.grid_outline)
 			if map.directions.has(cellPosition):
 				cellDirections = map.directions[cellPosition]
 			if cellEnum == W:
@@ -529,6 +531,7 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 
 #Returns amount of rail added
 func addRailLineToMap(startLoc, endLoc, layer):
+	if directionToStartMap == []: return 0
 	if get_cell_atlas_coords(0, endLoc) != Global.empty:
 		return 0
 		
@@ -588,12 +591,14 @@ func _input(event):
 		if event.key_label == KEY_ESCAPE:
 			if event.pressed:
 				buildingRail = false
+				directionToStartMap = []
 				numRailToBuild = 0
 				resetPartialRail()
 				rail_built.emit(Global.FUNCTION_STATES.Fail)
 		if event.key_label == KEY_ENTER:
 			if event.pressed:
 				buildingRail = false
+				directionToStartMap = []
 				numRailToBuild = 0
 				partialRailBuilt.clear()
 				rail_built.emit(Global.FUNCTION_STATES.Success)
