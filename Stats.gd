@@ -34,6 +34,8 @@ var current_playspace
 
 func set_playspace(playspace):
 	current_playspace = playspace
+	
+var trainCars = []
 
 func _ready():
 	for cardName in startingDeckNames:

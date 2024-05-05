@@ -36,7 +36,7 @@ var lastRailPlaced:Vector2i
 
 var useEmergencyRail = false
 
-var trainCars = []
+var trainCars:Array[TrainCar] = []
 
 
 var trainCrashed = false
@@ -59,19 +59,25 @@ func _ready():
 			
 
 func setMap(mapName):
-	var trainFront = Sprite2D.new()
+	var trainFront = TrainCar.new("Front")
 	trainFront.centered = true
-	trainFront.texture = load("res://Assets/Icons/train_front_32.png")
 	trainFront.scale *= 0.5
 	add_child(trainFront)
+	trainCars.append(trainFront)
 	
-	var trainBack = Sprite2D.new()
+	for carName in Stats.trainCars:
+		var trainCar = TrainCar.new(carName)
+		trainCar.centered = true
+		trainCar.scale *= 0.5
+		trainCars.append(trainCar)
+		add_child(trainCar)
+	
+	var trainBack = TrainCar.new("Caboose")
 	trainBack.centered = true
-	trainBack.texture = load("res://Assets/Icons/caboose.png")
 	trainBack.scale *= 0.5
 	add_child(trainBack)
 	
-	trainCars = [trainFront, trainBack]
+	trainCars.append(trainBack)
 	
 	map = load("res://Mapping/" + mapName + ".gd").new()
 	
@@ -187,6 +193,11 @@ func advanceTrain():
 						Stats.coinCount += 1
 					elif reward == "ER":
 						Stats.addEmergencyRail(1)
+					elif " Car" in reward:
+						Stats.trainCars.append(reward)
+						var trainCar = TrainCar.new(reward)
+						if TrainCar.TYPE.ONESHOT in trainCar.types:
+							trainCar.onGain()
 				PLAYSPACE.levelComplete.emit()
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying

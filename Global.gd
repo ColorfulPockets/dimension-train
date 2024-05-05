@@ -292,6 +292,7 @@ const CARD_VALUE = 6
 const EMERGENCY_TRACK_VALUE = 1
 const GOLD_VALUE = 2
 const SHOP_VALUE = 6
+const COMMON_CAR_VALUE = 12
 
 func addReward(cell:Vector2i, rewardValue:float):
 	var reward = []
@@ -300,7 +301,7 @@ func addReward(cell:Vector2i, rewardValue:float):
 		rewardValue -= CARD_VALUE
 	
 	while rewardValue > 0:
-		var extra_reward = randi_range(0,4)
+		var extra_reward = randi_range(0,5)
 		match extra_reward:
 			0:
 				if rewardValue >= CARD_VALUE:
@@ -313,10 +314,14 @@ func addReward(cell:Vector2i, rewardValue:float):
 				if rewardValue >= GOLD_VALUE:
 					reward.append("Gold")
 					rewardValue -= GOLD_VALUE
-			4:
+			3:
 				if rewardValue >= SHOP_VALUE and "Shop" not in reward:
 					reward.append("Shop")
 					rewardValue -= SHOP_VALUE
+			4:
+				if rewardValue >= COMMON_CAR_VALUE:
+					reward.append(TrainCar.COMMON_CARS.pick_random())
+					rewardValue -= COMMON_CAR_VALUE
 					
 	rewards[cell] = reward
 
@@ -326,14 +331,17 @@ func getRewardText(cell) -> String:
 	var gold_count = 0
 	var er_count = 0
 	
+	var reward_string = ""
+	
 	for reward in rewards[cell]:
 		match reward:
 			"Card": card_count += 1
 			"Shop": shop_count += 1
 			"Gold": gold_count += 1
 			"ER": er_count += 1
-			
-	var reward_string = ""
+		if " Car" in reward:
+			reward_string += "+" + reward + "\n"
+		
 	if card_count == 1:
 		reward_string += "+1 Card"
 	elif card_count > 1:
