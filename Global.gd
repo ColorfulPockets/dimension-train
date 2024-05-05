@@ -320,7 +320,7 @@ func addReward(cell:Vector2i, rewardValue:float):
 					
 	rewards[cell] = reward
 
-func getRewardText(cell):
+func getRewardText(cell) -> String:
 	var card_count = 0
 	var shop_count = 0
 	var gold_count = 0
@@ -347,3 +347,12 @@ func getRewardText(cell):
 		
 	return reward_string
 
+# Rotates array 90 degrees clockwise, assuming that array is a full rectangle (all rows same size)
+func rotate_array(arr) -> Array[Array]:
+	var new_arr:Array[Array] = []
+	for i in range(len(arr[0])):
+		var row = []
+		for j in range(len(arr)):
+			row.append(arr[len(arr) - j - 1][i])
+		new_arr.append(row)
+	return new_arr

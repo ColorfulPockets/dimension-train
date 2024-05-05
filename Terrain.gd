@@ -93,11 +93,11 @@ func setMap(mapName):
 func setUpMap():
 	
 	mapShape = Vector2i(map.cells.size(), map.cells[0].size())
-	for i in range(mapShape.x):
+	for i in range(mapShape.x + trainCars.size()):
 		outgoingMap.append([])
 		incomingMap.append([])
 		directionalCellMap.append([])
-		for j in range(mapShape.y + trainCars.size()):
+		for j in range(mapShape.y):
 			outgoingMap[i].append(DIR.NONE)
 			incomingMap[i].append(DIR.NONE)
 			directionalCellMap[i].append(null)
@@ -107,7 +107,7 @@ func setUpMap():
 			# The indexing is backwards because it's row, column (which is y, x)
 			var cellEnum = map.cells[y][x]
 			var cellPosition = Vector2i(x, y)
-			var cellDirections = [DIR.D, DIR.U]
+			var cellDirections = [DIR.L, DIR.R]
 			# Add the grid overlay to everything
 			set_cell(Global.grid_layer, cellPosition, 0, Global.grid_outline)
 			if map.directions.has(cellPosition):
@@ -136,17 +136,17 @@ func setUpMap():
 
 	
 	for i in range(trainCars.size()):
-		set_cell_directional(railEndpoint + Vector2i(0,i), Global.DIRECTIONAL_TILES.RAIL, DIR.D, DIR.U)
-		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(0,i)) / scale
-		connectedCells.append(railEndpoint + Vector2i(0,i))
-		trainLocations.append(railEndpoint + Vector2i(0,i))
+		set_cell_directional(railEndpoint + Vector2i(-i,0), Global.DIRECTIONAL_TILES.RAIL, DIR.L, DIR.R)
+		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(-i,0)) / scale
+		connectedCells.append(railEndpoint + Vector2i(-i,0))
+		trainLocations.append(railEndpoint + Vector2i(-i,0))
 		
 	Global.clearRewards()
 	
 	for cell in goalCells:
 		Global.addReward(cell, map.rewardValues[cell])
-		var rewardPosition = mapPositionToScreenPosition(Vector2(cell.x, cell.y-1))
-		rewardPosition.y += scale.y*tile_set.tile_size.y / 4
+		var rewardPosition = mapPositionToScreenPosition(Global.stepInDirection(cell, outgoingMap[cell.x][cell.y]))
+		#rewardPosition.y += scale.y*tile_set.tile_size.y / 4
 		PLAYSPACE.spawnRewardBox(cell, rewardPosition)
 						
 
@@ -447,7 +447,7 @@ func swapInOut(location):
 func recalculateRailRoute():
 	connectedCells = []
 	var currentPosition:Vector2i = railStartpoint
-	var prev_outgoing = DIR.U
+	var prev_outgoing = DIR.R
 	while get_cell_atlas_coords(0, currentPosition) in Global.rail_tiles:
 		connectedCells.append(currentPosition)
 		changeIncoming(currentPosition, Global.oppositeDir(prev_outgoing))
