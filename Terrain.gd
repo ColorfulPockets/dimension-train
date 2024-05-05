@@ -61,23 +61,17 @@ func _ready():
 func setMap(mapName):
 	var trainFront = Sprite2D.new()
 	trainFront.centered = true
-	trainFront.texture = load("res://Assets/Icons/Train_front.png")
-	trainFront.scale *= 0.75
+	trainFront.texture = load("res://Assets/Icons/train_front_32.png")
+	trainFront.scale *= 0.5
 	add_child(trainFront)
-	
-	var trainMiddle = Sprite2D.new()
-	trainMiddle.centered = true
-	trainMiddle.texture = load("res://Assets/Icons/Train_middle.png")
-	trainMiddle.scale *= 0.75
-	add_child(trainMiddle)
 	
 	var trainBack = Sprite2D.new()
 	trainBack.centered = true
-	trainBack.texture = load("res://Assets/Icons/Train_back.png")
-	trainBack.scale *= 0.75
+	trainBack.texture = load("res://Assets/Icons/caboose.png")
+	trainBack.scale *= 0.5
 	add_child(trainBack)
 	
-	trainCars = [trainFront, trainMiddle, trainBack]
+	trainCars = [trainFront, trainBack]
 	
 	map = load("res://Mapping/" + mapName + ".gd").new()
 	
@@ -167,7 +161,7 @@ func moveSpriteAlongPoints(sprite, points:Array, speed):
 		while sprite.position.distance_to(point) > 1:
 			var direction = (point - sprite.position).normalized()
 			sprite.position += direction * speed
-			sprite.rotation = direction.angle() + PI/2
+			sprite.rotation = direction.angle()
 			await get_tree().create_timer(0.01).timeout
 
 func advanceTrain():
