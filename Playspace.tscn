@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=34 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -27,7 +27,6 @@
 [ext_resource type="Script" path="res://MiddleBarContainer.gd" id="22_whwbt"]
 [ext_resource type="Script" path="res://TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
-[ext_resource type="Script" path="res://NextSpeedContainer.gd" id="24_vpmll"]
 [ext_resource type="Script" path="res://OverlayManager.gd" id="26_mtkk4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
@@ -4399,7 +4398,7 @@ offset_bottom = 349.0
 script = ExtResource("23_hpgys")
 
 [node name="MiddleBar" type="Sprite2D" parent="FixedElements/TrainSpeedContainer"]
-modulate = Color(0.231373, 0.231373, 0.231373, 0.819608)
+modulate = Color(0, 0, 0, 1)
 texture = ExtResource("15_n5iw7")
 centered = false
 
@@ -4426,29 +4425,6 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_font_sizes/font_size = 50
-text = "Speed"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="NextSpeedContainer" type="Control" parent="FixedElements"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 3457.0
-offset_top = 446.0
-offset_right = 3653.0
-offset_bottom = 514.0
-script = ExtResource("24_vpmll")
-
-[node name="MiddleBar" type="Sprite2D" parent="FixedElements/NextSpeedContainer"]
-modulate = Color(1, 0, 0, 0.607843)
-texture = ExtResource("15_n5iw7")
-centered = false
-
-[node name="NextSpeedLabel" type="Label" parent="FixedElements/NextSpeedContainer"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-theme_override_font_sizes/font_size = 45
 text = "Speed"
 horizontal_alignment = 1
 vertical_alignment = 1

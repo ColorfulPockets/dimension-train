@@ -59,8 +59,7 @@ func _ready():
 			
 
 func setMap(mapName):
-	Stats.turnCounter = 0
-	Stats.railCount = Stats.starterRail
+	Stats.startLevel()
 	var trainFront = TrainCar.new("Front")
 	trainFront.centered = true
 	trainFront.scale *= 0.5
@@ -86,9 +85,6 @@ func setMap(mapName):
 	setUpMap()
 	
 	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
-	
-	Stats.trainSpeed = Stats.speedProgression[Stats.turnCounter]
-	Stats.nextTrainSpeed = Stats.speedProgression[Stats.turnCounter + 1]
 	
 	makeMetalShine()
 
@@ -177,7 +173,7 @@ func advanceTrain():
 	
 	var emergencyTrackUsed = false
 	var stepNumber = 0
-	while stepNumber < Stats.trainSpeed:
+	while stepNumber < Stats.getTrainSpeed():
 		var pointsToMoveThrough = {}
 		for i in range(trainLocations.size()):
 			pointsToMoveThrough[i] = []
@@ -195,6 +191,7 @@ func advanceTrain():
 			var nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
 			
 			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
+				Stats.levelCounter += 1
 				Global.selectedReward = Global.rewards[nextLocation]
 				for reward in Global.selectedReward:
 					if reward == "Gold":
@@ -206,6 +203,12 @@ func advanceTrain():
 						var trainCar = TrainCar.new(reward)
 						if TrainCar.TYPE.ONESHOT in trainCar.types:
 							trainCar.onGain()
+					elif reward == "MinusSpeed":
+						Stats.startingTrainSpeed -= 1
+						if Stats.startingTrainSpeed < 0: Stats.startingTrainSpeed = 0
+					elif reward == "PlusSpeed":
+						Stats.startingTrainSpeed += 1
+				
 				PLAYSPACE.levelComplete.emit()
 				trainSucceeded = true
 				continue
@@ -221,7 +224,7 @@ func advanceTrain():
 					useEmergencyRail = true
 					Global.cardFunctionStarted.emit()
 					#Calling through cardFunctions because that displays the text
-					cardFunctions.buildRail(Stats.trainSpeed - stepNumber)
+					cardFunctions.buildRail(Stats.getTrainSpeed() - stepNumber)
 					await rail_built
 					Global.cardFunctionEnded.emit()
 					trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
@@ -296,14 +299,7 @@ func advanceTrain():
 		
 		stepNumber += 1
 	
-	if Stats.turnCounter < Stats.speedProgression.size()-2:
-		Stats.turnCounter += 1
-		Stats.trainSpeed = Stats.speedProgression[Stats.turnCounter]
-		Stats.nextTrainSpeed = Stats.speedProgression[Stats.turnCounter + 1]
-	else:
-		Stats.turnCounter += 1
-		Stats.trainSpeed = Stats.speedProgression[-1]
-		Stats.nextTrainSpeed = Stats.speedProgression[-1]
+	Stats.turnCounter += 1
 
 func moveTrainCarsAlongPoints(pointsToMoveThrough, speed):
 	var i = 0

@@ -293,15 +293,25 @@ const EMERGENCY_TRACK_VALUE = 1
 const GOLD_VALUE = 2
 const SHOP_VALUE = 6
 const COMMON_CAR_VALUE = 12
+const PLUS_SPEED_VALUE = -12
+const MINUS_SPEED_VALUE = 6
 
 func addReward(cell:Vector2i, rewardValue:float):
 	var reward = []
+	if Stats.levelCounter % 2 == 1:
+		reward.append("PlusSpeed")
+	if randi_range(0,3) == 0:
+		reward.append("PlusSpeed")
+		rewardValue -= PLUS_SPEED_VALUE
+	if rewardValue >= COMMON_CAR_VALUE:
+		reward.append(TrainCar.COMMON_CARS.pick_random())
+		rewardValue -= COMMON_CAR_VALUE
 	if rewardValue >= CARD_VALUE:
 		reward.append("Card")
 		rewardValue -= CARD_VALUE
 	
 	while rewardValue > 0:
-		var extra_reward = randi_range(0,5)
+		var extra_reward = randi_range(0,6)
 		match extra_reward:
 			0:
 				if rewardValue >= CARD_VALUE:
@@ -322,6 +332,10 @@ func addReward(cell:Vector2i, rewardValue:float):
 				if rewardValue >= COMMON_CAR_VALUE:
 					reward.append(TrainCar.COMMON_CARS.pick_random())
 					rewardValue -= COMMON_CAR_VALUE
+			5:
+				if "PlusSpeed" not in reward and rewardValue >= MINUS_SPEED_VALUE:
+					reward.append("MinusSpeed")
+					rewardValue -= MINUS_SPEED_VALUE
 					
 	rewards[cell] = reward
 
@@ -330,6 +344,8 @@ func getRewardText(cell) -> String:
 	var shop_count = 0
 	var gold_count = 0
 	var er_count = 0
+	var minus_count = 0
+	var plus_count = 0
 	
 	var reward_string = ""
 	
@@ -339,19 +355,25 @@ func getRewardText(cell) -> String:
 			"Shop": shop_count += 1
 			"Gold": gold_count += 1
 			"ER": er_count += 1
+			"MinusSpeed": minus_count += 1
+			"PlusSpeed": plus_count += 1
 		if " Car" in reward:
-			reward_string += "+" + reward + "\n"
+			reward_string += "\n+" + reward
 		
 	if card_count == 1:
-		reward_string += "+1 Card"
+		reward_string += "\n+1 Card"
 	elif card_count > 1:
-		reward_string += "+" + str(card_count) + " Cards"
+		reward_string += "\n+" + str(card_count) + " Cards"
 	if shop_count > 0:
 		reward_string += "\n+Shop"
 	if gold_count > 0:
 		reward_string += "\n+" + str(gold_count) + " Gold"
-	if er_count >0:
+	if er_count > 0:
 		reward_string += "\n+" + str(er_count) + " ER"
+	if minus_count > 0:
+		reward_string += "\n-" + str(minus_count) + " Speed"
+	if plus_count > 0:
+		reward_string += "\n+" + str(plus_count) + " Speed"
 		
 	return reward_string
 

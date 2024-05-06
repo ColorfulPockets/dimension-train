@@ -43,10 +43,10 @@ var DATA = {
 			fields.Rarity: "Starter",
 			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
-			fields.Text: "Build 2",
+			fields.Text: "Build 4",
 			fields.Function: "Build",
 			fields.MousePointer: load("res://Assets/Icons/Build_mouse.png"),
-			fields.Arguments: {"Build": 10, "Slow":2},
+			fields.Arguments: {"Build": 4},
 		},
 	"Manufacture":
 		{
@@ -57,7 +57,7 @@ var DATA = {
 			fields.Text: "Manufacture 4",
 			fields.Function: "Manufacture",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
-			fields.Arguments: {"Manufacture": 4, "Reveal": 1}
+			fields.Arguments: {"Manufacture": 4}
 		},
 	"Factory":
 		{

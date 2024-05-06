@@ -9,5 +9,6 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	$NextSpeedLabel.text = "Next: " + str(Stats.nextTrainSpeed)
-	$NextSpeedLabel.position = size / 2 - $NextSpeedLabel.size / 2
+	pass
+	#$NextSpeedLabel.text = "Next: " + str(Stats.nextTrainSpeed)
+	#$NextSpeedLabel.position = size / 2 - $NextSpeedLabel.size / 2
