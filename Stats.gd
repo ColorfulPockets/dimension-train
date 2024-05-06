@@ -13,11 +13,13 @@ func addEmergencyRail(num:int):
 	else:
 		emergencyRailCount = erc
 
-var railCount = 100
+var railCount = 0
+var starterRail = 100
 var coinCount = 0
 
 var trainSpeed = 0
 var nextTrainSpeed = 1
+var turnCounter = 0
 
 var currentEnergy = 3
 var maxEnergy = 3
@@ -35,7 +37,7 @@ var current_playspace
 func set_playspace(playspace):
 	current_playspace = playspace
 	
-var trainCars = []
+var trainCars = ["Brake Car", "Brake Car"]
 
 func _ready():
 	for cardName in startingDeckNames:

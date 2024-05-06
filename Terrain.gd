@@ -25,7 +25,6 @@ var mapShape:Vector2i = Vector2i(0,0)
 var revealedTiles:Array[Vector2i] = []
 var originalRevealedTiles
 var map:Tile
-var turnCounter = 0
 
 var trainLocations:Array[Vector2i]
 var railEndpoint:Vector2i
@@ -40,6 +39,7 @@ var trainCars:Array[TrainCar] = []
 
 
 var trainCrashed = false
+var trainSucceeded = false
 
 @onready var fixedElements = $"../FixedElements"
 @onready var cardFunctions = $"../CardFunctions"
@@ -59,6 +59,8 @@ func _ready():
 			
 
 func setMap(mapName):
+	Stats.turnCounter = 0
+	Stats.railCount = Stats.starterRail
 	var trainFront = TrainCar.new("Front")
 	trainFront.centered = true
 	trainFront.scale *= 0.5
@@ -85,8 +87,8 @@ func setMap(mapName):
 	
 	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
 	
-	Stats.trainSpeed = Stats.speedProgression[turnCounter]
-	Stats.nextTrainSpeed = Stats.speedProgression[turnCounter + 1]
+	Stats.trainSpeed = Stats.speedProgression[Stats.turnCounter]
+	Stats.nextTrainSpeed = Stats.speedProgression[Stats.turnCounter + 1]
 	
 	makeMetalShine()
 
@@ -171,15 +173,21 @@ func moveSpriteAlongPoints(sprite, points:Array, speed):
 			await get_tree().create_timer(0.01).timeout
 
 func advanceTrain():
-	if trainCrashed: return
+	if trainCrashed or trainSucceeded: return
 	
 	var emergencyTrackUsed = false
-	var pointsToMoveThrough = {}
-	for i in range(trainLocations.size()):
-		pointsToMoveThrough[i] = []
-	for stepNumber in range(Stats.trainSpeed):
-		var nextTrainLocations:Array[Vector2i] = []
+	var stepNumber = 0
+	while stepNumber < Stats.trainSpeed:
+		var pointsToMoveThrough = {}
 		for i in range(trainLocations.size()):
+			pointsToMoveThrough[i] = []
+		var nextTrainLocations:Array[Vector2i] = []
+		
+		# Some train cars will do something that may avert the emergency.  If so, we will skip the next block
+		var recalcEmergency = false
+			
+		for i in range(trainLocations.size()):
+			if trainSucceeded: continue
 			var trainLocation = trainLocations.pop_front()
 			var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
 			var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
@@ -199,21 +207,33 @@ func advanceTrain():
 						if TrainCar.TYPE.ONESHOT in trainCar.types:
 							trainCar.onGain()
 				PLAYSPACE.levelComplete.emit()
+				trainSucceeded = true
+				continue
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
 			if not emergencyTrackUsed and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
-				useEmergencyRail = true
-				Global.cardFunctionStarted.emit()
-				#Calling through cardFunctions because that displays the text
-				cardFunctions.buildRail(Stats.trainSpeed - stepNumber)
-				await rail_built
-				Global.cardFunctionEnded.emit()
-				trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
-				nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
-				
-				useEmergencyRail = false
-				emergencyTrackUsed = true
-				
+				for trainCar in trainCars:
+					if TrainCar.TYPE.EMERGENCY in trainCar.types:
+						if trainCar.onEmergency():
+							recalcEmergency = true
+							break
+				if not recalcEmergency:
+					useEmergencyRail = true
+					Global.cardFunctionStarted.emit()
+					#Calling through cardFunctions because that displays the text
+					cardFunctions.buildRail(Stats.trainSpeed - stepNumber)
+					await rail_built
+					Global.cardFunctionEnded.emit()
+					trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
+					nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
+					
+					useEmergencyRail = false
+					emergencyTrackUsed = true
+			
+			if recalcEmergency: 
+				nextTrainLocations.append(trainLocation)
+				continue
+			
 			if get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
 				print("TRAIN CRASHED")
 				trainCrashed = true
@@ -269,15 +289,29 @@ func advanceTrain():
 			
 			nextTrainLocations.append(nextLocation)
 	
-		trainLocations = nextTrainLocations
+		if not trainSucceeded:
+			trainLocations = nextTrainLocations
+			await moveTrainCarsAlongPoints(pointsToMoveThrough, 1.0)
+		
+		
+		stepNumber += 1
 	
-	for i in range(trainLocations.size()):
+	if Stats.turnCounter < Stats.speedProgression.size()-2:
+		Stats.turnCounter += 1
+		Stats.trainSpeed = Stats.speedProgression[Stats.turnCounter]
+		Stats.nextTrainSpeed = Stats.speedProgression[Stats.turnCounter + 1]
+	else:
+		Stats.turnCounter += 1
+		Stats.trainSpeed = Stats.speedProgression[-1]
+		Stats.nextTrainSpeed = Stats.speedProgression[-1]
+
+func moveTrainCarsAlongPoints(pointsToMoveThrough, speed):
+	var i = 0
+	while i < trainCars.size() - 1:
 		moveSpriteAlongPoints(trainCars[i], pointsToMoveThrough[i], 1.0)
+		i += 1
 	
-	if turnCounter < Stats.speedProgression.size()-2:
-		turnCounter += 1
-		Stats.trainSpeed = Stats.speedProgression[turnCounter]
-		Stats.nextTrainSpeed = Stats.speedProgression[turnCounter + 1]
+	await moveSpriteAlongPoints(trainCars[i], pointsToMoveThrough[i], 1.0)
 
 func collect(cell):
 	match get_cell_atlas_coords(0, cell):
