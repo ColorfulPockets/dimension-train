@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://7dwe1q8vl8bk"]
+
+[ext_resource type="Theme" uid="uid://c8cjm3vg4wc4" path="res://UI_Theme.tres" id="1_55gj8"]
+
+[node name="Tooltip" type="PanelContainer"]
+offset_left = 1.0
+offset_right = 515.0
+offset_bottom = 100.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme = ExtResource("1_55gj8")
+
+[node name="Label" type="RichTextLabel" parent="."]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+bbcode_enabled = true
+text = "test text"
+fit_content = true
+scroll_active = false

@@ -1,0 +1,13 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://c8cjm3vg4wc4"]
+
+[ext_resource type="Texture2D" uid="uid://ckw4yvx0tfyca" path="res://Assets/UI/Tooltip.png" id="1_xko4s"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ni4pm"]
+texture = ExtResource("1_xko4s")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[resource]
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_ni4pm")

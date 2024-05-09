@@ -169,11 +169,12 @@ func moveSpriteAlongPoints(sprite, points:Array, speed):
 			await get_tree().create_timer(0.01).timeout
 
 func advanceTrain():
+	Stats.resetTrainSpeed()
 	if trainCrashed or trainSucceeded: return
 	
 	var emergencyTrackUsed = false
 	var stepNumber = 0
-	while stepNumber < Stats.getTrainSpeed():
+	while stepNumber < Stats.trainSpeed:
 		var pointsToMoveThrough = {}
 		for i in range(trainLocations.size()):
 			pointsToMoveThrough[i] = []
@@ -224,7 +225,7 @@ func advanceTrain():
 					useEmergencyRail = true
 					Global.cardFunctionStarted.emit()
 					#Calling through cardFunctions because that displays the text
-					cardFunctions.buildRail(Stats.getTrainSpeed() - stepNumber)
+					cardFunctions.buildRail(Stats.trainSpeed - stepNumber)
 					await rail_built
 					Global.cardFunctionEnded.emit()
 					trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]

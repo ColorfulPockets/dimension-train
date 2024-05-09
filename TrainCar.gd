@@ -1,17 +1,36 @@
 class_name TrainCar extends Sprite2D
 
+const CARGO_CAR_VAL = 3
+
 enum TYPE {ONESHOT, STARTLEVEL, STARTTURN, ENDTURN, ENDLEVEL, TRAINMOVEMENT, EMERGENCY}
 enum RARITY {COMMON, UNCOMMON, RARE, BOSS, STARTER}
+
+var mouseIn:bool = false
+signal mouse_entered
+signal mouse_exited
 
 var carName: String
 var types: Array[TYPE]
 var rarity: RARITY
 
 const COMMON_CARS = ["Cargo Car", "Brake Car"]
+var TOOLTIP_TEXT = {
+	"Cargo Car": "+" + str(CARGO_CAR_VAL) + " ERC",
+	"Brake Car": "Each level, the first time you would need to use emergency rail, set speed to 0 instead.",
+}
 
 func _init(carName):
 	self.carName = carName
 	texture = load("res://Assets/TrainCars/" + carName + ".png")
+	if carName in TOOLTIP_TEXT:
+		var tooltip = Tooltip.new("[color=Green]"+carName+": [/color]"+TOOLTIP_TEXT[carName])
+		tooltip.offset_x = 50
+		tooltip.offset_y = 50
+		tooltip.padding_x = 10
+		tooltip.padding_y = 10
+		tooltip.delay = 0.01
+		tooltip.visuals_res = load("res://tooltip.tscn")
+		add_child(tooltip)
 	
 	match carName:
 		"Front":
@@ -63,3 +82,15 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
+	
+func _input(event):
+	if event is InputEventMouseMotion:
+		if get_rect().has_point(to_local(event.position + $"../../FixedElements".position)):
+			if not mouseIn:
+				mouseIn = true
+				mouse_entered.emit()
+		else:
+			if mouseIn:
+				mouseIn = false
+				mouse_exited.emit()
+				

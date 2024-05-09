@@ -23,8 +23,9 @@ var coinCount = 0
 
 var startingTrainSpeed = 0
 var turnCounter = 0
-func getTrainSpeed():
-	return startingTrainSpeed + turnCounter
+var trainSpeed = 0
+func resetTrainSpeed():
+	trainSpeed = startingTrainSpeed + turnCounter
 
 var currentEnergy = 3
 var maxEnergy = 3
@@ -40,7 +41,7 @@ var current_playspace
 func set_playspace(playspace):
 	current_playspace = playspace
 	
-var trainCars = []
+var trainCars = ["Cargo Car", "Brake Car"]
 
 func startLevel():
 	turnCounter = 0
