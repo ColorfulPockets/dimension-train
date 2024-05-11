@@ -13,14 +13,12 @@ extends Node
 #####################################
 # EXPORT VARIABLES 
 #####################################
-@export var visuals_res: PackedScene
-#@export var owner_path: NodePath
-@export_range (0, 10, 0.05) var delay: float = 0.5
+@export_range (0, 10, 0.05) var delay: float = 0.01
 @export var follow_mouse: bool = true
-@export_range (0, 100, 1) var offset_x: float
-@export_range (0, 100, 1) var offset_y: float
-@export_range (0, 100, 1) var padding_x: float
-@export_range (0, 100, 1) var padding_y: float
+@export_range (0, 100, 1) var offset_x: float = 50
+@export_range (0, 100, 1) var offset_y: float = 50
+@export_range (0, 100, 1) var padding_x: float = 10
+@export_range (0, 100, 1) var padding_y: float = 10
 
 
 #####################################
@@ -37,18 +35,21 @@ var _timer: Timer
 #####################################
 # ONREADY VARIABLES
 #####################################
+@onready var visuals_res: PackedScene = load("res://tooltip.tscn")
 @onready var owner_node = get_parent()
 @onready var offset: Vector2 = Vector2(offset_x, offset_y)
 @onready var padding: Vector2 = Vector2(padding_x, padding_y)
 @onready var extents: Vector2
 
-var text
+var text:String
+var fixedElementsLayersUp:int
 
 #####################################
 # OVERRIDE FUNCTIONS
 #####################################
-func _init(text:String) -> void:
+func _init(text:String, fixedElementsLayersUp:int) -> void:
 	self.text = text
+	self.fixedElementsLayersUp = fixedElementsLayersUp
 
 
 func _ready() -> void:
@@ -60,6 +61,7 @@ func _ready() -> void:
 	# connect signals
 	owner_node.connect("mouse_entered", _mouse_entered)
 	owner_node.connect("mouse_exited", _mouse_exited)
+	
 	# initialize the timer
 	_timer = Timer.new()
 	add_child(_timer)
@@ -82,8 +84,10 @@ func _process(delta: float) -> void:
 		var final_y = base_pos.y - extents.y - offset.y
 		if final_y < padding.y:
 			final_y = base_pos.y + offset.y
-		$"./Tooltip".position = Vector2(final_x, final_y) + $"../../../FixedElements".position
-
+		match fixedElementsLayersUp:
+			1: $"./Tooltip".position = Vector2(final_x, final_y) + $"../FixedElements".position
+			2: $"./Tooltip".position = Vector2(final_x, final_y) + $"../../FixedElements".position
+			3: $"./Tooltip".position = Vector2(final_x, final_y) + $"../../../FixedElements".position
 
 #####################################
 # API FUNCTIONS
@@ -93,15 +97,18 @@ func _process(delta: float) -> void:
 # HELPER FUNCTIONS
 #####################################
 func _mouse_entered() -> void:
+	#print("MOUSE ENTERED")
 	_timer.start(delay)
 
 
 func _mouse_exited() -> void:
+	#print("MOUSE EXITED")
 	_timer.stop()
 	_visuals.hide()
 
 
 func _custom_show() -> void:
+	#print("SHOWING")
 	_timer.stop()
 	_visuals.show()
 
@@ -122,30 +129,6 @@ func _get_screen_pos() -> Vector2:
 	
 	return position
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+func _exit_tree():
+	owner_node.disconnect("mouse_entered", _mouse_entered)
+	owner_node.disconnect("mouse_exited", _mouse_exited)

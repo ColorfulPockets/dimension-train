@@ -3,6 +3,8 @@ class_name Playspace extends Node2D
 const CardBase = preload("res://Cards/CardBase.tscn")
 const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
+@onready var rewardScene:PackedScene = preload("res://reward.tscn")
+
 @onready var deckNames = Stats.deck.duplicate()
 
 @onready var viewportSize = Vector2(get_viewport().size)
@@ -72,16 +74,11 @@ func drawHand():
 	handDrawn.emit()
 
 func spawnRewardBox(cell:Vector2i, location: Vector2):
-	var rewardsLabel = Label.new()
-	rewardsLabel.size = Vector2(200,200)
-	rewardsLabel.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rewardsLabel.position.x = location.x - rewardsLabel.size.x / 2
-	rewardsLabel.position.y = location.y - rewardsLabel.size.y
-	rewardsLabel.text = Global.getRewardText(cell)
-	rewardsLabel.add_theme_font_size_override("font_size", 40)
-	rewardsLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	rewardsLabel.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	self.add_child(rewardsLabel)
+	var rewardBox = rewardScene.instantiate()
+	self.add_child(rewardBox)
+	rewardBox.position = location
+	rewardBox.setText(Global.getRewardText(cell))
+	
 		
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):

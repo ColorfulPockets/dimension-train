@@ -358,8 +358,8 @@ func getRewardText(cell) -> String:
 			"MinusSpeed": minus_count += 1
 			"PlusSpeed": plus_count += 1
 		if " Car" in reward:
-			reward_string += "\n+" + reward
-		
+			reward_string += "\n+[color=Green]" + reward + "[/color]"
+ 		
 	if card_count == 1:
 		reward_string += "\n+1 Card"
 	elif card_count > 1:
@@ -375,7 +375,8 @@ func getRewardText(cell) -> String:
 	if plus_count > 0:
 		reward_string += "\n+" + str(plus_count) + " Speed"
 		
-	return reward_string
+	# remove initial line break
+	return reward_string.erase(0)
 
 # Rotates array 90 degrees clockwise, assuming that array is a full rectangle (all rows same size)
 func rotate_array(arr) -> Array[Array]:

@@ -144,7 +144,7 @@ func setUpMap():
 	for cell in goalCells:
 		Global.addReward(cell, map.rewardValues[cell])
 		var rewardPosition = mapPositionToScreenPosition(Global.stepInDirection(cell, outgoingMap[cell.x][cell.y]))
-		#rewardPosition.y += scale.y*tile_set.tile_size.y / 4
+		rewardPosition -= Vector2(tile_set.tile_size)*scale/2
 		PLAYSPACE.spawnRewardBox(cell, rewardPosition)
 						
 

@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://don53ifogsn1r"]
+
+[ext_resource type="Theme" uid="uid://c4yjqxcrmosju" path="res://Reward_Theme.tres" id="1_duys5"]
+[ext_resource type="Script" path="res://rewardBox.gd" id="2_4g5p3"]
+
+[node name="Reward" type="PanelContainer"]
+offset_left = 1.0
+offset_right = 335.0
+offset_bottom = 80.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme = ExtResource("1_duys5")
+script = ExtResource("2_4g5p3")
+
+[node name="Label" type="RichTextLabel" parent="."]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+bbcode_enabled = true
+text = "test text"
+fit_content = true
+scroll_active = false
