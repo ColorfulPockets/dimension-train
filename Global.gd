@@ -12,10 +12,12 @@ signal overlayHidden
 const base_layer = 0
 const resource_counts_layer = 1
 const animation_layer = 2
-const temporary_rail_layer = 3
-const fog_layer = 4
-const grid_layer = 5
-const highlight_layer = 6
+const rail_layer = 3
+const temporary_rail_layer = 4
+const fog_layer = 5
+const grid_layer = 6
+const highlight_layer = 7
+const max_layer = 7
 
 const TRAIN_MOVEMENT_TIME = 0.5
 const FADE_TIME = 0.2
@@ -34,6 +36,7 @@ const TILE_SHAPE = Vector2i(10,10)
 const tree = Vector2i(4,2)
 const rock = Vector2i(0,3)
 const empty = Vector2i(0,0)
+const bridge = Vector2i(5,6)
 const highlight = Vector2i(2,4)
 const grid_outline = Vector2i(1,4)
 const wood = Vector2i(4,4)
@@ -57,6 +60,7 @@ const train_end_turning = Vector2i(9,6)
 const water = Vector2i(0,28)
 const fog = Vector2i(11,4)
 const delete = Vector2i(-1, -1)
+const empty_tiles = [empty, bridge]
 
 enum CARD_TYPES {Harvesting, Logistics, Technology}
 enum CARD_FIELDS {

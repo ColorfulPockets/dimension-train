@@ -135,65 +135,64 @@ func Manufacture(cardInfo):
 			Stats.railCount += 2
 			
 	return confirmed
-	
 
-func Reveal(cardInfo):
-	var numToReveal
+func Factory(cardInfo):
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Gather materials\n(Esc to cancel)")
 	
-	numToReveal = cardInfo[Global.CARD_FIELDS.Arguments]["Reveal"]
+	terrain.targeting = true
+	
+	var discard = await terrain.confirmed
+	
+	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
+		return discard
 		
+	var harvested_wood = []
+	var harvested_metal = []
+	for tile in terrain.highlighted_cells:
+		if terrain.get_cell_atlas_coords(0,tile) == Global.wood:
+			harvested_wood.append(tile)
+			terrain.set_cell(0, tile, 0, Global.empty)
+			Stats.woodCount += 1
+		elif terrain.get_cell_atlas_coords(0,tile) == Global.metal:
+			harvested_metal.append(tile)
+			terrain.set_cell(0, tile, 0, Global.empty)
+			Stats.metalCount += 1
+	
+	terrain.targeting = false
+	
+	middleBarContainer.visible = false
+	
+	# Manufacture
+	terrain.clearHighlights()
+	var numManufactured
+
+	numManufactured = cardInfo[Global.CARD_FIELDS.Arguments]["Manufacture"]
+	
+	middleBarContainer.setText("Manufacture " + str(min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)) + " rails.\n(Enter to confirm, Esc to cancel)")
 	middleBarContainer.visible = true
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	
-	highlight_tiles = true
-	var numHighlightedTiles = 0
-	
-	var selected
-	
-	while numToReveal > 0:
-		middleBarContainer.setText("Choose "+ str(numToReveal) + " more tiles to reveal.\n(Enter to confirm, Esc to cancel)")
-		
-		selected = await selection
-		
-		if selected in [Global.FUNCTION_STATES.Waiting, Global.FUNCTION_STATES.Fail]:
-			highlight_tiles = false
-			terrain.clearHighlights()
-			terrain.clearLockedHighlights()
-			return selected
-		
-		if selected == Global.FUNCTION_STATES.Success:
-			break
-		
-		# If we get here, selected is a click
-		
-		#OPTIMIZE: Making highlighted_cells and locked_highlights dictionaries and using .has() for O(1) key lookup
-		for cell in terrain.highlighted_cells:
-			if cell not in terrain.locked_highlights:
-				terrain.locked_highlights.append(cell)
-		
-		if terrain.locked_highlights.size() > numHighlightedTiles:	
-			numToReveal -= 1
-			numHighlightedTiles = terrain.highlighted_cells.size()
-		
-	middleBarContainer.setText("Choose "+ str(numToReveal) + " more tiles to reveal.\n(Enter to confirm, Esc to cancel)")
-	
-	highlight_tiles = false
-	
-	var confirmed
-	
-	
-	if selected != Global.FUNCTION_STATES.Success:
-		confirmed = await confirmation
-	else:
-		confirmed = Global.FUNCTION_STATES.Success
-	
-	if confirmed == Global.FUNCTION_STATES.Success:
-		for cell in terrain.locked_highlights:
-			terrain.set_cell(Global.fog_layer, cell, 0, Global.delete)
-	
-	terrain.clearLockedHighlights()
+	var confirmed = await confirmation
 	
 	middleBarContainer.visible = false
+	
+	if confirmed == Global.FUNCTION_STATES.Success:
+		var num_to_manufacture = min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)
+		for i in range(int(num_to_manufacture/2)):
+			Stats.woodCount -= 1
+			Stats.metalCount -= 1
+			Stats.railCount += 2
+	else:
+		for tile in harvested_wood:
+			terrain.set_cell(0, tile, 0, Global.wood)
+			Stats.woodCount -= 1
+		for tile in harvested_metal:
+			terrain.set_cell(0, tile, 0, Global.metal)
+			Stats.metalCount += 1
+			
 	return confirmed
 
 func Slow(cardInfo):
@@ -215,6 +214,66 @@ func Slow(cardInfo):
 		Stats.trainSpeed = max(0, Stats.trainSpeed - amountSlowed)
 		
 	return confirmed
+
+func Gust(cardInfo):
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Chop Trees\n(Esc to cancel)")
+	terrain.targeting = true
+	var discard = await terrain.confirmed
+	
+	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
+		return discard
+	
+	for tile in terrain.highlighted_cells:
+		if terrain.get_cell_atlas_coords(0,tile) == Global.tree:
+			terrain.set_cell(0, tile, 0, Global.wood)
+	
+	Draw(cardInfo)
+	
+	terrain.targeting = false
+
+	middleBarContainer.visible = false
+
+	return Global.FUNCTION_STATES.Success
+
+func Draw(cardInfo):
+	terrain.clearHighlights()
+	
+	var amountDrawn
+
+	amountDrawn = cardInfo[Global.CARD_FIELDS.Arguments]["Draw"]
+	
+	while PLAYSPACE.cardsInHand.size() < PLAYSPACE.HAND_LIMIT - 1 and amountDrawn > 0:
+		await PLAYSPACE.drawCardFromDeck()
+		amountDrawn -= 1
+	
+	return Global.FUNCTION_STATES.Success
+
+func Bridge(_cardInfo):
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Bridge over water\n(Esc to cancel)")
+	
+	terrain.targeting = true
+	
+	var discard = await terrain.confirmed
+	
+	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
+		return discard
+		
+	discard = Global.FUNCTION_STATES.Fail
+	for tile in terrain.highlighted_cells:
+		if terrain.get_cell_atlas_coords(0,tile) == Global.water:
+			terrain.set_cell(0, tile, 0, Global.bridge)
+			discard = Global.FUNCTION_STATES.Success
+		
+	terrain.targeting = false
+	
+	middleBarContainer.visible = false
+	return discard
 
 func _input(event):
 	if event is InputEventKey:

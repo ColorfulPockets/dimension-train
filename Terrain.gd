@@ -52,7 +52,7 @@ var locked_highlights:Array[Vector2i] = []
 func _ready():
 	
 	
-	for i in range(5):
+	for i in range(Global.max_layer):
 		add_layer(i)
 		set_layer_enabled(i, true)
 		set_layer_z_index(i,0)
@@ -126,7 +126,8 @@ func setUpMap():
 				railStartpoint = cellPosition
 				lastRailPlaced = cellPosition
 			elif cellEnum == G:
-				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1])
+				set_cell(Global.base_layer, cellPosition, 0, Global.empty)
+				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1], Global.rail_layer)
 				goalCells.append(cellPosition)
 			elif cellEnum == X:
 				var randomTile = [Global.tree, Global.rock, Global.empty]
@@ -134,6 +135,7 @@ func setUpMap():
 
 	
 	for i in range(trainCars.size()):
+		set_cell(Global.base_layer, railEndpoint + Vector2i(-i,0), 0, Global.empty)
 		set_cell_directional(railEndpoint + Vector2i(-i,0), Global.DIRECTIONAL_TILES.RAIL, DIR.L, DIR.R)
 		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(-i,0)) / scale
 		connectedCells.append(railEndpoint + Vector2i(-i,0))
@@ -215,7 +217,7 @@ func advanceTrain():
 				continue
 			
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
-			if not emergencyTrackUsed and get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
+			if not emergencyTrackUsed and get_cell_atlas_coords(Global.rail_layer, nextLocation) not in Global.rail_tiles:
 				for trainCar in trainCars:
 					if TrainCar.TYPE.EMERGENCY in trainCar.types:
 						if trainCar.onEmergency():
@@ -238,7 +240,7 @@ func advanceTrain():
 				nextTrainLocations.append(trainLocation)
 				continue
 			
-			if get_cell_atlas_coords(0, nextLocation) not in Global.rail_tiles:
+			if get_cell_atlas_coords(Global.rail_layer, nextLocation) not in Global.rail_tiles:
 				print("TRAIN CRASHED")
 				trainCrashed = true
 				return
@@ -425,10 +427,10 @@ func buildRail(numRail):
 		rail_built.emit(Global.FUNCTION_STATES.Fail)
 		return false
 
-func set_cell_directional(mapPosition, cellType, incoming, outgoing):
+func set_cell_directional(mapPosition, cellType, incoming, outgoing, layer = Global.rail_layer):
 	var directional_info = Global.DIRECTIONAL_TILE_INOUT[cellType][incoming][outgoing]
 	
-	set_cell(0, mapPosition, 0, directional_info[0], directional_info[1])
+	set_cell(layer, mapPosition, 0, directional_info[0], directional_info[1])
 	directionalCellMap[mapPosition.x][mapPosition.y] = cellType
 	incomingMap[mapPosition.x][mapPosition.y] = incoming
 	outgoingMap[mapPosition.x][mapPosition.y] = outgoing
@@ -467,7 +469,7 @@ func get_tile(mapPosition:Vector2i):
 func buildRailOn(mousePosition):
 	if legalToPlaceRail:
 		var mapPosition:Vector2i = screenPositionToMapPosition(mousePosition)
-		var amountAdded = addRailLineToMap(railEndpoint, mapPosition, Global.base_layer)
+		var amountAdded = addRailLineToMap(railEndpoint, mapPosition, Global.rail_layer)
 		recalculateRailRoute()
 		lastRailPlaced = mapPosition
 		numRailToBuild -= amountAdded
@@ -484,7 +486,7 @@ func recalculateRailRoute():
 	connectedCells = []
 	var currentPosition:Vector2i = railStartpoint
 	var prev_outgoing = DIR.R
-	while get_cell_atlas_coords(0, currentPosition) in Global.rail_tiles:
+	while get_cell_atlas_coords(Global.rail_layer, currentPosition) in Global.rail_tiles:
 		connectedCells.append(currentPosition)
 		changeIncoming(currentPosition, Global.oppositeDir(prev_outgoing))
 		prev_outgoing = outgoingMap[currentPosition.x][currentPosition.y]
@@ -496,7 +498,7 @@ func recalculateRailRoute():
 			break 
 		#If the cell is a rail connected on both sides, but neither side is part of the connected cells, can't continue the line
 		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles \
-			and get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
+			and get_cell_atlas_coords(Global.rail_layer, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
 				if not (
 					Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y]) in connectedCells
 					or
@@ -505,18 +507,18 @@ func recalculateRailRoute():
 						break
 		#If this cell has an outgoing connection to a new part of existing rail line, it's fine to continue to use that,
 		#so we continue, skipping the next check to reverse the direction
-		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
+		if get_cell_atlas_coords(Global.rail_layer, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
 			if Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y]) not in connectedCells:
 				continue
 		#If this cell's incoming is a rail that's not currently part of the connected line, reverse its direction
 		#(this allows for connecting to either side of an existing rail line)
-		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
+		if get_cell_atlas_coords(Global.rail_layer, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
 			if Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y]) not in connectedCells:
 				swapInOut(currentPosition)
 
 func resetPartialRail():
 	for rail in partialRailBuilt:
-		set_cell(0, rail, 0, Global.empty)
+		set_cell(Global.rail_layer, rail, 0, -Vector2i.ONE)
 		outgoingMap[rail.x][rail.y] = DIR.NONE
 		incomingMap[rail.x][rail.y] = DIR.NONE
 		directionalCellMap[rail.x][rail.y] = null
@@ -541,7 +543,7 @@ func toggleRailOutput(mousePosition):
 func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 	directionToStartMap = []
 	legalToPlaceRail = false
-	if get_cell_atlas_coords(0, endLoc) != Global.empty:
+	if get_cell_atlas_coords(0, endLoc) not in Global.empty_tiles:
 		return
 	
 	for i in range(mapShape.x):
@@ -561,7 +563,7 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 		for loc in outermostLocations:
 			for dir in DIRS:
 				var nextLoc = Global.stepInDirection(loc, dir)
-				if get_cell_atlas_coords(0, nextLoc) == Global.empty and directionToStartMap[nextLoc.x][nextLoc.y] == null:
+				if get_cell_atlas_coords(0, nextLoc) in Global.empty_tiles and directionToStartMap[nextLoc.x][nextLoc.y] == null:
 					directionToStartMap[nextLoc.x][nextLoc.y] = [Global.oppositeDir(dir), steps]
 					nextOutermost.append(nextLoc)
 				
@@ -574,7 +576,7 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 func addRailLineToMap(startLoc, endLoc, layer):
 	# Prevents a bug where it tries to find a path to start based on old map, when card is clicked
 	if directionToStartMap == []: return 0
-	if get_cell_atlas_coords(0, endLoc) != Global.empty:
+	if get_cell_atlas_coords(0, endLoc) not in Global.empty_tiles:
 		return 0
 		
 	var directionMap = directionToStartMap.duplicate(true)
@@ -582,7 +584,7 @@ func addRailLineToMap(startLoc, endLoc, layer):
 		return 0
 	
 	var recordTempRail = false
-	if layer == Global.base_layer:
+	if layer == Global.rail_layer:
 		recordTempRail = true
 
 	var currentLoc = endLoc

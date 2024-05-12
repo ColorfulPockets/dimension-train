@@ -65,10 +65,11 @@ var DATA = {
 			fields.Rarity: "Starter",
 			fields.EnergyCost: 2,
 			fields.Type: types.Logistics,
-			fields.Text: "Manufacture 8",
-			fields.Function: "Manufacture",
-			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
-			fields.Arguments: {"Manufacture": 8}
+			fields.Text: "Gather 2x2, then Manufacture 6",
+			fields.TargetArea: Vector2i(2,2),
+			fields.Function: "Factory",
+			fields.MousePointer: load("res://Assets/Icons/Gather_mouse.png"),
+			fields.Arguments: {"Manufacture": 6}
 		},
 	"Drill":
 		{
@@ -87,9 +88,9 @@ var DATA = {
 			fields.Rarity: "Common",
 			fields.EnergyCost: 1,
 			fields.Type: types.Harvesting,
-			fields.Text: "Chop 2x2 and draw a card.",
+			fields.Text: "Chop 2x2, then draw a card.",
 			fields.TargetArea: Vector2i(2,2),
-			fields.Function: "Chop Draw",
+			fields.Function: "Gust",
 			fields.MousePointer: load("res://Assets/Icons/Chop_mouse.png"),
 			fields.Arguments: {"Draw": 1}
 		},
@@ -103,7 +104,7 @@ var DATA = {
 			fields.TargetArea: Vector2i(1,1),
 			fields.Function: "Bridge",
 			fields.MousePointer: load("res://Assets/Icons/Bridge_mouse.png"),
-			fields.Arguments: {"Draw": 1}
+			fields.Arguments: {"Bridge": 1}
 		},
 	"Bolster":
 		{

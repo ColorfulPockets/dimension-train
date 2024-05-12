@@ -67,9 +67,12 @@ func _ready():
 func setMap(mapName):
 	terrain.setMap(mapName)
 
+func drawCardFromDeck():
+	await drawCard(drawPileNode.position, Vector2.ZERO)
+
 func drawHand():
 	for i in range(5):
-		await drawCard(drawPileNode.position, Vector2.ZERO)
+		await drawCardFromDeck()
 		
 	handDrawn.emit()
 

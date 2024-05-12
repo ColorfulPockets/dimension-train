@@ -32,7 +32,7 @@ var maxEnergy = 3
 
 var collectRadius = 1
 
-var startingDeckNames = ["Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
+var startingDeckNames = ["Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
 var rareChance = 0.1
 
