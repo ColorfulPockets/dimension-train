@@ -7,6 +7,7 @@ var DIR = Global.DIR
 var cells:Array[Array]
 var directions:Dictionary
 var rewardValues:Dictionary
+var enemies:Array[Array]
 
 func _init(cells:Array[Array], directions:Dictionary):
 	self.cells = cells

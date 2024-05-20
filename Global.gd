@@ -17,7 +17,8 @@ const temporary_rail_layer = 4
 const fog_layer = 5
 const grid_layer = 6
 const highlight_layer = 7
-const max_layer = 7
+const enemy_layer = 8
+const max_layer = 8
 
 const TRAIN_MOVEMENT_TIME = 0.5
 const FADE_TIME = 0.2
@@ -34,7 +35,9 @@ const VIEWPORT_SIZE = Vector2(3840, 2160)
 const TILE_SHAPE = Vector2i(10,10)
 
 const tree = Vector2i(4,2)
+const corrupt_tree = Vector2i(3,2)
 const rock = Vector2i(0,3)
+const corrupt_rock = Vector2i(1,3)
 const empty = Vector2i(0,0)
 const bridge = Vector2i(5,6)
 const highlight = Vector2i(2,4)

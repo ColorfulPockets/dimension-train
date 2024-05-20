@@ -36,7 +36,7 @@ var lastRailPlaced:Vector2i
 var useEmergencyRail = false
 
 var trainCars:Array[TrainCar] = []
-
+var enemies:Array[Enemy] = []
 
 var trainCrashed = false
 var trainSucceeded = false
@@ -89,6 +89,14 @@ func setMap(mapName):
 	makeMetalShine()
 
 func setUpMap():
+	for enemyVals in map.enemies:
+		var enemy = Enemy.new(enemyVals[0], enemyVals[1], enemyVals[2], self)
+		enemy.centered = true
+		enemy.scale *= 0.5
+		enemy.position = mapPositionToScreenPosition(enemy.cell) / scale
+		enemies.append(enemy)
+		add_child(enemy)
+	
 	
 	mapShape = Vector2i(map.cells.size(), map.cells[0].size())
 	for i in range(mapShape.x + trainCars.size()):
@@ -266,7 +274,6 @@ func advanceTrain():
 					
 			
 			var nextOutgoing = outgoingMap[nextLocation.x][nextLocation.y]
-			#var nextIncoming = incomingMap[nextLocation.x][nextLocation.y]
 			
 			var nextPosition = map_to_local(nextLocation)
 			var currentPosition = map_to_local(trainLocation)
@@ -303,6 +310,59 @@ func advanceTrain():
 		stepNumber += 1
 	
 	Stats.turnCounter += 1
+
+var enemiesMoved = 0
+
+#TODO: This definitely doesn't work right for non linear paths, so fix that
+func moveSpriteThroughCells(sprite:Sprite2D, cellPath, dirPath):
+	for i in range(1,len(cellPath)):
+		var pointsToMoveThrough = []
+		var cell = cellPath[i]
+		var dir = dirPath[i]
+		var currentPosition = map_to_local(cell)
+		var prevPosition = map_to_local(Global.stepInDirection(cell, Global.oppositeDir(dir)))
+		if i == 0:
+			prevPosition = currentPosition
+		var nextPosition = map_to_local(Global.stepInDirection(cell, dir))
+		var nextNextPosition = map_to_local(Global.stepInDirection(cellPath[i+1], dirPath[i+1])) if i < len(cellPath)-1 else map_to_local(Global.stepInDirection(Global.stepInDirection(cell, dir), dir))
+		
+		const NUM_ANIMATION_POINTS:int = 100
+		
+		var firstCurve = interpolate_quadratic_bezier(
+			prevPosition,
+			(prevPosition + currentPosition) / 2,
+			currentPosition,
+			NUM_ANIMATION_POINTS
+		)
+		#var secondCurve = interpolate_quadratic_bezier(
+			#(nextPosition + currentPosition) /2,
+			#nextPosition,
+			#(nextPosition + nextNextPosition) /2,
+			#NUM_ANIMATION_POINTS
+		#)w
+		
+		for _i in range(NUM_ANIMATION_POINTS / 3):
+			pointsToMoveThrough.append(firstCurve[_i+2*NUM_ANIMATION_POINTS/3])
+		
+		#for _i in range(NUM_ANIMATION_POINTS / 2):
+			#pointsToMoveThrough.append(secondCurve[_i])
+		
+		await moveSpriteAlongPoints(sprite, pointsToMoveThrough, 1.0)
+		
+	enemiesMoved += 1
+		
+	
+
+func enemyTurn():
+	for enemy in enemies:
+		var enemyReturn = enemy.takeActions()
+		moveSpriteThroughCells(enemy, enemyReturn[0], enemyReturn[1])
+		
+	while enemiesMoved < len(enemies):
+		await get_tree().create_timer(0.1).timeout
+	
+	enemiesMoved = 0
+		
 
 func moveTrainCarsAlongPoints(pointsToMoveThrough, speed):
 	var i = 0

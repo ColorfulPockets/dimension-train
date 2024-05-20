@@ -31,4 +31,8 @@ func _init():
 		Vector2i(14,11) : 8,
 	}
 	
+	enemies = [
+		["Corrupt Slug", Vector2i(5,14), Global.DIR.U]
+	]
+	
 	

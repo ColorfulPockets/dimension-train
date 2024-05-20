@@ -226,6 +226,7 @@ func endTurn():
 				card.mouseExited(true)
 		endingTurn = true
 		await terrain.advanceTrain()
+		await terrain.enemyTurn()
 		while cardsInHand.size() > 0:
 			cardDiscarded(0)
 			await get_tree().create_timer(0.05).timeout
