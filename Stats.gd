@@ -17,8 +17,14 @@ func addEmergencyRail(num:int):
 	else:
 		emergencyRailCount = erc
 
+func removeEmergencyRail(num:int):
+	if emergencyRailCount - num < 0:
+		emergencyRailCount = 0
+	else:
+		emergencyRailCount -= num
+
 var railCount = 0
-var starterRail = 5
+var starterRail = 20
 var coinCount = 0
 
 var startingTrainSpeed = 0

@@ -129,6 +129,7 @@ func setUpMap():
 			#TODO: figure out how to handle existing rail as bidirectional
 			elif cellEnum == R:
 				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cellDirections[0], cellDirections[1])
+				set_cell(Global.base_layer, cellPosition, 0, Global.empty)
 			elif cellEnum == L:
 				railEndpoint = cellPosition
 				railStartpoint = cellPosition
@@ -179,7 +180,6 @@ func moveSpriteAlongPoints(sprite, points:Array, speed):
 			await get_tree().create_timer(0.01).timeout
 
 func advanceTrain():
-	Stats.resetTrainSpeed()
 	if trainCrashed or trainSucceeded: return
 	
 	var emergencyTrackUsed = false
@@ -200,6 +200,18 @@ func advanceTrain():
 			var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
 			#var trainType = directionalCellMap[trainLocation.x][trainLocation.y]
 			var nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
+			
+			var enemiesToRemove = []
+			for enemyIndex in range(len(enemies)):
+				var enemy = enemies[enemyIndex]
+				if nextLocation == enemy.cell:
+					enemy.destroy()
+					Stats.removeEmergencyRail(1)
+					enemiesToRemove.append(enemyIndex)
+					enemy.queue_free()
+					
+			for indexIndex in range(len(enemiesToRemove)-1, -1, -1):
+				enemies.remove_at(enemiesToRemove[indexIndex])
 			
 			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
 				Stats.levelCounter += 1
@@ -310,6 +322,7 @@ func advanceTrain():
 		stepNumber += 1
 	
 	Stats.turnCounter += 1
+	Stats.resetTrainSpeed()
 
 var enemiesMoved = 0
 
@@ -495,16 +508,16 @@ func set_cell_directional(mapPosition, cellType, incoming, outgoing, layer = Glo
 	incomingMap[mapPosition.x][mapPosition.y] = incoming
 	outgoingMap[mapPosition.x][mapPosition.y] = outgoing
 
-func changeOutgoing(mapPosition, direction):
+func changeOutgoing(mapPosition, direction, layer = Global.rail_layer):
 	if mapPosition.x < directionalCellMap.size() \
 		and mapPosition.y  < directionalCellMap[0].size() \
 		and directionalCellMap[mapPosition.x][mapPosition.y] != null:
 			if direction == incomingMap[mapPosition.x][mapPosition.y]:
-				swapInOut(mapPosition)
+				swapInOut(mapPosition, layer)
 			else:
 				set_cell_directional(mapPosition, directionalCellMap[mapPosition.x][mapPosition.y],
 						incomingMap[mapPosition.x][mapPosition.y],
-						direction)
+						direction, layer)
 			return true
 	else:
 		return false
@@ -538,8 +551,8 @@ func buildRailOn(mousePosition):
 		else:
 			Stats.railCount -= amountAdded
 
-func swapInOut(location):
-	set_cell_directional(location, directionalCellMap[location.x][location.y], outgoingMap[location.x][location.y], incomingMap[location.x][location.y])
+func swapInOut(location, layer = Global.rail_layer):
+	set_cell_directional(location, directionalCellMap[location.x][location.y], outgoingMap[location.x][location.y], incomingMap[location.x][location.y], layer)
 
 #Traces rail route to determine which tiles are connected and where the endpoint is
 func recalculateRailRoute():
@@ -595,7 +608,7 @@ func toggleRailOutput(mousePosition):
 		if nextDir == incomingMap[clicked_cell.x][clicked_cell.y]:
 			nextDir = Global.nextDirClockwise(nextDir)
 			
-		changeOutgoing(clicked_cell, nextDir)
+		changeOutgoing(clicked_cell, nextDir, Global.rail_layer)
 	
 	recalculateRailRoute()
 
@@ -623,9 +636,11 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 		for loc in outermostLocations:
 			for dir in DIRS:
 				var nextLoc = Global.stepInDirection(loc, dir)
-				if get_cell_atlas_coords(0, nextLoc) in Global.empty_tiles and directionToStartMap[nextLoc.x][nextLoc.y] == null:
-					directionToStartMap[nextLoc.x][nextLoc.y] = [Global.oppositeDir(dir), steps]
-					nextOutermost.append(nextLoc)
+				if get_cell_atlas_coords(0, nextLoc) in Global.empty_tiles \
+					and get_cell_atlas_coords(Global.rail_layer, nextLoc) not in Global.rail_tiles \
+					and directionToStartMap[nextLoc.x][nextLoc.y] == null:
+						directionToStartMap[nextLoc.x][nextLoc.y] = [Global.oppositeDir(dir), steps]
+						nextOutermost.append(nextLoc)
 				
 		outermostLocations = nextOutermost
 		
@@ -668,7 +683,9 @@ func addRailLineToMap(startLoc, endLoc, layer):
 			directionalCellMap[nextLoc.x][nextLoc.y] = Global.DIRECTIONAL_TILES.RAIL
 		#if recordTempRail or (not nextLoc == startLoc):
 		set_cell(layer, nextLoc, 0, nextCellVals[0], nextCellVals[1])
-			
+		set_cell(layer, nextLoc, 0, nextCellVals[0], nextCellVals[1])
+		if nextLoc == startLoc:
+			set_cell(Global.rail_layer, nextLoc, 0, nextCellVals[0], nextCellVals[1])
 		currentLoc = nextLoc
 		
 	return (directionMap[endLoc.x][endLoc.y])[1]
@@ -679,7 +696,8 @@ func _input(event):
 			if event.pressed:
 				if buildingRail:
 					toggleRailOutput(get_viewport().get_mouse_position())
-					if numRailToBuild > 0:
+					clear_layer(Global.temporary_rail_layer)
+					if numRailToBuild > 0 and screenPositionToMapPosition(event.position) != lastRailPlaced:
 						buildRailOn(get_viewport().get_mouse_position())
 						if numRailToBuild == 0:
 							clearHighlights()
@@ -688,7 +706,8 @@ func _input(event):
 		clear_layer(Global.temporary_rail_layer)
 		if numRailToBuild > 0:
 			highlightCells(event.position, Vector2i.ONE)
-			drawRailLine(railEndpoint, screenPositionToMapPosition(event.position), numRailToBuild)
+			if screenPositionToMapPosition(event.position) != lastRailPlaced:
+				drawRailLine(railEndpoint, screenPositionToMapPosition(event.position), numRailToBuild)
 		
 	if event is InputEventKey and buildingRail:
 		clear_layer(Global.temporary_rail_layer)

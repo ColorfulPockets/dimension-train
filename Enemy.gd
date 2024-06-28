@@ -15,7 +15,7 @@ var enemyName: String
 const ENEMIES = ["Corrupt Slug"]
 
 static var TOOLTIP_TEXT = {
-	"Corrupt Slug": "Moves 1 space forward per turn. Leaves a trail of Corrupted terrain.",
+	"Corrupt Slug": "Moves 1 space forward per turn. Leaves a trail of Corrupted terrain which removes 1 Emergency Rail when harvested.",
 }
 
 func _init(enemyName, cell:Vector2i, facing:Global.DIR, terrain:Terrain):
@@ -36,7 +36,6 @@ func _init(enemyName, cell:Vector2i, facing:Global.DIR, terrain:Terrain):
 func takeActions() -> Array[Array]:
 	match enemyName:
 		"Corrupt Slug":
-			print(cell)
 			var new_terrain
 			var old_cell = cell
 			var old_facing = facing
@@ -61,6 +60,12 @@ func takeActions() -> Array[Array]:
 			return [[old_cell, cell], [old_facing, facing]]
 			
 	return [[]]
+
+# Called when the train runs over the enemy
+func destroy():
+	match enemyName:
+		"Corrupt Slug":
+			pass
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

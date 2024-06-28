@@ -25,6 +25,10 @@ func Chop(_cardInfo):
 		if terrain.get_cell_atlas_coords(0,tile) == Global.tree:
 			terrain.set_cell(0, tile, 0, Global.wood)
 			discard = Global.FUNCTION_STATES.Success
+		if terrain.get_cell_atlas_coords(0,tile) == Global.corrupt_tree:
+			terrain.set_cell(0, tile, 0, Global.wood)
+			Stats.removeEmergencyRail(1)
+			discard = Global.FUNCTION_STATES.Success
 	
 	terrain.targeting = false
 
@@ -49,6 +53,10 @@ func Mine(_cardInfo):
 	for tile in terrain.highlighted_cells:
 		if terrain.get_cell_atlas_coords(0,tile) == Global.rock:
 			terrain.set_cell(0, tile, 0, Global.metal)
+			discard = Global.FUNCTION_STATES.Success
+		if terrain.get_cell_atlas_coords(0,tile) == Global.corrupt_rock:
+			terrain.set_cell(0, tile, 0, Global.metal)
+			Stats.removeEmergencyRail(1)
 			discard = Global.FUNCTION_STATES.Success
 	
 	terrain.targeting = false
