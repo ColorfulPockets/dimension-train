@@ -7,6 +7,8 @@ signal building_rail
 signal rail_built(built_or_not)
 var buildingRail = false
 var numRailToBuild = 0
+# Which tiles rail is currently allowed to be built on
+var buildOver = Global.empty_tiles
 
 var targeting = false
 
@@ -482,7 +484,8 @@ func drawHighlights(highlightedCells):
 	for highlightedCell in highlightedCells:
 			set_cell(Global.highlight_layer,highlightedCell, 0, Global.highlight)
 
-func buildRail(numRail):
+func buildRail(numRail, buildOver:Array):
+	self.buildOver = buildOver
 	emit_signal("building_rail")
 	originalRailEndpoint = railEndpoint
 	originalRevealedTiles = revealedTiles
@@ -497,6 +500,7 @@ func buildRail(numRail):
 		highlightCells(get_viewport().get_mouse_position(), Vector2i.ONE)
 		return true
 	else:
+		self.buildOver = Global.empty_tiles
 		rail_built.emit(Global.FUNCTION_STATES.Fail)
 		return false
 
@@ -554,12 +558,16 @@ func buildRailOn(mousePosition):
 func swapInOut(location, layer = Global.rail_layer):
 	set_cell_directional(location, directionalCellMap[location.x][location.y], outgoingMap[location.x][location.y], incomingMap[location.x][location.y], layer)
 
-#Traces rail route to determine which tiles are connected and where the endpoint is
-func recalculateRailRoute():
+# Traces rail route to determine which tiles are connected and where the endpoint is
+# If clearUnderRail is set, it will replace anything that isn't an empty tile underneath the rails with an empty tile
+func recalculateRailRoute(clearUnderRail:bool = false):
 	connectedCells = []
 	var currentPosition:Vector2i = railStartpoint
 	var prev_outgoing = DIR.R
 	while get_cell_atlas_coords(Global.rail_layer, currentPosition) in Global.rail_tiles:
+		if clearUnderRail:
+			if get_cell_atlas_coords(Global.base_layer, currentPosition) not in Global.empty_tiles:
+				set_cell(Global.base_layer, currentPosition, 0, Global.empty)
 		connectedCells.append(currentPosition)
 		changeIncoming(currentPosition, Global.oppositeDir(prev_outgoing))
 		prev_outgoing = outgoingMap[currentPosition.x][currentPosition.y]
@@ -616,7 +624,7 @@ func toggleRailOutput(mousePosition):
 func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 	directionToStartMap = []
 	legalToPlaceRail = false
-	if get_cell_atlas_coords(0, endLoc) not in Global.empty_tiles:
+	if get_cell_atlas_coords(0, endLoc) not in buildOver:
 		return
 	
 	for i in range(mapShape.x):
@@ -636,7 +644,7 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 		for loc in outermostLocations:
 			for dir in DIRS:
 				var nextLoc = Global.stepInDirection(loc, dir)
-				if get_cell_atlas_coords(0, nextLoc) in Global.empty_tiles \
+				if get_cell_atlas_coords(0, nextLoc) in buildOver \
 					and get_cell_atlas_coords(Global.rail_layer, nextLoc) not in Global.rail_tiles \
 					and directionToStartMap[nextLoc.x][nextLoc.y] == null:
 						directionToStartMap[nextLoc.x][nextLoc.y] = [Global.oppositeDir(dir), steps]
@@ -651,7 +659,7 @@ func drawRailLine(startLoc:Vector2i, endLoc:Vector2i, distance:int):
 func addRailLineToMap(startLoc, endLoc, layer):
 	# Prevents a bug where it tries to find a path to start based on old map, when card is clicked
 	if directionToStartMap == []: return 0
-	if get_cell_atlas_coords(0, endLoc) not in Global.empty_tiles:
+	if get_cell_atlas_coords(0, endLoc) not in buildOver:
 		return 0
 		
 	var directionMap = directionToStartMap.duplicate(true)
@@ -717,6 +725,7 @@ func _input(event):
 				directionToStartMap = []
 				numRailToBuild = 0
 				resetPartialRail()
+				buildOver = Global.empty_tiles
 				rail_built.emit(Global.FUNCTION_STATES.Fail)
 		if event.key_label == KEY_ENTER:
 			if event.pressed:
@@ -724,6 +733,9 @@ func _input(event):
 				directionToStartMap = []
 				numRailToBuild = 0
 				partialRailBuilt.clear()
+				buildOver = Global.empty_tiles
+				# Recalculates the rail route and sets anything under the rails to empty
+				recalculateRailRoute(true)
 				rail_built.emit(Global.FUNCTION_STATES.Success)
 		
 	

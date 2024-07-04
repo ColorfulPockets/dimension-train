@@ -67,8 +67,8 @@ func drawMap(currentLocation):
 			var maps = ["Corridor"]
 			match locationName:
 				"Plains":
-					#maps = ["Corridor", "LostTrack"]
-					maps = ["TestTrack"]
+					maps = ["Corridor", "LostTrack"]
+					#maps = ["TestTrack"]
 				"Mountain":
 					maps = ["ManyTracks"]
 				"Forest":

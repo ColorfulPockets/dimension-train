@@ -98,12 +98,17 @@ func Build(cardInfo):
 	
 	numBuilt = cardInfo[Global.CARD_FIELDS.Arguments]["Build"]
 	
-	var discard = await buildRail(numBuilt)
+	var buildOver = Global.empty_tiles
+	
+	if "BuildOver" in cardInfo[Global.CARD_FIELDS.Arguments]:
+		buildOver += cardInfo[Global.CARD_FIELDS.Arguments]["BuildOver"]
+	
+	var discard = await buildRail(numBuilt, buildOver)
 	
 	return discard
 
 # note helper function, not capitalized
-func buildRail(numBuilt):
+func buildRail(numBuilt:int, buildOver:Array):
 	if terrain.useEmergencyRail:
 		middleBarContainer.middleBarText.buildingEmergencyRail()
 	else:
@@ -112,7 +117,7 @@ func buildRail(numBuilt):
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	
 	var discard
-	if terrain.buildRail(numBuilt):
+	if terrain.buildRail(numBuilt, buildOver):
 		discard = await terrain.rail_built
 	else:
 		discard = Global.FUNCTION_STATES.Fail

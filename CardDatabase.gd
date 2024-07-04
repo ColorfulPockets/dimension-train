@@ -145,21 +145,10 @@ var DATA = {
 			fields.Rarity: "Rare",
 			fields.EnergyCost: 2,
 			fields.Type: types.Logistics,
-			fields.Text: "Build 6, even over Trees and Boulders.",
+			fields.Text: "Build 6, even over Trees and Boulders. (Can't build over resources; clears underneath rail)",
 			fields.Function: "Build",
 			fields.MousePointer: load("res://Assets/Icons/Bolster_cursor.png"),
-			fields.Arguments: {"Manufacture": 4, "ManufactureCost": 1, "Build": 6, "BuildOver": [Global.tree, Global.rock]}
-		},
-	"Headlight":
-		{
-			fields.Name: "Headlight",
-			fields.Rarity: "Rare",
-			fields.EnergyCost: 1,
-			fields.Type: types.Technology,
-			fields.Text: "Reveal all.",
-			fields.Function: "Reveal",
-			fields.MousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
-			fields.Arguments: {"Reveal": "All"}
+			fields.Arguments: {"Build": 6, "BuildOver": Global.trees + Global.rocks}
 		},
 	"AutoBuild":
 		{
