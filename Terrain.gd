@@ -191,29 +191,16 @@ func advanceTrain():
 		for i in range(trainLocations.size()):
 			pointsToMoveThrough[i] = []
 		var nextTrainLocations:Array[Vector2i] = []
-		
-		# Some train cars will do something that may avert the emergency.  If so, we will skip the next block
-		var recalcEmergency = false
 			
-		for i in range(trainLocations.size()):
-			if trainSucceeded: continue
-			var trainLocation = trainLocations.pop_front()
+		var recalcEmergency = false
+		var numTrainCars = trainLocations.size()
+		for i in range(numTrainCars):
+			if trainSucceeded or recalcEmergency: continue
+			var trainLocation = trainLocations[0]
 			var trainIncoming = incomingMap[trainLocation.x][trainLocation.y]
 			var trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
 			#var trainType = directionalCellMap[trainLocation.x][trainLocation.y]
 			var nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
-			
-			var enemiesToRemove = []
-			for enemyIndex in range(len(enemies)):
-				var enemy = enemies[enemyIndex]
-				if nextLocation == enemy.cell:
-					enemy.destroy()
-					Stats.removeEmergencyRail(1)
-					enemiesToRemove.append(enemyIndex)
-					enemy.queue_free()
-					
-			for indexIndex in range(len(enemiesToRemove)-1, -1, -1):
-				enemies.remove_at(enemiesToRemove[indexIndex])
 			
 			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
 				Stats.levelCounter += 1
@@ -237,19 +224,28 @@ func advanceTrain():
 				PLAYSPACE.levelComplete.emit()
 				trainSucceeded = true
 				continue
-			
+				
+			# Some train cars will do something that may avert the emergency.  If so, we will skip the next block
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
 			if not emergencyTrackUsed and get_cell_atlas_coords(Global.rail_layer, nextLocation) not in Global.rail_tiles:
-				for trainCar in trainCars:
-					if TrainCar.TYPE.EMERGENCY in trainCar.types:
-						if trainCar.onEmergency():
-							recalcEmergency = true
-							break
+				if "AutoBuild" in Stats.powersInPlay and Stats.railCount > 0:
+					if get_cell_atlas_coords(Global.base_layer, nextLocation) in Global.empty_tiles:
+						set_cell_directional(nextLocation, Global.DIRECTIONAL_TILES.RAIL, Global.oppositeDir(trainOutgoing), trainOutgoing, Global.rail_layer)
+						Stats.railCount -= 1
+						recalcEmergency = true
+				
+				if not recalcEmergency:
+					for trainCar in trainCars:
+						if TrainCar.TYPE.EMERGENCY in trainCar.types:
+							if trainCar.onEmergency():
+								recalcEmergency = true
+								break
+				
 				if not recalcEmergency:
 					useEmergencyRail = true
 					Global.cardFunctionStarted.emit()
 					#Calling through cardFunctions because that displays the text
-					cardFunctions.buildRail(Stats.trainSpeed - stepNumber)
+					cardFunctions.buildRail(Stats.trainSpeed - stepNumber, Global.empty_tiles)
 					await rail_built
 					Global.cardFunctionEnded.emit()
 					trainOutgoing = outgoingMap[trainLocation.x][trainLocation.y]
@@ -259,13 +255,24 @@ func advanceTrain():
 					emergencyTrackUsed = true
 			
 			if recalcEmergency: 
-				nextTrainLocations.append(trainLocation)
 				continue
 			
 			if get_cell_atlas_coords(Global.rail_layer, nextLocation) not in Global.rail_tiles:
 				print("TRAIN CRASHED")
 				trainCrashed = true
 				return
+			
+			var enemiesToRemove = []
+			for enemyIndex in range(len(enemies)):
+				var enemy = enemies[enemyIndex]
+				if nextLocation == enemy.cell:
+					enemy.destroy()
+					Stats.removeEmergencyRail(1)
+					enemiesToRemove.append(enemyIndex)
+					enemy.queue_free()
+					
+			for indexIndex in range(len(enemiesToRemove)-1, -1, -1):
+				enemies.remove_at(enemiesToRemove[indexIndex])
 			
 			# If there is something that can be collected near the train, but not in front, collect it
 			match outgoingMap[nextLocation.x][nextLocation.y]:
@@ -314,14 +321,13 @@ func advanceTrain():
 			for _i in range(NUM_ANIMATION_POINTS / 2):
 				pointsToMoveThrough[i].append(secondCurve[_i])
 			
+			trainLocations.pop_front()
 			nextTrainLocations.append(nextLocation)
 	
-		if not trainSucceeded:
+		if not (trainSucceeded or recalcEmergency):
 			trainLocations = nextTrainLocations
 			await moveTrainCarsAlongPoints(pointsToMoveThrough, 1.0)
-		
-		
-		stepNumber += 1
+			stepNumber += 1
 	
 	Stats.turnCounter += 1
 	Stats.resetTrainSpeed()

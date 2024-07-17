@@ -107,6 +107,10 @@ func Build(cardInfo):
 	
 	return discard
 
+func AutoBuild(_cardInfo):
+	Stats.powersInPlay.append("AutoBuild")
+	return Global.FUNCTION_STATES.Success
+
 # note helper function, not capitalized
 func buildRail(numBuilt:int, buildOver:Array):
 	if terrain.useEmergencyRail:

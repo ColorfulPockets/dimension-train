@@ -24,7 +24,7 @@ func removeEmergencyRail(num:int):
 		emergencyRailCount -= num
 
 var railCount = 0
-var starterRail = 20
+var starterRail = 7
 var coinCount = 0
 
 var startingTrainSpeed = 0
@@ -38,9 +38,11 @@ var maxEnergy = 3
 
 var collectRadius = 1
 
-var startingDeckNames = ["Levitate", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
+var startingDeckNames = ["AutoBuild", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
 var rareChance = 0.1
+
+var powersInPlay = []
 
 var current_playspace
 
@@ -55,6 +57,7 @@ func startLevel():
 	woodCount = starterWoodCount
 	metalCount = starterMetalCount
 	currentEnergy = maxEnergy
+	powersInPlay = []
 	
 
 func _ready():
