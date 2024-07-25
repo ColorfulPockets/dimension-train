@@ -108,8 +108,22 @@ func Build(cardInfo):
 	return discard
 
 func AutoBuild(_cardInfo):
-	Stats.powersInPlay.append("AutoBuild")
-	return Global.FUNCTION_STATES.Success
+	if Stats.confirmCardClicks:
+		middleBarContainer.setText("Enable Autobuild\n(Enter to confirm, Esc to cancel)")
+		middleBarContainer.visible = true
+		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+		
+		var confirmed = await confirmation
+		
+		middleBarContainer.visible = false
+		
+		if confirmed == Global.FUNCTION_STATES.Success:
+			Stats.powersInPlay.append("AutoBuild")
+			
+		return confirmed
+	else:
+		Stats.powersInPlay.append("AutoBuild")
+		return Global.FUNCTION_STATES.Success
 
 # note helper function, not capitalized
 func buildRail(numBuilt:int, buildOver:Array):
@@ -215,22 +229,29 @@ func Factory(cardInfo):
 func Slow(cardInfo):
 	terrain.clearHighlights()
 	
+	if Stats.trainSpeed <= 0:
+		return Global.FUNCTION_STATES.Fail
+	
 	var amountSlowed
 
 	amountSlowed = cardInfo[Global.CARD_FIELDS.Arguments]["Slow"]
 	
-	middleBarContainer.setText("Temporarily reduce train speed to " + str(max(0, Stats.trainSpeed - amountSlowed)) + "\n(Enter to confirm, Esc to cancel)")
-	middleBarContainer.visible = true
-	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-	
-	var confirmed = await confirmation
-	
-	middleBarContainer.visible = false
-	
-	if confirmed == Global.FUNCTION_STATES.Success:
-		Stats.trainSpeed = max(0, Stats.trainSpeed - amountSlowed)
+	if Stats.confirmCardClicks:
+		middleBarContainer.setText("Temporarily reduce train speed to " + str(max(0, Stats.trainSpeed - amountSlowed)) + "\n(Enter to confirm, Esc to cancel)")
+		middleBarContainer.visible = true
+		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 		
-	return confirmed
+		var confirmed = await confirmation
+		
+		middleBarContainer.visible = false
+		
+		if confirmed == Global.FUNCTION_STATES.Success:
+			Stats.trainSpeed = max(0, Stats.trainSpeed - amountSlowed)
+			
+		return confirmed
+	else:
+		Stats.trainSpeed = max(0, Stats.trainSpeed - amountSlowed)
+		return Global.FUNCTION_STATES.Success
 
 func Gust(cardInfo):
 	middleBarContainer.visible = true
@@ -268,6 +289,19 @@ func Draw(cardInfo):
 	
 	return Global.FUNCTION_STATES.Success
 
+#Current best template for simple effect
+func Brake(cardInfo):
+	terrain.clearHighlights()
+	
+	var amountBraked = cardInfo[Global.CARD_FIELDS.Arguments]["Brake"]
+	
+	var confirmed = await confirmIfEnabled("Brake " + str(amountBraked))
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.trainSpeed = max(0, Stats.trainSpeed - amountBraked)
+		
+	return confirmed
+
 func Bridge(_cardInfo):
 	middleBarContainer.visible = true
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
@@ -291,6 +325,47 @@ func Bridge(_cardInfo):
 	
 	middleBarContainer.visible = false
 	return discard
+
+func Magnet(_cardInfo):
+	if Stats.confirmCardClicks:
+		middleBarContainer.setText("Increase pickup range to " + str(Stats.collectRadius + 1) + "\n(Enter to confirm, Esc to cancel)")
+		middleBarContainer.visible = true
+		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+		
+		var confirmed = await confirmation
+		
+		middleBarContainer.visible = false
+		
+		if confirmed == Global.FUNCTION_STATES.Success:
+			Stats.collectRadius += 1
+			Stats.powersInPlay += ["Magnet"]
+			
+		return confirmed
+	
+	else:
+		Stats.collectRadius += 1
+		Stats.powersInPlay += "Magnet"
+		return Global.FUNCTION_STATES.Success
+
+func confirmIfEnabled(text:String):
+	var confirmed
+	if Stats.confirmCardClicks:
+		confirmed = await middleBarConfirmation(text)
+	else:
+		confirmed = Global.FUNCTION_STATES.Success
+		
+	return confirmed
+
+func middleBarConfirmation(text:String):
+	middleBarContainer.setText(text + "\n(Enter to confirm, Esc to cancel)")
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	
+	var confirmed = await confirmation
+	
+	middleBarContainer.visible = false
+	
+	return confirmed
 
 func _input(event):
 	if event is InputEventKey:

@@ -100,7 +100,7 @@ var DATA = {
 			fields.Rarity: "Common",
 			fields.EnergyCost: 1,
 			fields.Type: types.Logistics,
-			fields.Text: "Bridge 1",
+			fields.Text: "Bridge 1x1",
 			fields.TargetArea: Vector2i(1,1),
 			fields.Function: "Bridge",
 			fields.MousePointer: load("res://Assets/Icons/Bridge_mouse.png"),
@@ -159,5 +159,26 @@ var DATA = {
 			fields.Text: "Whenever you reach the end of the track with speed remaining, place a rail in a straight line.",
 			fields.Function: "AutoBuild",
 			fields.MousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
+		},
+	"Magnet":
+		{
+			fields.Name: "Magnet",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: types.Technology,
+			fields.Text: "Increases pickup range by 1",
+			fields.Function: "Magnet",
+			fields.MousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
+		},
+	"Brake":
+		{
+			fields.Name: "Brake",
+			fields.Rarity: "Common",
+			fields.EnergyCost: 1,
+			fields.Type: types.Logistics,
+			fields.Text: "Reduce speed this turn by 3",
+			fields.Function: "Brake",
+			fields.MousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
+			fields.Arguments: {"Brake": 3}
 		},
 }

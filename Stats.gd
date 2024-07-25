@@ -2,6 +2,8 @@ extends Node
 
 const CardBase = preload("res://Cards/CardBase.tscn")
 
+var confirmCardClicks = true
+
 var levelCounter = 0
 
 var woodCount = 0
@@ -37,8 +39,9 @@ var currentEnergy = 3
 var maxEnergy = 3
 
 var collectRadius = 1
+var startingCollectRadius = 1
 
-var startingDeckNames = ["AutoBuild", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
+var startingDeckNames = ["Brake", "Magnet", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
 var rareChance = 0.1
 
@@ -58,6 +61,7 @@ func startLevel():
 	metalCount = starterMetalCount
 	currentEnergy = maxEnergy
 	powersInPlay = []
+	collectRadius = startingCollectRadius
 	
 
 func _ready():
