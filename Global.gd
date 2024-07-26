@@ -29,6 +29,7 @@ const DECK_POSITION = Vector2(3570,50)
 const END_TURN_BUTTON_POSITION = Vector2(3470,1350)
 const ENERGY_DISPLAY_POSITION = Vector2(400,1350)
 const SPEED_CONTAINER_POSITION = Vector2(3450, 150)
+const POWER_POSITION = Vector2(3840/2, 2160/2)
 
 const VIEWPORT_SIZE = Vector2(3840, 2160)
 
@@ -90,9 +91,10 @@ enum CARD_STATES {
 	FocusOtherInHand,
 	InOverlay,
 	InDeck,
+	InPower,
 }
 
-enum FUNCTION_STATES {Waiting, Success, Fail}
+enum FUNCTION_STATES {Waiting, Success, Fail, Power}
 
 var flipH = TileSetAtlasSource.TRANSFORM_FLIP_H
 var flipV = TileSetAtlasSource.TRANSFORM_FLIP_V

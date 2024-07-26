@@ -119,11 +119,12 @@ func AutoBuild(_cardInfo):
 		
 		if confirmed == Global.FUNCTION_STATES.Success:
 			Stats.powersInPlay.append("AutoBuild")
+			confirmed = Global.FUNCTION_STATES.Power
 			
 		return confirmed
 	else:
 		Stats.powersInPlay.append("AutoBuild")
-		return Global.FUNCTION_STATES.Success
+		return Global.FUNCTION_STATES.Power
 
 # note helper function, not capitalized
 func buildRail(numBuilt:int, buildOver:Array):
@@ -339,13 +340,13 @@ func Magnet(_cardInfo):
 		if confirmed == Global.FUNCTION_STATES.Success:
 			Stats.collectRadius += 1
 			Stats.powersInPlay += ["Magnet"]
-			
+			confirmed = Global.FUNCTION_STATES.Power
 		return confirmed
 	
 	else:
 		Stats.collectRadius += 1
 		Stats.powersInPlay += "Magnet"
-		return Global.FUNCTION_STATES.Success
+		return Global.FUNCTION_STATES.Power
 
 func confirmIfEnabled(text:String):
 	var confirmed

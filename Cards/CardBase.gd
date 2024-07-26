@@ -25,6 +25,7 @@ var startpos = Vector2()
 var targetpos = Vector2()
 var startrot = 0
 var targetrot = 0
+var startA = 1.0
 var startscale = Vector2()
 var targetscale = Vector2()
 var focuspos = Vector2()
@@ -162,6 +163,13 @@ func discard():
 	out_of_place = true
 	moveTime = DRAWTIME
 	state = states.InDiscardPile
+
+func playAsPower():
+	resetCurrentPosition()
+	$HighlightBorder.visible = false
+	out_of_place = true
+	moveTime = DRAWTIME
+	state = states.InPower
 	
 func moveToDrawPile():
 	resetCurrentPosition()
@@ -261,6 +269,23 @@ func _process(delta):
 				visible = false
 				out_of_place = false
 				currentPositionSet = false
+		states.InPower:
+			z_index = 0
+			if t <= 1 and out_of_place:
+				position = startpos.lerp(Global.POWER_POSITION, t)
+				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
+				scale = startscale.lerp(Vector2.ONE, t)
+				modulate.a = startA + (0.0 - startA)*t
+				t += delta/float(moveTime)
+			else:
+				t = 0
+				position = Global.POWER_POSITION
+				rotation = DISCARD_PILE_ROTATION
+				scale = Vector2.ONE
+				visible = false
+				out_of_place = false
+				currentPositionSet = false
+				queue_free()
 		states.InHand:
 			visible = true
 			z_index = index

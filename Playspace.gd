@@ -143,6 +143,9 @@ func cardPressed(index, cardPosition, pointer):
 		if discard_card == Global.FUNCTION_STATES.Success:
 			Stats.currentEnergy -= cardHeldPointer.CardInfo[Global.CARD_FIELDS.EnergyCost]
 			cardDiscarded(cardHeldIndex)
+		elif discard_card == Global.FUNCTION_STATES.Power:
+			Stats.currentEnergy -= cardHeldPointer.CardInfo[Global.CARD_FIELDS.EnergyCost]
+			cardPlayedAsPower(cardHeldIndex)
 		else:	
 			cardReleased(cardHeldIndex)
 		
@@ -184,6 +187,30 @@ func cardDiscarded(index):
 		cardsInHand[i].index = i
 	
 	card_discarded.mousedOver = false
+	
+	cardHeldPointer = null
+	cardHeldIndex = -1
+		
+func cardPlayedAsPower(index):
+	$Terrain.clearHighlights()
+	for i in range(cardsInHand.size()):
+		cardsInHand[i].other_card_pressed = false
+		cardsInHand[i].card_pressed = false
+		# mouseExited makes sure the card is unfocused and returns to hand
+		cardsInHand[i].mouseExited(true)
+		cardsInHand[i].manualFocusRetrigger()
+		if i < index:
+			cardsInHand[i].ellipseAngle += deg_to_rad(5)
+		elif i > index:
+			cardsInHand[i].ellipseAngle -= deg_to_rad(5)
+		
+		cardsInHand[i].reorganize()
+	var card_discarded = cardsInHand.pop_at(index)
+	card_discarded.index = discardPileIndexCounter
+	card_discarded.playAsPower()
+	angle -= deg_to_rad(5)
+	for i in range(cardsInHand.size()):
+		cardsInHand[i].index = i
 	
 	cardHeldPointer = null
 	cardHeldIndex = -1
