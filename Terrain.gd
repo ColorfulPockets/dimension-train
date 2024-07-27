@@ -277,20 +277,20 @@ func advanceTrain():
 			# If there is something that can be collected near the train, but not in front, collect it
 			match outgoingMap[nextLocation.x][nextLocation.y]:
 				Global.DIR.U:
-					for x in range(-Stats.collectRadius, Stats.collectRadius + 1):
-						for y in range(0, Stats.collectRadius + 1):
+					for x in range(-Stats.pickupRange, Stats.pickupRange + 1):
+						for y in range(0, Stats.pickupRange + 1):
 							collect(nextLocation + Vector2i(x, y))
 				Global.DIR.D:
-					for x in range(-Stats.collectRadius, Stats.collectRadius + 1):
-						for y in range(-Stats.collectRadius, 1):
+					for x in range(-Stats.pickupRange, Stats.pickupRange + 1):
+						for y in range(-Stats.pickupRange, 1):
 							collect(nextLocation + Vector2i(x, y))
 				Global.DIR.R:
-					for x in range(-Stats.collectRadius, 1):
-						for y in range(-Stats.collectRadius, Stats.collectRadius + 1):
+					for x in range(-Stats.pickupRange, 1):
+						for y in range(-Stats.pickupRange, Stats.pickupRange + 1):
 							collect(nextLocation + Vector2i(x, y))
 				Global.DIR.L:
-					for x in range(0, Stats.collectRadius + 1):
-						for y in range(-Stats.collectRadius, Stats.collectRadius + 1):
+					for x in range(0, Stats.pickupRange + 1):
+						for y in range(-Stats.pickupRange, Stats.pickupRange + 1):
 							collect(nextLocation + Vector2i(x, y))
 					
 			

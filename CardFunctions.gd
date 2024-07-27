@@ -329,7 +329,7 @@ func Bridge(_cardInfo):
 
 func Magnet(_cardInfo):
 	if Stats.confirmCardClicks:
-		middleBarContainer.setText("Increase pickup range to " + str(Stats.collectRadius + 1) + "\n(Enter to confirm, Esc to cancel)")
+		middleBarContainer.setText("Increase pickup range to " + str(Stats.pickupRange + 1) + "\n(Enter to confirm, Esc to cancel)")
 		middleBarContainer.visible = true
 		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 		
@@ -338,13 +338,13 @@ func Magnet(_cardInfo):
 		middleBarContainer.visible = false
 		
 		if confirmed == Global.FUNCTION_STATES.Success:
-			Stats.collectRadius += 1
+			Stats.pickupRange += 1
 			Stats.powersInPlay += ["Magnet"]
 			confirmed = Global.FUNCTION_STATES.Power
 		return confirmed
 	
 	else:
-		Stats.collectRadius += 1
+		Stats.pickupRange += 1
 		Stats.powersInPlay += "Magnet"
 		return Global.FUNCTION_STATES.Power
 

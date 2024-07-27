@@ -55,7 +55,7 @@ func onGain():
 		"Cargo Car":
 			Stats.erc += 3
 		"Magnet Car":
-			Stats.startingCollectRadius += 1
+			Stats.startingPickupRange += 1
 
 var brakeUsed = false
 

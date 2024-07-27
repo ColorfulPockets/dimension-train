@@ -38,8 +38,8 @@ func resetTrainSpeed():
 var currentEnergy = 3
 var maxEnergy = 3
 
-var collectRadius = 1
-var startingCollectRadius = 1
+var pickupRange = 1
+var startingPickupRange = 1
 
 var startingDeckNames = ["Brake", "Magnet", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
@@ -61,7 +61,7 @@ func startLevel():
 	metalCount = starterMetalCount
 	currentEnergy = maxEnergy
 	powersInPlay = []
-	collectRadius = startingCollectRadius
+	pickupRange = startingPickupRange
 	
 
 func _ready():
