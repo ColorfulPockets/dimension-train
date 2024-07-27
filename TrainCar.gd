@@ -16,12 +16,13 @@ var types: Array[TYPE]
 var rarity: RARITY
 
 const COMMON_CARS = ["Cargo Car", "Brake Car"]
-const UNCOMMON_CARS = []
+const UNCOMMON_CARS = ["Magnet Car"]
 const ALL_CARS = COMMON_CARS + UNCOMMON_CARS
 
 static var TOOLTIP_TEXT = {
 	"Cargo Car": "+" + str(CARGO_CAR_VAL) + " ERC",
 	"Brake Car": "Each level, the first time you would need to use emergency rail, set speed to 0 instead.",
+	"Magnet Car": "+1 Pickup Range",
 }
 
 func _init(carName):
@@ -45,11 +46,16 @@ func _init(carName):
 		"Brake Car":
 			types = [TYPE.EMERGENCY]
 			rarity = RARITY.COMMON
+		"Magnet Car":
+			types = [TYPE.ONESHOT]
+			rarity = RARITY.UNCOMMON
 
 func onGain():
 	match carName:
 		"Cargo Car":
 			Stats.erc += 3
+		"Magnet Car":
+			Stats.startingCollectRadius += 1
 
 var brakeUsed = false
 
