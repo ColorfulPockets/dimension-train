@@ -62,7 +62,13 @@ func takeActions() -> Array[Array]:
 	return [[]]
 
 # Called when the train runs over the enemy
-func destroy():
+# Collision is true if the train collided with the enemy to kill it
+func destroy(collision:bool):
+	if collision:
+		Stats.removeEmergencyRail(1)
+	if "Recycle" in Stats.powersInPlay:
+		Stats.addEmergencyRail(2)
+		
 	match enemyName:
 		"Corrupt Slug":
 			pass

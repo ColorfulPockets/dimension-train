@@ -181,4 +181,14 @@ var DATA = {
 			fields.MousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
 			fields.Arguments: {"Brake": 3}
 		},
-}
+	"Recycle":
+		{
+			fields.Name: "Recycle",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: types.Technology,
+			fields.Text: "Each time you destroy an enemy, +2 ER",
+			fields.Function: "Recycle",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
+}	

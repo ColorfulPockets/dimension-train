@@ -11,7 +11,7 @@ var starterWoodCount = 0
 var metalCount = 0
 var starterMetalCount = 0
 var emergencyRailCount = 20
-var erc = 20
+var erc = 30
 
 func addEmergencyRail(num:int): 
 	if emergencyRailCount + num <= erc:
@@ -26,7 +26,7 @@ func removeEmergencyRail(num:int):
 		emergencyRailCount -= num
 
 var railCount = 0
-var starterRail = 7
+var starterRail = 20
 var coinCount = 0
 
 var startingTrainSpeed = 0
@@ -41,7 +41,7 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Brake", "Magnet", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
+var startingDeckNames = ["Recycle", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
 var rareChance = 0.1
 

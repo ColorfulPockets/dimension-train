@@ -266,8 +266,7 @@ func advanceTrain():
 			for enemyIndex in range(len(enemies)):
 				var enemy = enemies[enemyIndex]
 				if nextLocation == enemy.cell:
-					enemy.destroy()
-					Stats.removeEmergencyRail(1)
+					enemy.destroy(true)
 					enemiesToRemove.append(enemyIndex)
 					enemy.queue_free()
 					

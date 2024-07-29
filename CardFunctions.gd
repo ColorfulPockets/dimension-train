@@ -348,6 +348,17 @@ func Magnet(_cardInfo):
 		Stats.powersInPlay += "Magnet"
 		return Global.FUNCTION_STATES.Power
 
+func Recycle(_cardInfo):
+	terrain.clearHighlights()
+	
+	var confirmed = await confirmIfEnabled("Recycle enemies for 2 ER")
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.powersInPlay.append("Recycle")
+		confirmed = Global.FUNCTION_STATES.Power
+		
+	return confirmed
+
 func confirmIfEnabled(text:String):
 	var confirmed
 	if Stats.confirmCardClicks:
