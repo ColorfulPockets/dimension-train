@@ -78,6 +78,8 @@ func Gather(_cardInfo):
 		return discard
 		
 	discard = Global.FUNCTION_STATES.Fail
+	var startingWoodCount = Stats.woodCount
+	var startingMetalCount = Stats.metalCount
 	for tile in terrain.highlighted_cells:
 		if terrain.get_cell_atlas_coords(0,tile) == Global.wood:
 			terrain.set_cell(0, tile, 0, Global.empty)
@@ -87,6 +89,14 @@ func Gather(_cardInfo):
 			terrain.set_cell(0, tile, 0, Global.empty)
 			Stats.metalCount += 1
 			discard = Global.FUNCTION_STATES.Success
+	
+	if "Fusion Car" in Stats.trainCars:
+		if (Stats.woodCount > startingWoodCount) and (Stats.metalCount > startingMetalCount):
+			if randi_range(0,1) == 0:
+				Stats.woodCount += 1
+			else:
+				Stats.metalCount += 1
+		
 	
 	terrain.targeting = false
 	

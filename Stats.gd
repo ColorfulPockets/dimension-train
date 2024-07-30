@@ -52,7 +52,7 @@ var current_playspace
 func set_playspace(playspace):
 	current_playspace = playspace
 	
-var trainCars = ["Cargo Car", "Brake Car", "Magnet Car"]
+var trainCars = ["Cargo Car", "Brake Car", "Magnet Car", "Fusion Car"]
 
 func startLevel():
 	turnCounter = 0

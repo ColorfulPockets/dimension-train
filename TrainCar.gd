@@ -4,7 +4,7 @@ const CARGO_CAR_VAL = 3
 
 @onready var FIXED_ELEMENTS = $"../../FixedElements"
 
-enum TYPE {ONESHOT, STARTLEVEL, STARTTURN, ENDTURN, ENDLEVEL, TRAINMOVEMENT, EMERGENCY}
+enum TYPE {ONESHOT, STARTLEVEL, STARTTURN, ENDTURN, ENDLEVEL, TRAINMOVEMENT, EMERGENCY, OTHER}
 enum RARITY {COMMON, UNCOMMON, RARE, BOSS, STARTER}
 
 var mouseIn:bool = false
@@ -23,6 +23,7 @@ static var TOOLTIP_TEXT = {
 	"Cargo Car": "+" + str(CARGO_CAR_VAL) + " ERC",
 	"Brake Car": "Each level, the first time you would need to use emergency rail, set speed to 0 instead.",
 	"Magnet Car": "+1 Pickup Range",
+	"Fusion Car": "Each time you Gather, if you collect at least one wood and at least one metal, gain an extra random material.",
 }
 
 func _init(carName):
@@ -49,6 +50,9 @@ func _init(carName):
 		"Magnet Car":
 			types = [TYPE.ONESHOT]
 			rarity = RARITY.UNCOMMON
+		"Fusion Car":
+			types = [TYPE.OTHER]
+			rarity = RARITY.COMMON
 
 func onGain():
 	match carName:
