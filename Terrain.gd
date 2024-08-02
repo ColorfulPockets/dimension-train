@@ -429,9 +429,17 @@ func screenPositionToMapPosition(screenPosition):
 func mapPositionToScreenPosition(mapPosition:Vector2i):
 	return map_to_local(mapPosition)*scale - fixedElements.position
 
+# These are useful for powers that need to expand on the area that was previously highlighted
+var lastHighlightedMousePosition
+var lastHighlightedTargetArea:Vector2i
+var pseudoHighlightedCells
+
 # Draws the highlight and updates which cells are highlighted
 func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 	clearHighlights()
+	
+	lastHighlightedMousePosition = mousePosition
+	lastHighlightedTargetArea = targetArea
 
 	var currently_highlighted_tiles:Array[Vector2i] = []
 			
@@ -484,6 +492,8 @@ func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 	if not containsOutOfBoundsCell:
 		highlighted_cells = currently_highlighted_tiles
 		drawHighlights(highlighted_cells)
+	
+	pseudoHighlightedCells = currently_highlighted_tiles
 
 func drawHighlights(highlightedCells):
 	for highlightedCell in highlightedCells:

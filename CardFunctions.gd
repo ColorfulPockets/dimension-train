@@ -21,6 +21,7 @@ func Chop(_cardInfo):
 		return discard
 	
 	discard = Global.FUNCTION_STATES.Fail
+
 	for tile in terrain.highlighted_cells:
 		if terrain.get_cell_atlas_coords(0,tile) == Global.tree:
 			terrain.set_cell(0, tile, 0, Global.wood)
@@ -29,12 +30,21 @@ func Chop(_cardInfo):
 			terrain.set_cell(0, tile, 0, Global.wood)
 			Stats.removeEmergencyRail(1)
 			discard = Global.FUNCTION_STATES.Success
-	
+			
+	if "Swarm" in Stats.powersInPlay and discard == Global.FUNCTION_STATES.Success:
+		terrain.highlightCells(terrain.lastHighlightedMousePosition, terrain.lastHighlightedTargetArea + Vector2i(2,2))
+		emptyHighlighted()
 	terrain.targeting = false
 
 	middleBarContainer.visible = false
 
 	return discard
+
+#Replaces all harvestables in pseudohighlighted area with empty tiles
+func emptyHighlighted():
+	for tile in terrain.pseudoHighlightedCells:
+		if terrain.get_cell_atlas_coords(0,tile) in Global.harvestable_tiles:
+			terrain.set_cell(0, tile, 0, Global.empty)
 
 func Mine(_cardInfo):
 	middleBarContainer.visible = true
@@ -58,6 +68,10 @@ func Mine(_cardInfo):
 			terrain.set_cell(0, tile, 0, Global.metal)
 			Stats.removeEmergencyRail(1)
 			discard = Global.FUNCTION_STATES.Success
+	
+	if "Swarm" in Stats.powersInPlay and discard == Global.FUNCTION_STATES.Success:
+		terrain.highlightCells(terrain.lastHighlightedMousePosition, terrain.lastHighlightedTargetArea + Vector2i(2,2))
+		emptyHighlighted()
 	
 	terrain.targeting = false
 	
@@ -365,6 +379,17 @@ func Recycle(_cardInfo):
 		
 	if confirmed == Global.FUNCTION_STATES.Success:
 		Stats.powersInPlay.append("Recycle")
+		confirmed = Global.FUNCTION_STATES.Power
+		
+	return confirmed
+
+func Swarm(_cardInfo):
+	terrain.clearHighlights()
+	
+	var confirmed = await confirmIfEnabled("Clear around Chops and Mines")
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.powersInPlay.append("Swarm")
 		confirmed = Global.FUNCTION_STATES.Power
 		
 	return confirmed

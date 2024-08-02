@@ -41,6 +41,7 @@ const trees = [tree, corrupt_tree]
 const rock = Vector2i(0,3)
 const corrupt_rock = Vector2i(1,3)
 const rocks = [rock, corrupt_rock]
+const harvestable_tiles = rocks + trees
 const empty = Vector2i(0,0)
 const bridge = Vector2i(5,6)
 const highlight = Vector2i(2,4)

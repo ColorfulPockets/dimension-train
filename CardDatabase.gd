@@ -191,4 +191,14 @@ var DATA = {
 			fields.Function: "Recycle",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
+	"Swarm":
+		{
+			fields.Name: "Swarm",
+			fields.Rarity: "Rare",
+			fields.EnergyCost: 3,
+			fields.Type: types.Technology,
+			fields.Text: "Whenever you Chop or Mine, Clear the surrounding area.",
+			fields.Function: "Swarm",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
 }	
