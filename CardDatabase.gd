@@ -231,4 +231,15 @@ var DATA = {
 			fields.Function: "Turbo",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
-}	
+	"Skim":
+		{
+			fields.Name: "Skim",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Draw 3 cards.",
+			fields.Function: "Draw",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+			fields.Arguments: {"Draw": 3}
+		},
+}

@@ -329,7 +329,7 @@ func Gust(cardInfo):
 		if terrain.get_cell_atlas_coords(0,tile) == Global.tree:
 			terrain.set_cell(0, tile, 0, Global.wood)
 	
-	Draw(cardInfo)
+	Draw(cardInfo, false)
 	
 	terrain.targeting = false
 
@@ -337,18 +337,24 @@ func Gust(cardInfo):
 
 	return Global.FUNCTION_STATES.Success
 
-func Draw(cardInfo):
+func Draw(cardInfo, displayConfirmation:bool = true):
 	terrain.clearHighlights()
 	
 	var amountDrawn
 
 	amountDrawn = cardInfo[Global.CARD_FIELDS.Arguments]["Draw"]
 	
-	while PLAYSPACE.cardsInHand.size() < PLAYSPACE.HAND_LIMIT - 1 and amountDrawn > 0:
-		await PLAYSPACE.drawCardFromDeck()
-		amountDrawn -= 1
+	var confirmed = Global.FUNCTION_STATES.Success
 	
-	return Global.FUNCTION_STATES.Success
+	if displayConfirmation:
+		confirmed = await confirmIfEnabled("Draw " + str(amountDrawn) + " cards.")
+	
+	if confirmed == Global.FUNCTION_STATES.Success:
+		while PLAYSPACE.cardsInHand.size() < PLAYSPACE.HAND_LIMIT - 1 and amountDrawn > 0:
+			await PLAYSPACE.drawCardFromDeck()
+			amountDrawn -= 1
+		
+	return confirmed
 
 #Current best template for simple effect
 func Brake(cardInfo):
