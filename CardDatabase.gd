@@ -215,10 +215,20 @@ var DATA = {
 		{
 			fields.Name: "AutoManufacture",
 			fields.Rarity: "Rare",
-			fields.EnergyCost: 2,
+			fields.EnergyCost: 3,
 			fields.Type: Global.CARD_TYPES.Technology,
 			fields.Text: "Each time you play a card, Manufacture 2.",
 			fields.Function: "AutoManufacture",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
+	"Turbo":
+		{
+			fields.Name: "Turbo",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Remove all rails, then gain energy equal to the number of rails removed.",
+			fields.Function: "Turbo",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
 }	

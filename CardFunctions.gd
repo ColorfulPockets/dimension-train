@@ -441,6 +441,19 @@ func AutoManufacture(_cardInfo):
 		
 	return confirmed
 
+#Current best template for simple effect
+func Turbo(_cardInfo):
+	terrain.clearHighlights()
+	
+	var confirmed = await confirmIfEnabled("Convert all rails to energy")
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.currentEnergy += Stats.railCount
+		Stats.railCount = 0
+		
+	return confirmed
+
+
 func confirmIfEnabled(text:String):
 	var confirmed
 	if Stats.confirmCardClicks:
