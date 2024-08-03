@@ -137,9 +137,10 @@ func cardPressed(index, cardPosition, pointer):
 			
 		var discard_card = Global.FUNCTION_STATES.Waiting
 		while discard_card == Global.FUNCTION_STATES.Waiting:
-			
 			discard_card = await Callable(cardFunctions, cardHeldPointer.CardInfo[Global.CARD_FIELDS.Function]).call(cardHeldPointer.CardInfo)
 			
+		if ("AutoManufacture" in Stats.powersInPlay) and (discard_card == Global.FUNCTION_STATES.Success or discard_card == Global.FUNCTION_STATES.Power):
+			cardFunctions.Manufacture({Global.CARD_FIELDS.Arguments: {"Manufacture": 2}}, false)
 		if discard_card == Global.FUNCTION_STATES.Success:
 			Stats.currentEnergy -= cardHeldPointer.CardInfo[Global.CARD_FIELDS.EnergyCost]
 			cardDiscarded(cardHeldIndex)

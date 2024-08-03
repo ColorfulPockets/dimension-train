@@ -202,27 +202,30 @@ func buildRail(numBuilt:int, buildOver:Array):
 	
 	return discard
 	
-func Manufacture(cardInfo):
+func Manufacture(cardInfo:Dictionary, displayConfirmation:bool = true):
 	terrain.clearHighlights()
 	var numManufactured
-
+	var confirmed
+	
 	numManufactured = cardInfo[Global.CARD_FIELDS.Arguments]["Manufacture"]
 	
-	middleBarContainer.setText("Manufacture " + str(min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)) + " rails.\n(Enter to confirm, Esc to cancel)")
-	middleBarContainer.visible = true
-	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	if displayConfirmation:
+		
+		middleBarContainer.setText("Manufacture " + str(min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)) + " rails.\n(Enter to confirm, Esc to cancel)")
+		middleBarContainer.visible = true
+		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+		
+		confirmed = await confirmation
+		
+		middleBarContainer.visible = false
 	
-	var confirmed = await confirmation
-	
-	middleBarContainer.visible = false
-	
-	if confirmed == Global.FUNCTION_STATES.Success:
+	if confirmed == Global.FUNCTION_STATES.Success or !displayConfirmation:
 		var num_to_manufacture = min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)
 		for i in range(int(num_to_manufacture/2)):
 			Stats.woodCount -= 1
 			Stats.metalCount -= 1
 			Stats.railCount += 2
-			
+
 	return confirmed
 
 func Factory(cardInfo):
@@ -423,6 +426,17 @@ func Swarm(_cardInfo):
 		
 	if confirmed == Global.FUNCTION_STATES.Success:
 		Stats.powersInPlay.append("Swarm")
+		confirmed = Global.FUNCTION_STATES.Power
+		
+	return confirmed
+
+func AutoManufacture(_cardInfo):
+	terrain.clearHighlights()
+	
+	var confirmed = await confirmIfEnabled("AutoManufacture")
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.powersInPlay.append("AutoManufacture")
 		confirmed = Global.FUNCTION_STATES.Power
 		
 	return confirmed

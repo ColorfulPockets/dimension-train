@@ -211,4 +211,14 @@ var DATA = {
 			fields.TargetArea: Vector2i(2,2),
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
+	"AutoManufacture":
+		{
+			fields.Name: "AutoManufacture",
+			fields.Rarity: "Rare",
+			fields.EnergyCost: 2,
+			fields.Type: Global.CARD_TYPES.Technology,
+			fields.Text: "Each time you play a card, Manufacture 2.",
+			fields.Function: "AutoManufacture",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
 }	
