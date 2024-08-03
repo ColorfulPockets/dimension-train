@@ -41,13 +41,13 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Skim", "Gust", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
+var startingDeckNames = ["Swarm", "Gust", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
 var rareChance = 0.1
 
 var powersInPlay = []
 
-var current_playspace
+var current_playspace:Playspace
 
 func set_playspace(playspace):
 	current_playspace = playspace
@@ -62,7 +62,6 @@ func startLevel():
 	currentEnergy = maxEnergy
 	powersInPlay = []
 	pickupRange = startingPickupRange
-	
 
 func _ready():
 	for cardName in startingDeckNames:

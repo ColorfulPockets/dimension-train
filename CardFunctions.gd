@@ -35,8 +35,8 @@ func Chop(_cardInfo, displayConfirmation:bool = true):
 			
 	if "Swarm" in Stats.powersInPlay and discard == Global.FUNCTION_STATES.Success:
 		var lastHighlightedTargetArea = terrain.lastHighlightedTargetArea
-		terrain.highlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea + Vector2i(2,2))
-		emptyHighlighted()
+		terrain.pseudoHighlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea + Vector2i(2,2))
+		emptyPseudoHighlighted()
 		# Gotta reset the highlight in case something else cares about it
 		terrain.highlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea)
 	terrain.targeting = false
@@ -72,8 +72,8 @@ func Mine(_cardInfo, displayConfirmation:bool = true):
 	
 	if "Swarm" in Stats.powersInPlay and discard == Global.FUNCTION_STATES.Success:
 		var lastHighlightedTargetArea = terrain.lastHighlightedTargetArea
-		terrain.highlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea + Vector2i(2,2))
-		emptyHighlighted()
+		terrain.pseudoHighlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea + Vector2i(2,2))
+		emptyPseudoHighlighted()
 		# Gotta reset the highlight in case something else cares about it
 		terrain.highlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea)
 	
@@ -82,9 +82,8 @@ func Mine(_cardInfo, displayConfirmation:bool = true):
 	middleBarContainer.visible = false
 	return discard
 
-
 #Replaces all harvestables in pseudohighlighted area with empty tiles
-func emptyHighlighted():
+func emptyPseudoHighlighted():
 	for tile in terrain.pseudoHighlightedCells:
 		if tile not in terrain.highlighted_cells:
 			if terrain.get_cell_atlas_coords(0,tile) in Global.harvestable_tiles:
@@ -325,9 +324,7 @@ func Gust(cardInfo):
 		middleBarContainer.visible = false
 		return discard
 	
-	for tile in terrain.highlighted_cells:
-		if terrain.get_cell_atlas_coords(0,tile) == Global.tree:
-			terrain.set_cell(0, tile, 0, Global.wood)
+	Chop(cardInfo, false)
 	
 	Draw(cardInfo, false)
 	

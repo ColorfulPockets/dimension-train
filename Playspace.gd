@@ -30,7 +30,6 @@ var numberOfFocusedCards = 0
 
 
 var building_rail = false
-
 var endingTurn = false
 
 signal handDrawn
@@ -120,6 +119,39 @@ func unFocus(index):
 		return true
 	else:
 		return false
+
+var selectingCards = false
+var selectedCards = []
+var numCardsToSelect = 0
+var numCardsSelected = 0
+func cardSelected(index, cardPosition, pointer:CardBase):
+	if pointer.inSelection:
+		#Remove from selection
+		pass
+	elif numCardsSelected < numCardsToSelect:
+		#Add to selection
+		for i in range(cardsInHand.size()):
+			cardsInHand[i].other_card_pressed = false
+			cardsInHand[i].card_pressed = false
+			# mouseExited makes sure the card is unfocused and returns to hand
+			cardsInHand[i].mouseExited(true)
+			cardsInHand[i].manualFocusRetrigger()
+			if i < index:
+				cardsInHand[i].ellipseAngle += deg_to_rad(5)
+			elif i > index:
+				cardsInHand[i].ellipseAngle -= deg_to_rad(5)
+			
+			cardsInHand[i].reorganize()
+		var card_selected = cardsInHand.pop_at(index)
+		selectedCards.append(card_selected)
+		card_selected.moveToSelection()
+		angle -= deg_to_rad(5)
+		for i in range(cardsInHand.size()):
+			cardsInHand[i].index = i		
+		card_selected.mousedOver = false
+	else:
+		pointer.removeFromSelection()
+		drawCard(cardPosition, pointer.scale, pointer)
 
 var cardHeldIndex = -1
 var cardHeldPointer = null
@@ -267,19 +299,21 @@ func endTurn():
 	
 		
 
-func drawCard(fromPosition, fromScale):
-	if drawPile.size() < 1:
-		for card in discardPile:
-			card.moveToDrawPile()
-			card.index = drawPileIndexCounter
-			drawPileIndexCounter += 1
-			await get_tree().create_timer(0.05).timeout
-			drawPile.append(card)
-		drawPile.shuffle()
-		discardPile = []
-	if drawPile.size() < 1 or cardsInHand.size() >= HAND_LIMIT:
-		return
-	var new_card = drawPile.pop_front()
+func drawCard(fromPosition, fromScale, new_card:CardBase = null):
+	if new_card == null:
+		if drawPile.size() < 1:
+			for card in discardPile:
+				card.moveToDrawPile()
+				card.index = drawPileIndexCounter
+				drawPileIndexCounter += 1
+				await get_tree().create_timer(0.05).timeout
+				drawPile.append(card)
+			drawPile.shuffle()
+			discardPile = []
+		if drawPile.size() < 1 or cardsInHand.size() >= HAND_LIMIT:
+			return
+		new_card = drawPile.pop_front()
+	
 	new_card.card_pressed = false
 	new_card.targetscale = CARDSIZE / new_card.size
 	

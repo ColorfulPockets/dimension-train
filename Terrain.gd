@@ -48,6 +48,7 @@ var trainSucceeded = false
 @onready var PLAYSPACE = $".."
 
 var highlighted_cells:Array[Vector2i] = []
+var pseudohighlighted_cells:Array[Vector2i] = []
 var locked_highlights:Array[Vector2i] = []
 
 # Called when the node enters the scene tree for the first time.
@@ -415,6 +416,9 @@ func clearHighlights():
 		if cell not in locked_highlights:
 			set_cell(Global.highlight_layer,cell, 0, Global.delete)
 	highlighted_cells.clear()
+	
+func clearPseudoHighlights():
+	pseudohighlighted_cells.clear()
 			
 func clearLockedHighlights():
 	for cell in locked_highlights:
@@ -432,6 +436,8 @@ func mapPositionToScreenPosition(mapPosition:Vector2i):
 # These are useful for powers that need to expand on the area that was previously highlighted
 var lastHighlightedMousePosition
 var lastHighlightedTargetArea:Vector2i
+var lastPseudoHighlightedMousePosition
+var lastPseudoHighlightedTargetArea
 var pseudoHighlightedCells
 
 # Draws the highlight and updates which cells are highlighted
@@ -492,6 +498,63 @@ func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 	if not containsOutOfBoundsCell:
 		highlighted_cells = currently_highlighted_tiles
 		drawHighlights(highlighted_cells)
+	
+	pseudoHighlightedCells = currently_highlighted_tiles
+
+# Draws the highlight and updates which cells are highlighted
+func pseudoHighlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
+	clearPseudoHighlights()
+	
+	lastPseudoHighlightedMousePosition = mousePosition
+	lastPseudoHighlightedTargetArea = targetArea
+
+	var currently_highlighted_tiles:Array[Vector2i] = []
+			
+	var center_tile = screenPositionToMapPosition(mousePosition)
+	currently_highlighted_tiles.append(center_tile)
+	
+	if fromTopLeft:
+		for i in range(targetArea.x):
+			for j in range(targetArea.y):
+				currently_highlighted_tiles.append(Vector2i(i,j) + center_tile)
+		
+	else:
+		var spreadX = targetArea.x/2
+		var spreadY = targetArea.y/2
+		
+		# i will be 0-indexed, so we add an extra tile for odd spread.
+		# For event spread, 
+		# adding i + 0.5 will only add the closest tiles.
+		# For instance, at 0.75, it adds only the right tile, not the left
+		var addX = 1.0 if targetArea.x % 2 == 1 else 0.5
+		var addY = 1.0 if targetArea.y % 2 == 1 else 0.5
+		
+		for i in range(-1,spreadX):
+			for j in range(-1,spreadY):
+				currently_highlighted_tiles.append(screenPositionToMapPosition(
+					mousePosition + Vector2(
+						(addX + i)*tile_set.tile_size.x*scale.x, 
+						(addY + j)*tile_set.tile_size.y*scale.y)))
+				currently_highlighted_tiles.append(screenPositionToMapPosition(
+					mousePosition + Vector2(
+						-1*(addX + i)*tile_set.tile_size.x*scale.x, 
+						(addY + j)*tile_set.tile_size.y*scale.y)))
+				currently_highlighted_tiles.append(screenPositionToMapPosition(
+					mousePosition + Vector2(
+						-1*(addX + i)*tile_set.tile_size.x*scale.x, 
+						-1*(addY + j)*tile_set.tile_size.y*scale.y)))
+				currently_highlighted_tiles.append(screenPositionToMapPosition(
+					mousePosition + Vector2(
+						(addX + i)*tile_set.tile_size.x*scale.x, 
+						-1*(addY + j)*tile_set.tile_size.y*scale.y)))
+		
+	var containsOutOfBoundsCell = false
+	for highlighted_tile in currently_highlighted_tiles:
+		if not( 0 <= highlighted_tile[0] \
+			and highlighted_tile[0] < mapShape[0] \
+			and 0 <= highlighted_tile[1] \
+			and highlighted_tile[1] < mapShape[1]):
+				containsOutOfBoundsCell = true
 	
 	pseudoHighlightedCells = currently_highlighted_tiles
 

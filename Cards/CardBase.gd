@@ -7,7 +7,7 @@ signal rewardSelected(card)
 @onready var states = Global.CARD_STATES
 
 
-@onready var current_playspace = Stats.current_playspace
+@onready var current_playspace:Playspace = Stats.current_playspace
 @onready var OVERLAY_MANAGER = $"../../../FixedElements/DarkenedBackground"
 
 @onready var CardDb = preload("res://CardDatabase.gd").new()
@@ -53,6 +53,7 @@ var currentPositionSet = false
 const FOCUS_SCALE_AMOUNT = 1.5
 var card_pressed = false
 var other_card_pressed = false
+var inSelection = false
 var mousedOver = false
 var cardPileShowing = false
 var inReward = false
@@ -62,6 +63,8 @@ var REORGTIME = 0.15
 var RETURNTOHANDTIME = 0.1
 var FOCUSTIME = 0.1
 var moveTime = 0.1
+
+var selectingACard = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -198,6 +201,12 @@ func moveToOverlay():
 	scale = OVERLAY_SCALE
 	rotation = 0
 	fadeIn()
+
+func moveToSelection():
+	t = 0
+	z_index = 13
+	state = states.InSelection
+	rotation = 0
 
 func fadeIn():
 	modulate.a8 = 0
@@ -349,6 +358,11 @@ func _process(delta):
 			out_of_place = true
 			moveTime = DRAWTIME
 			state = states.InHand
+		states.InSelection:
+			# TODO: give the card a selection index (can just reuse index)
+			# Use that index to set its position, offset from some point here
+			# Add logic for updating indices when unselecting
+			pass
 
 
 func _input(event):
@@ -361,7 +375,10 @@ func _input(event):
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				if Stats.currentEnergy >= CardInfo[Global.CARD_FIELDS.EnergyCost]:
+				if current_playspace.selectingCards:
+					card_pressed = true
+					current_playspace.cardSelected(index, focuspos + size/2, self)
+				elif Stats.currentEnergy >= CardInfo[Global.CARD_FIELDS.EnergyCost]:
 					card_pressed = true
 					# Alert the playspace about which card has been clicked
 					current_playspace.cardPressed(index, focuspos + size/2, self)

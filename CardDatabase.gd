@@ -111,9 +111,8 @@ var DATA = {
 			fields.Rarity: "Uncommon",
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Logistics,
-			fields.Text: "Increase all numbers on another card in your hand by 1 for this level.",
-			fields.TargetArea: Vector2i(2,2),
-			fields.Function: "NumbersUp",
+			fields.Text: "Increase the target area on another card in your hand by +1/+1 for this level.",
+			fields.Function: "Bolster",
 			fields.MousePointer: load("res://Assets/Icons/Bolster_cursor.png"),
 		},
 	"Freeze":
@@ -242,4 +241,5 @@ var DATA = {
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 			fields.Arguments: {"Draw": 3}
 		},
+		# TODO cards that rearrange stuff on the board
 }

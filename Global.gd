@@ -93,6 +93,7 @@ enum CARD_STATES {
 	InOverlay,
 	InDeck,
 	InPower,
+	InSelection,
 }
 
 enum FUNCTION_STATES {Waiting, Success, Fail, Power}
