@@ -48,12 +48,16 @@ var ellipseAngle = 0
 var inHandPosition = Vector2()
 var inHandScale = Vector2()
 var inHandRotation = 0
+var inSelectionPosition = Vector2()
+var inSelectionScale = Vector2.ONE
+var inSelectionRotation = 0
+const SELECTION_MARGIN = 150
+const SELECTION_CENTER_POSITION = Vector2(1920, 700)
 var out_of_place = false
 var currentPositionSet = false
 const FOCUS_SCALE_AMOUNT = 1.5
 var card_pressed = false
 var other_card_pressed = false
-var inSelection = false
 var mousedOver = false
 var cardPileShowing = false
 var inReward = false
@@ -100,7 +104,7 @@ func manualFocusRetrigger():
 		mouseEntered()
 
 func mouseEntered():
-	if inReward:
+	if inReward or (state == states.InSelection):
 		$HighlightBorder.visible = true
 		mousedOver = true
 		return
@@ -117,7 +121,7 @@ func mouseEntered():
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
-	if inReward:
+	if inReward or (state == states.InSelection):
 		$HighlightBorder.visible = false
 		mousedOver = false
 		return
@@ -203,10 +207,19 @@ func moveToOverlay():
 	fadeIn()
 
 func moveToSelection():
+	moveTime = REORGTIME
 	t = 0
 	z_index = 13
+	var offset = (-float(current_playspace.selectedCards.size())/2.0 + index) * (size.x + SELECTION_MARGIN)
+	inSelectionPosition = Vector2(offset, 0) + SELECTION_CENTER_POSITION
 	state = states.InSelection
-	rotation = 0
+	resetCurrentPosition()
+	out_of_place = true
+	
+func removeFromSelection():
+	moveTime = REORGTIME
+	# The rest of the work of moving it to the hand is done by the draw() function in Playspace
+	$HighlightBorder.visible = false
 
 func fadeIn():
 	modulate.a8 = 0
@@ -356,13 +369,22 @@ func _process(delta):
 			inHandRotation = targetrot
 			inHandScale = targetscale
 			out_of_place = true
-			moveTime = DRAWTIME
 			state = states.InHand
 		states.InSelection:
-			# TODO: give the card a selection index (can just reuse index)
-			# Use that index to set its position, offset from some point here
-			# Add logic for updating indices when unselecting
-			pass
+			visible = true
+			if t <= 1 and out_of_place:
+				position = startpos.lerp(inSelectionPosition, t)
+				rotation = startrot + (inSelectionRotation - startrot)*t
+				scale = startscale.lerp(inSelectionScale, t)
+				t += delta/float(moveTime)
+			else:
+				t = 0
+				position = inSelectionPosition
+				rotation = inSelectionRotation
+				scale = inSelectionScale
+				out_of_place = false
+				currentPositionSet = false
+			
 
 
 func _input(event):

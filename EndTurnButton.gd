@@ -1,6 +1,6 @@
 extends TextureButton
 
-@onready var PLAYSPACE = $"../.."
+@onready var PLAYSPACE : Playspace = $"../.."
 var drawingHand = false
 var hoverTexture = null
 var clickedTexture = null
@@ -32,6 +32,10 @@ func disableButton():
 
 func _pressed():
 	if not drawingHand and not cardFunctionHappening and not overlayShowing:
+		PLAYSPACE.numCardsToSelect = 4
+		PLAYSPACE.selectingCards = true
+		return
+		
 		drawingHand = true
 		texture_pressed = texture_normal
 		texture_hover = texture_normal

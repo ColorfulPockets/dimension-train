@@ -25,6 +25,7 @@ static var TOOLTIP_TEXT = {
 	"Magnet Car": "+1 Pickup Range",
 	"Fusion Car": "Each time you Gather, if you collect at least one wood and at least one metal, gain an extra random material.",
 	"Heavy Car": "Starter rail -5, Speed -1 (min 0)",
+	# TODO: a car that does stuff based on its orientation (Specifically, when it moves left?)
 }
 
 func _init(carName):

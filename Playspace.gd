@@ -121,13 +121,20 @@ func unFocus(index):
 		return false
 
 var selectingCards = false
-var selectedCards = []
+var selectedCards:Array = []
 var numCardsToSelect = 0
 var numCardsSelected = 0
 func cardSelected(index, cardPosition, pointer:CardBase):
-	if pointer.inSelection:
-		#Remove from selection
-		pass
+	if pointer.state == Global.CARD_STATES.InSelection:
+		selectedCards.remove_at(selectedCards.find(pointer))
+		for i in range(selectedCards.size()):
+			selectedCards[i].index = i
+			# Using moveToSelection to rearrange within the selection
+			selectedCards[i].moveToSelection()
+		pointer.removeFromSelection()
+		# drawCard just actually moves a card from a given position and scale and adds it to the hand
+		drawCard(pointer.position, pointer.scale, pointer)
+		numCardsSelected -= 1
 	elif numCardsSelected < numCardsToSelect:
 		#Add to selection
 		for i in range(cardsInHand.size()):
@@ -144,14 +151,17 @@ func cardSelected(index, cardPosition, pointer:CardBase):
 			cardsInHand[i].reorganize()
 		var card_selected = cardsInHand.pop_at(index)
 		selectedCards.append(card_selected)
-		card_selected.moveToSelection()
 		angle -= deg_to_rad(5)
 		for i in range(cardsInHand.size()):
-			cardsInHand[i].index = i		
+			cardsInHand[i].index = i
+		for i in range(selectedCards.size()):
+			selectedCards[i].index = i
+			# Using moveToSelection to rearrange within the selection
+			selectedCards[i].moveToSelection()
 		card_selected.mousedOver = false
+		numCardsSelected += 1
 	else:
-		pointer.removeFromSelection()
-		drawCard(cardPosition, pointer.scale, pointer)
+		pointer.card_pressed = false
 
 var cardHeldIndex = -1
 var cardHeldPointer = null
@@ -313,9 +323,11 @@ func drawCard(fromPosition, fromScale, new_card:CardBase = null):
 		if drawPile.size() < 1 or cardsInHand.size() >= HAND_LIMIT:
 			return
 		new_card = drawPile.pop_front()
+		new_card.moveTime = new_card.DRAWTIME
 	
 	new_card.card_pressed = false
 	new_card.targetscale = CARDSIZE / new_card.size
+	new_card.inSelectionScale = CARDSIZE / new_card.size
 	
 	new_card.scale = fromScale
 	
