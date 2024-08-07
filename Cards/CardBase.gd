@@ -18,8 +18,6 @@ var CardName = "Chop"
 
 @onready var CardImg = str("res://Assets/Icons/",CardInfo[0],".png")
 
-var targetArea = null
-
 @onready var state = states.InHand
 var startpos = Vector2()
 var targetpos = Vector2()
@@ -81,9 +79,6 @@ func _ready():
 	$BottomText/BottomText.text = CardInfo[fields.Text]
 	$Name/Name.text = CardInfo[fields.Name]
 	
-	if CardInfo.has(Global.CARD_FIELDS.TargetArea):
-		targetArea = CardInfo[Global.CARD_FIELDS.TargetArea]
-		
 	$Name/Name/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
 		
 	

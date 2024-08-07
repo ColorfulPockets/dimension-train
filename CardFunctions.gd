@@ -465,7 +465,13 @@ func Bolster(_cardInfo):
 	
 	if confirmed == Global.FUNCTION_STATES.Success:
 		var bolsterCallback = func():
-			print("here")
+			for card:CardBase in PLAYSPACE.selectedCards:
+				if Global.CARD_FIELDS.TargetArea in card.CardInfo.keys():
+					var targetArea = card.CardInfo[Global.CARD_FIELDS.TargetArea]
+					targetArea.x += 1
+					targetArea.y += 1
+					card.CardInfo[Global.CARD_FIELDS.TargetArea] = targetArea
+				PLAYSPACE.drawCard(card.position,card.scale,card)
 		PLAYSPACE.selectCards(1, bolsterCallback)
 	
 	return confirmed

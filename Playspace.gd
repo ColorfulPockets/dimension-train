@@ -129,6 +129,8 @@ var numCardsSelected = 0
 var selectionCallback:Callable
 
 func selectCards(numCards:int, callback):
+	# This await just makes sure there's time in between the card effect being selected and the confirmation of selection
+	# Idk if this solution is good enough, should be tested
 	await get_tree().create_timer(0.1).timeout
 	numCardsToSelect = numCards
 	selectingCards = true
@@ -137,10 +139,12 @@ func selectCards(numCards:int, callback):
 	selectionCallback = callback
 	
 func doneSelecting():
-	numCardsToSelect = 0
-	selectingCards = false
 	selectingBackground.state = 0
-	selectionCallback.call()
+	await selectionCallback.call()
+	selectingCards = false
+	numCardsToSelect = 0
+	numCardsSelected = 0
+	selectedCards = []
 
 func cardSelected(index, cardPosition, pointer:CardBase):
 	if pointer.state == Global.CARD_STATES.InSelection:
@@ -182,7 +186,7 @@ func cardSelected(index, cardPosition, pointer:CardBase):
 		pointer.card_pressed = false
 
 var cardHeldIndex = -1
-var cardHeldPointer = null
+var cardHeldPointer:CardBase = null
 var focusedCardPosition = Vector2()
 
 func cardPressed(index, cardPosition, pointer):
@@ -280,8 +284,8 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		if cardHeldIndex > -1:
 			Input.set_custom_mouse_cursor(cardHeldPointer.CardInfo[Global.CARD_FIELDS.MousePointer], 0, cardHeldPointer.CardInfo[Global.CARD_FIELDS.MousePointer].get_size()/2)
-			if cardHeldPointer.targetArea != null:
-				terrain.highlightCells(event.position, cardHeldPointer.targetArea)
+			if Global.CARD_FIELDS.TargetArea in cardHeldPointer.CardInfo.keys():
+				terrain.highlightCells(event.position, cardHeldPointer.CardInfo[Global.CARD_FIELDS.TargetArea])
 		else:
 			Input.set_custom_mouse_cursor(NORMAL_CURSOR,0,NORMAL_CURSOR.get_size()/2)
 	
