@@ -247,7 +247,7 @@ func _process(delta):
 		states.InOverlay:
 			pass
 		states.InDeck:
-			z_index = 0
+			z_index = 1
 			if t <= 1 and out_of_place:
 				position = startpos.lerp(Global.DECK_POSITION, t)
 				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
@@ -262,7 +262,7 @@ func _process(delta):
 				out_of_place = false
 				currentPositionSet = false
 		states.InDrawPile:
-			z_index = 0
+			z_index = 1
 			if t <= 1 and out_of_place:
 				position = startpos.lerp(Global.DRAW_PILE_POSITION, t)
 				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
@@ -277,7 +277,7 @@ func _process(delta):
 				out_of_place = false
 				currentPositionSet = false
 		states.InDiscardPile:
-			z_index = 0
+			z_index = 1
 			if t <= 1 and out_of_place:
 				position = startpos.lerp(Global.DISCARD_PILE_POSITION, t)
 				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
@@ -292,7 +292,7 @@ func _process(delta):
 				out_of_place = false
 				currentPositionSet = false
 		states.InPower:
-			z_index = 0
+			z_index = 1
 			if t <= 1 and out_of_place:
 				position = startpos.lerp(Global.POWER_POSITION, t)
 				rotation = startrot + (DISCARD_PILE_ROTATION - startrot)*t
@@ -310,7 +310,7 @@ func _process(delta):
 				queue_free()
 		states.InHand:
 			visible = true
-			z_index = index
+			z_index = index + 1
 			if t <= 1 and out_of_place:
 				position = startpos.lerp(inHandPosition, t)
 				rotation = startrot + (inHandRotation - startrot)*t
@@ -324,7 +324,7 @@ func _process(delta):
 				out_of_place = false
 				currentPositionSet = false
 		states.FocusOtherInHand:
-			z_index = index
+			z_index = index + 1
 			moveTime = REORGTIME
 			if focusIndex == -1:
 				state = states.InHand

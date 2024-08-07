@@ -456,6 +456,19 @@ func Turbo(_cardInfo):
 		
 	return confirmed
 
+#Current best template for simple effect
+func Bolster(_cardInfo):
+	terrain.clearHighlights()
+	
+	
+	var confirmed = await confirmIfEnabled("Bolster a card")
+	
+	if confirmed == Global.FUNCTION_STATES.Success:
+		var bolsterCallback = func():
+			print("here")
+		PLAYSPACE.selectCards(1, bolsterCallback)
+	
+	return confirmed
 
 func confirmIfEnabled(text:String):
 	var confirmed

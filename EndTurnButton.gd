@@ -31,11 +31,7 @@ func disableButton():
 	texture_hover = texture_normal
 
 func _pressed():
-	if not drawingHand and not cardFunctionHappening and not overlayShowing:
-		PLAYSPACE.numCardsToSelect = 4
-		PLAYSPACE.selectingCards = true
-		return
-		
+	if not drawingHand and not cardFunctionHappening and not overlayShowing:		
 		drawingHand = true
 		texture_pressed = texture_normal
 		texture_hover = texture_normal

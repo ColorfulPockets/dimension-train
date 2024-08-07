@@ -27,6 +27,7 @@ var numberOfFocusedCards = 0
 @onready var terrain:Terrain = $Terrain
 @onready var drawPileNode = $FixedElements/DrawPile
 @onready var cardFunctions:CardFunctions = $CardFunctions
+@onready var selectingBackground:OverlayManager = $FixedElements/SelectingBackground
 
 
 var building_rail = false
@@ -124,6 +125,23 @@ var selectingCards = false
 var selectedCards:Array = []
 var numCardsToSelect = 0
 var numCardsSelected = 0
+# function to call after a selection is confirmed
+var selectionCallback:Callable
+
+func selectCards(numCards:int, callback):
+	await get_tree().create_timer(0.1).timeout
+	numCardsToSelect = numCards
+	selectingCards = true
+	# fade in
+	selectingBackground.state = 1
+	selectionCallback = callback
+	
+func doneSelecting():
+	numCardsToSelect = 0
+	selectingCards = false
+	selectingBackground.state = 0
+	selectionCallback.call()
+
 func cardSelected(index, cardPosition, pointer:CardBase):
 	if pointer.state == Global.CARD_STATES.InSelection:
 		selectedCards.remove_at(selectedCards.find(pointer))
@@ -287,6 +305,9 @@ func _input(event):
 				fake_mouse_motion.position = get_viewport().get_mouse_position()
 				_input(fake_mouse_motion)
 				
+		if selectingCards and event.key_label == KEY_ENTER:
+			if event.pressed:
+				doneSelecting()
 				
 
 func endTurn():

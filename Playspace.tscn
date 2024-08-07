@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=34 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -28,7 +28,6 @@
 [ext_resource type="Script" path="res://TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
 [ext_resource type="Script" path="res://OverlayManager.gd" id="26_mtkk4"]
-[ext_resource type="Script" path="res://SelectACard.gd" id="29_qgc3p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
 texture = ExtResource("2_g6npi")
@@ -4438,10 +4437,9 @@ texture = ExtResource("15_n5iw7")
 centered = false
 script = ExtResource("26_mtkk4")
 
-[node name="SelectACard" type="Sprite2D" parent="FixedElements"]
+[node name="SelectingBackground" type="Sprite2D" parent="FixedElements"]
 modulate = Color(0, 0, 0, 0.792157)
-z_index = 12
 scale = Vector2(3840, 2160)
 texture = ExtResource("15_n5iw7")
 centered = false
-script = ExtResource("29_qgc3p")
+script = ExtResource("26_mtkk4")
