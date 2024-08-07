@@ -68,6 +68,8 @@ var moveTime = 0.1
 
 var selectingACard = false
 
+var baseText:String
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Icon.texture = load(CardImg)
@@ -75,8 +77,8 @@ func _ready():
 	$Icon.scale *= 0.09766
 	$Icon.position = Vector2(125,195)
 	
-	#$TopText/TopText.text = CardInfo[fields.Text]
-	$BottomText/BottomText.text = CardInfo[fields.Text]
+	baseText = CardInfo[fields.Text]
+	replaceText()
 	$Name/Name.text = CardInfo[fields.Name]
 	
 	$Name/Name/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
@@ -87,6 +89,30 @@ func _ready():
 	
 	Global.overlayShowing.connect(func(): cardPileShowing = true)
 	Global.overlayHidden.connect(func(): cardPileShowing = false)
+
+func replaceText():
+	var newText: String = baseText
+	#GPT
+	var pattern = RegEx.new()
+	pattern.compile(r'TARGETAREA')
+	var matches = pattern.search_all(baseText)
+	for match in matches:
+		var key = match.get_string(1)	# get the matched argument name
+		var targetArea = CardInfo[Global.CARD_FIELDS.TargetArea]
+		var replacement = str(targetArea.x) + "x" + str(targetArea.y)
+		newText = baseText.replace("TARGETAREA", replacement)
+	
+	pattern = RegEx.new()
+	pattern.compile(r'ARG(\S+)')
+	matches = pattern.search_all(newText)
+	for match in matches:
+		print(match.get_string(1))
+		var key = match.get_string(1)	# get the matched argument name
+		if CardInfo[Global.CARD_FIELDS.Arguments].has(key):
+			var argReplacement = str(CardInfo[Global.CARD_FIELDS.Arguments][key])
+			newText = newText.replace("ARG" + key, argReplacement)
+			
+	$BottomText/BottomText.text = newText
 
 # Since the cards are children of Stats, we need to reset some variables when adding them to the playspace
 func resetPlayspace():

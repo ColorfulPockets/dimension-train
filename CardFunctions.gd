@@ -471,6 +471,7 @@ func Bolster(_cardInfo):
 					targetArea.x += 1
 					targetArea.y += 1
 					card.CardInfo[Global.CARD_FIELDS.TargetArea] = targetArea
+					card.replaceText()
 				PLAYSPACE.drawCard(card.position,card.scale,card)
 		PLAYSPACE.selectCards(1, bolsterCallback)
 	
