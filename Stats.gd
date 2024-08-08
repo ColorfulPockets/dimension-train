@@ -13,9 +13,9 @@ var starterMetalCount = 0
 var emergencyRailCount = 20
 var erc = 20
 var railCount = 0
-var starterRail = 100
+var starterRail = 100 if Global.devmode else 5
 var coinCount = 0
-var startingTrainSpeed = 100
+var startingTrainSpeed = 100 if Global.devmode else 0
 var turnCounter = 0
 var trainSpeed = 0
 
@@ -61,6 +61,7 @@ func startLevel():
 	currentEnergy = maxEnergy
 	powersInPlay = []
 	pickupRange = startingPickupRange
+	resetTrainSpeed()
 
 func _ready():
 	for cardName in startingDeckNames:

@@ -45,8 +45,7 @@ var DATA = {
 			fields.Text: "Build ARGBuild",
 			fields.Function: "Build",
 			fields.MousePointer: load("res://Assets/Icons/Build_mouse.png"),
-			fields.Arguments: {"Build": 100},
-			#fields.Arguments: {"Build": 4},
+			fields.Arguments: {"Build": 100 if Global.devmode else 4},
 		},
 	"Manufacture":
 		{
