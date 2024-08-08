@@ -44,8 +44,8 @@ func _init():
 	
 		
 	rewardValues = {
-		Vector2i(14,5) : 10,
-		Vector2i(14,13) : 10,
+		Vector2i(14,5) : 12,
+		Vector2i(14,13) : 12,
 	}
 	
 	enemies = [

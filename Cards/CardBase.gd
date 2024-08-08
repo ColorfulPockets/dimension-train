@@ -90,9 +90,9 @@ func _ready():
 	Global.overlayShowing.connect(func(): cardPileShowing = true)
 	Global.overlayHidden.connect(func(): cardPileShowing = false)
 
+#GPT
 func replaceText():
 	var newText: String = baseText
-	#GPT
 	var pattern = RegEx.new()
 	pattern.compile(r'TARGETAREA')
 	var matches = pattern.search_all(baseText)
@@ -106,7 +106,6 @@ func replaceText():
 	pattern.compile(r'ARG(\S+)')
 	matches = pattern.search_all(newText)
 	for match in matches:
-		print(match.get_string(1))
 		var key = match.get_string(1)	# get the matched argument name
 		if CardInfo[Global.CARD_FIELDS.Arguments].has(key):
 			var argReplacement = str(CardInfo[Global.CARD_FIELDS.Arguments][key])

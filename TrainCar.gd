@@ -3,6 +3,7 @@ class_name TrainCar extends Sprite2D
 const CARGO_CAR_VAL = 3
 
 @onready var FIXED_ELEMENTS = $"../../FixedElements"
+@onready var PLAYSPACE: Playspace = $"../.."
 
 enum TYPE {ONESHOT, STARTLEVEL, STARTTURN, ENDTURN, ENDLEVEL, TRAINMOVEMENT, EMERGENCY, OTHER}
 enum RARITY {COMMON, UNCOMMON, RARE, BOSS, STARTER}
@@ -12,57 +13,74 @@ signal mouse_entered
 signal mouse_exited
 
 var carName: String
-var types: Array[TYPE]
+var types: Array
 var rarity: RARITY
 
 const COMMON_CARS = ["Cargo Car", "Brake Car"]
 const UNCOMMON_CARS = ["Magnet Car"]
 const ALL_CARS = COMMON_CARS + UNCOMMON_CARS
 
-static var TOOLTIP_TEXT = {
-	"Cargo Car": "+" + str(CARGO_CAR_VAL) + " ERC",
-	"Brake Car": "Each level, the first time you would need to use emergency rail, set speed to 0 instead.",
-	"Magnet Car": "+1 Pickup Range",
-	"Fusion Car": "Each time you Gather, if you collect at least one wood and at least one metal, gain an extra random material.",
-	"Heavy Car": "Starter rail -5, Speed -1 (min 0)",
-	# TODO: a car that does stuff based on its orientation (Specifically, when it moves left?)
+enum FIELDS {TOOLTIP, TYPES, RARITY}
+#TODO: create github issue to turn this into a const eventually
+static var CAR_INFO = {
+	"Front": {
+		FIELDS.TOOLTIP: "This is the front of the train.",
+		FIELDS.TYPES: [TYPE.ONESHOT],
+		FIELDS.RARITY: RARITY.STARTER,
+		},
+	"Caboose": {
+		FIELDS.TOOLTIP: "This is the back of the train.",
+		FIELDS.TYPES: [TYPE.ONESHOT],
+		FIELDS.RARITY: RARITY.STARTER,
+		},
+	"Brake Car": {
+		FIELDS.TOOLTIP: "Each level, the first time you would need to use emergency rail, set speed to 0 instead.",
+		FIELDS.TYPES: [TYPE.EMERGENCY],
+		FIELDS.RARITY: RARITY.COMMON,
+		},
+	"Cargo Car": {
+		FIELDS.TOOLTIP: "+" + str(CARGO_CAR_VAL) + " ERC",
+		FIELDS.TYPES: [TYPE.ONESHOT],
+		FIELDS.RARITY: RARITY.COMMON,
+		},
+	"Magnet Car": {
+		FIELDS.TOOLTIP: "+1 Pickup Range",
+		FIELDS.TYPES: [TYPE.ONESHOT],
+		FIELDS.RARITY: RARITY.UNCOMMON,
+		},
+	"Fusion Car": {
+		FIELDS.TOOLTIP: "Each time you Gather, if you collect at least one wood and at least one metal, gain an extra random material.",
+		FIELDS.TYPES: [TYPE.OTHER],
+		FIELDS.RARITY: RARITY.COMMON,
+		},
+	"Heavy Car": {
+		FIELDS.TOOLTIP: "Starter rail -5, Speed -1 (min 0)",
+		FIELDS.TYPES: [TYPE.ONESHOT],
+		FIELDS.RARITY: RARITY.UNCOMMON,
+		},
+	"Retrograde Car": {
+		FIELDS.TOOLTIP: "Whenever this car moves to the left, draw a card",
+		FIELDS.TYPES: [TYPE.TRAINMOVEMENT],
+		FIELDS.RARITY: RARITY.RARE,
+		},
+	
 }
 
 func _init(carName):
 	self.carName = carName
 	texture = load("res://Assets/TrainCars/" + carName + ".png")
-	if carName in TOOLTIP_TEXT:
-		var tooltip = Tooltip.new("[color=Green]"+carName+": [/color]"+TOOLTIP_TEXT[carName], 3)
+	if carName in CAR_INFO:
+		var tooltip = Tooltip.new("[color=Green]"+carName+": [/color]"+CAR_INFO[carName][FIELDS.TOOLTIP], 3)
 		tooltip.visuals_res = load("res://tooltip.tscn")
 		add_child(tooltip)
 	
-	match carName:
-		"Front":
-			types = [TYPE.ONESHOT]
-			rarity = RARITY.STARTER
-		"Caboose":
-			types = [TYPE.ONESHOT]
-			rarity = RARITY.STARTER
-		"Cargo Car":
-			types = [TYPE.ONESHOT]
-			rarity = RARITY.COMMON
-		"Brake Car":
-			types = [TYPE.EMERGENCY]
-			rarity = RARITY.COMMON
-		"Magnet Car":
-			types = [TYPE.ONESHOT]
-			rarity = RARITY.UNCOMMON
-		"Fusion Car":
-			types = [TYPE.OTHER]
-			rarity = RARITY.COMMON
-		"Heavy Car":
-			types = [TYPE.ONESHOT]
-			rarity = RARITY.UNCOMMON
+	types = CAR_INFO[carName][FIELDS.TYPES]
+	rarity = CAR_INFO[carName][FIELDS.RARITY]
 
 func onGain():
 	match carName:
 		"Cargo Car":
-			Stats.erc += 3
+			Stats.erc += CARGO_CAR_VAL
 		"Magnet Car":
 			Stats.startingPickupRange += 1
 		"Heavy Car":
@@ -86,6 +104,12 @@ func onEmergency() -> bool:
 				return true
 	
 	return false
+	
+func onMovement(currentLocation: Vector2i, nextLocation: Vector2i) -> void:
+	match carName:
+		"Retrograde Car":
+			if nextLocation.x < currentLocation.x:
+				await PLAYSPACE.drawCardFromDeck()
 
 func animateBrakes():
 	texture = load("res://Assets/TrainCars/Brake Car_engaged.png")

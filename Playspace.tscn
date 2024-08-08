@@ -4339,6 +4339,7 @@ script = ExtResource("20_hbuuu")
 
 [node name="MiddleBarContainer" type="Control" parent="FixedElements"]
 visible = false
+z_index = 13
 layout_mode = 1
 anchors_preset = 0
 offset_right = 1200.0

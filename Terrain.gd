@@ -45,7 +45,7 @@ var trainSucceeded = false
 
 @onready var fixedElements = $"../FixedElements"
 @onready var cardFunctions = $"../CardFunctions"
-@onready var PLAYSPACE = $".."
+@onready var PLAYSPACE:Playspace = $".."
 
 var highlighted_cells:Array[Vector2i] = []
 var pseudohighlighted_cells:Array[Vector2i] = []
@@ -203,7 +203,7 @@ func advanceTrain():
 			#var trainType = directionalCellMap[trainLocation.x][trainLocation.y]
 			var nextLocation = Global.stepInDirection(trainLocation, trainOutgoing)
 			
-			if get_cell_atlas_coords(0, nextLocation) == Global.rail_endpoint:
+			if get_cell_atlas_coords(Global.rail_layer, nextLocation) == Global.rail_endpoint:
 				Stats.levelCounter += 1
 				Global.selectedReward = Global.rewards[nextLocation]
 				for reward in Global.selectedReward:
@@ -221,10 +221,11 @@ func advanceTrain():
 						if Stats.startingTrainSpeed < 0: Stats.startingTrainSpeed = 0
 					elif reward == "PlusSpeed":
 						Stats.startingTrainSpeed += 1
-				
+
 				PLAYSPACE.levelComplete.emit()
 				trainSucceeded = true
-				continue
+				stepNumber = INF
+				break
 				
 			# Some train cars will do something that may avert the emergency.  If so, we will skip the next block
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
@@ -262,6 +263,9 @@ func advanceTrain():
 				print("TRAIN CRASHED")
 				trainCrashed = true
 				return
+			
+			if TrainCar.TYPE.TRAINMOVEMENT in trainCars[i].types:
+				await trainCars[i].onMovement(trainLocation, nextLocation)
 			
 			var enemiesToRemove = []
 			for enemyIndex in range(len(enemies)):
@@ -690,11 +694,12 @@ func resetPartialRail():
 func toggleRailOutput(mousePosition):
 	var clicked_cell = screenPositionToMapPosition(mousePosition)
 	if clicked_cell == lastRailPlaced:
-		var nextDir = Global.nextDirClockwise(outgoingMap[clicked_cell.x][clicked_cell.y])
-		if nextDir == incomingMap[clicked_cell.x][clicked_cell.y]:
-			nextDir = Global.nextDirClockwise(nextDir)
-			
-		changeOutgoing(clicked_cell, nextDir, Global.rail_layer)
+		if clicked_cell.x < outgoingMap.size() and clicked_cell.y < outgoingMap[clicked_cell.x].size():
+			var nextDir = Global.nextDirClockwise(outgoingMap[clicked_cell.x][clicked_cell.y])
+			if nextDir == incomingMap[clicked_cell.x][clicked_cell.y]:
+				nextDir = Global.nextDirClockwise(nextDir)
+				
+			changeOutgoing(clicked_cell, nextDir, Global.rail_layer)
 	
 	recalculateRailRoute()
 

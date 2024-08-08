@@ -35,11 +35,11 @@ func chooseCards():
 			while cardChosen in cardsToOffer:
 				cardChosen = uncommons[randi_range(0,uncommons.size()-1)]
 		else:
-			cardChosen = commons[randi_range(0,uncommons.size()-1)]
+			cardChosen = commons[randi_range(0,commons.size()-1)]
 			while cardChosen in cardsToOffer:
-				cardChosen = commons[randi_range(0,uncommons.size()-1)]
+				cardChosen = commons[randi_range(0,commons.size()-1)]
 		cardsToOffer.append(cardChosen)
-		
+	
 	for i in range(3):
 		var card_shown = CardBase.instantiate()
 		card_shown.CardName = cardsToOffer[i]

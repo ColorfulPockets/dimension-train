@@ -6,6 +6,7 @@ const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 @onready var rewardScene:PackedScene = preload("res://reward.tscn")
 
 @onready var deckNames = Stats.deck.duplicate()
+@onready var middleBarContainer:MiddleBarContainer = $FixedElements/MiddleBarContainer
 
 @onready var viewportSize = Vector2(get_viewport().size)
 
@@ -79,6 +80,7 @@ func drawHand():
 func spawnRewardBox(cell:Vector2i, location: Vector2):
 	var rewardBox = rewardScene.instantiate()
 	self.add_child(rewardBox)
+	rewardBox.z_index = -100
 	rewardBox.position = location
 	rewardBox.setText(Global.getRewardText(cell))
 	
@@ -136,6 +138,12 @@ func selectCards(numCards:int, callback):
 	selectingCards = true
 	# fade in
 	selectingBackground.state = 1
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	if numCards > 1:
+		middleBarContainer.setText("Select " + str(numCards) + " cards\n(Enter to Confirm)")
+	else:
+		middleBarContainer.setText("Select a card\n(Enter to Confirm)")
 	selectionCallback = callback
 	
 func doneSelecting():
@@ -145,6 +153,7 @@ func doneSelecting():
 	numCardsToSelect = 0
 	numCardsSelected = 0
 	selectedCards = []
+	middleBarContainer.visible = false
 
 func cardSelected(index, cardPosition, pointer:CardBase):
 	if pointer.state == Global.CARD_STATES.InSelection:
@@ -320,11 +329,11 @@ func endTurn():
 			for card in cardsInHand:
 				card.mouseExited(true)
 		endingTurn = true
-		await terrain.advanceTrain()
-		await terrain.enemyTurn()
 		while cardsInHand.size() > 0:
 			cardDiscarded(0)
 			await get_tree().create_timer(0.05).timeout
+		await terrain.advanceTrain()
+		await terrain.enemyTurn()
 		await get_tree().create_timer(0.25).timeout
 		drawHand()
 		Stats.currentEnergy = Stats.maxEnergy

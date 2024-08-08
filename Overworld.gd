@@ -70,7 +70,7 @@ func drawMap(currentLocation):
 					maps = ["Corridor", "LostTrack"]
 					#maps = ["TestTrack"]
 				"Mountain":
-					maps = ["ManyTracks"]
+					maps = ["TestTrack"]
 				"Forest":
 					pass
 				_:

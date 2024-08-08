@@ -11,7 +11,13 @@ var starterWoodCount = 0
 var metalCount = 0
 var starterMetalCount = 0
 var emergencyRailCount = 20
-var erc = 30
+var erc = 20
+var railCount = 0
+var starterRail = 100
+var coinCount = 0
+var startingTrainSpeed = 100
+var turnCounter = 0
+var trainSpeed = 0
 
 func addEmergencyRail(num:int): 
 	if emergencyRailCount + num <= erc:
@@ -25,13 +31,6 @@ func removeEmergencyRail(num:int):
 	else:
 		emergencyRailCount -= num
 
-var railCount = 0
-var starterRail = 20
-var coinCount = 0
-
-var startingTrainSpeed = 0
-var turnCounter = 0
-var trainSpeed = 0
 func resetTrainSpeed():
 	trainSpeed = startingTrainSpeed + turnCounter
 
@@ -41,7 +40,7 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Bolster", "Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
+var startingDeckNames = ["Bridge","Factory","Manufacture", "Mine", "Mine", "Chop", "Chop", "Gather", "Build", "Build", "Gather"]
 var deck = []
 var rareChance = 0.1
 
@@ -52,7 +51,7 @@ var current_playspace:Playspace
 func set_playspace(playspace):
 	current_playspace = playspace
 	
-var trainCars = ["Cargo Car", "Brake Car", "Magnet Car", "Fusion Car"]
+var trainCars = []
 
 func startLevel():
 	turnCounter = 0
