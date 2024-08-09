@@ -240,5 +240,16 @@ var DATA = {
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 			fields.Arguments: {"Draw": 3}
 		},
+	"Transmute":
+		{
+			fields.Name: "Transmute",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Select two TARGETAREA areas and swap all non-rail cells",
+			fields.Function: "Transmute",
+			fields.TargetArea: Vector2i(2,2),
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
 		# TODO cards that rearrange stuff on the board
 }

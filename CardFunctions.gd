@@ -444,7 +444,6 @@ func AutoManufacture(_cardInfo):
 		
 	return confirmed
 
-#Current best template for simple effect
 func Turbo(_cardInfo):
 	terrain.clearHighlights()
 	
@@ -456,7 +455,6 @@ func Turbo(_cardInfo):
 		
 	return confirmed
 
-#Current best template for simple effect
 func Bolster(_cardInfo):
 	terrain.clearHighlights()
 	
@@ -476,6 +474,78 @@ func Bolster(_cardInfo):
 		PLAYSPACE.selectCards(1, bolsterCallback)
 	
 	return confirmed
+
+func Transmute(_cardInfo):
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Transmute Terrain\n(Esc to cancel)")
+	
+	terrain.targeting = true
+	
+	var discard = await terrain.confirmed
+	
+	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
+		return discard
+		
+	discard = Global.FUNCTION_STATES.Fail
+	
+	var firstTiles = []
+	for i in range(terrain.highlighted_cells.size()):
+		var tile = terrain.highlighted_cells[i]
+		if terrain.get_cell_atlas_coords(Global.rail_layer,tile) not in Global.rail_tiles:
+			firstTiles.append([tile, true])
+		else:
+			firstTiles.append([tile, false])
+		terrain.locked_highlights.append(tile)
+	
+	firstTiles.sort_custom(
+		func(a, b) : 
+			var vec1 = a[0]
+			var vec2 = b[0]
+			if vec1.x < vec2.x: return true
+			elif vec1.x > vec2.x: return false
+			else: return vec1.y < vec2.y
+	)
+	terrain.targeting = true
+	
+	discard  = await terrain.confirmed
+	
+	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
+		terrain.locked_highlights.clear()
+		return discard
+	
+	# highlighted_cells contains all highlights, including locked, so we have to get rid of those
+	# This could be improved by just indexing into the array based on the number of locked highlights
+	var secondHighlight = []
+	for i in range(terrain.highlighted_cells.size()):
+		if terrain.highlighted_cells[i] not in terrain.locked_highlights:
+			secondHighlight.append(terrain.highlighted_cells[i])
+			
+	secondHighlight.sort_custom(
+		func(vec1, vec2) : 
+			if vec1.x < vec2.x: return true
+			elif vec1.x > vec2.x: return false
+			else: return vec1.y < vec2.y
+	)
+	
+	for i in range(secondHighlight.size()):
+		var secondTile = secondHighlight[i]
+		if terrain.get_cell_atlas_coords(Global.rail_layer,secondTile) not in Global.rail_tiles:
+			if firstTiles[i][1] != null:
+				var firstTileType = terrain.get_cell_atlas_coords(Global.base_layer, firstTiles[i][0])
+				terrain.set_cell(Global.base_layer, firstTiles[i][0], 0, terrain.get_cell_atlas_coords(Global.base_layer, secondTile))
+				terrain.set_cell(Global.base_layer, secondTile, 0, firstTileType)
+
+	terrain.targeting = false
+	
+	terrain.highlighted_cells += terrain.locked_highlights
+	terrain.locked_highlights.clear()
+	terrain.clearHighlights()
+	
+	middleBarContainer.visible = false
+	return discard
 
 func confirmIfEnabled(text:String):
 	var confirmed

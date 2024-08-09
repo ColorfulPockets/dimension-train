@@ -103,7 +103,7 @@ func replaceText():
 		newText = baseText.replace("TARGETAREA", replacement)
 	
 	pattern = RegEx.new()
-	pattern.compile(r'ARG(\S+)')
+	pattern.compile(r'ARG(\w+)')
 	matches = pattern.search_all(newText)
 	for match in matches:
 		var key = match.get_string(1)	# get the matched argument name

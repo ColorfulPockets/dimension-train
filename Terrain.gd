@@ -419,6 +419,7 @@ func clearHighlights():
 	for cell in highlighted_cells:
 		if cell not in locked_highlights:
 			set_cell(Global.highlight_layer,cell, 0, Global.delete)
+	
 	highlighted_cells.clear()
 	
 func clearPseudoHighlights():
@@ -490,7 +491,7 @@ func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 					mousePosition + Vector2(
 						(addX + i)*tile_set.tile_size.x*scale.x, 
 						-1*(addY + j)*tile_set.tile_size.y*scale.y)))
-		
+	currently_highlighted_tiles = remove_duplicates(currently_highlighted_tiles)
 	var containsOutOfBoundsCell = false
 	for highlighted_tile in currently_highlighted_tiles:
 		if not( 0 <= highlighted_tile[0] \
@@ -504,6 +505,15 @@ func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 		drawHighlights(highlighted_cells)
 	
 	pseudoHighlightedCells = currently_highlighted_tiles
+
+func remove_duplicates(array: Array[Vector2i]) -> Array[Vector2i]:
+	var result:Array[Vector2i] = []  # The resulting array with duplicates removed
+	
+	for item in array:
+		if item not in result:
+			result.append(item)
+	
+	return result
 
 # Draws the highlight and updates which cells are highlighted
 func pseudoHighlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
