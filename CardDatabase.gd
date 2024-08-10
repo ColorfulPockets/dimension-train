@@ -251,5 +251,40 @@ var DATA = {
 			fields.TargetArea: Vector2i(2,2),
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
-		# TODO cards that rearrange stuff on the board
+	"Assemble":
+		{
+			fields.Name: "Assemble",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 0,
+			fields.Exhaust: true,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Manufacture ARGManufacture.\nExhaust",
+			fields.Function: "Manufacture",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+			fields.Arguments: {"Manufacture": 6},
+		},
+	"Reforest":
+		{
+			fields.Name: "Reforest",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 0,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Replace all empty spaces in a TARGETAREA area with trees. Draw ARGDraw.",
+			fields.Function: "Reforest",
+			fields.TargetArea: Vector2i(2,3),
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+			fields.Arguments: {"Draw": 1},
+		},
+	"Scoop":
+		{
+			fields.Name: "Scoop",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 0,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Gather TARGETAREA. Draw ARGDraw.",
+			fields.Function: "Scoop",
+			fields.TargetArea: Vector2i(2,1),
+			fields.MousePointer: load("res://Assets/Icons/Gather_mouse.png"),
+			fields.Arguments: {"Draw": 1},
+		},
 }

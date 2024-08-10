@@ -110,18 +110,20 @@ func Blast(_cardInfo):
 	
 	return discard
 
-func Gather(_cardInfo):
-	middleBarContainer.visible = true
-	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-	middleBarContainer.setText("Gather materials\n(Esc to cancel)")
-	
-	terrain.targeting = true
-	
-	var discard = await terrain.confirmed
-	
-	if discard != Global.FUNCTION_STATES.Success:
-		middleBarContainer.visible = false
-		return discard
+func Gather(_cardInfo, displayConfirmation=true):
+	var discard
+	if displayConfirmation:
+		middleBarContainer.visible = true
+		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+		middleBarContainer.setText("Gather materials\n(Esc to cancel)")
+		
+		terrain.targeting = true
+		
+		discard = await terrain.confirmed
+		
+		if discard != Global.FUNCTION_STATES.Success:
+			middleBarContainer.visible = false
+			return discard
 		
 	discard = Global.FUNCTION_STATES.Fail
 	var startingWoodCount = Stats.woodCount
@@ -547,6 +549,45 @@ func Transmute(_cardInfo):
 	middleBarContainer.visible = false
 	return discard
 
+func Reforest(cardInfo):
+	var discard
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	middleBarContainer.setText("Reforest\n(Esc to cancel)")
+	terrain.targeting = true
+	discard = await terrain.confirmed
+
+	if discard != Global.FUNCTION_STATES.Success:
+		middleBarContainer.visible = false
+		return discard
+	
+	for tile in terrain.highlighted_cells:
+		if terrain.get_cell_atlas_coords(0,tile) in Global.empty_tiles:
+			terrain.set_cell(Global.base_layer, tile, 0, Global.tree)
+			
+	terrain.targeting = false
+
+	middleBarContainer.visible = false
+	
+	Draw(cardInfo, false)
+
+	return discard
+	
+# Best template for effect involving targeting
+func Scoop(cardInfo):
+	terrain.clearHighlights()
+	
+	terrain.targeting = true
+	
+	var confirmed = await confirmTarget("Gather and draw " + str(cardInfo[Global.CARD_FIELDS.Arguments]["Draw"]))
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Gather(cardInfo, false)
+		Draw(cardInfo, false)
+	
+	return confirmed
+
+
 func confirmIfEnabled(text:String):
 	var confirmed
 	if Stats.confirmCardClicks:
@@ -554,6 +595,16 @@ func confirmIfEnabled(text:String):
 	else:
 		confirmed = Global.FUNCTION_STATES.Success
 		
+	return confirmed
+
+func confirmTarget(text:String):
+	middleBarContainer.setText(text + "\n(Esc to cancel)")
+	middleBarContainer.visible = true
+	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
+	
+	var confirmed = await terrain.confirmed
+		
+	middleBarContainer.visible = false
 	return confirmed
 
 func middleBarConfirmation(text:String):
