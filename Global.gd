@@ -308,7 +308,7 @@ const CARD_VALUE = 6
 const EMERGENCY_TRACK_VALUE = 1
 const GOLD_VALUE = 2
 const SHOP_VALUE = 6
-const COMMON_CAR_VALUE = 12
+const CAR_VALUE = 12
 const PLUS_SPEED_VALUE = -12
 const MINUS_SPEED_VALUE = 6
 
@@ -319,36 +319,32 @@ func addReward(cell:Vector2i, rewardValue:float):
 	if randi_range(0,3) == 0:
 		reward.append("PlusSpeed")
 		rewardValue -= PLUS_SPEED_VALUE
-	if rewardValue >= COMMON_CAR_VALUE:
-		reward.append(TrainCar.COMMON_CARS.pick_random())
-		rewardValue -= COMMON_CAR_VALUE
 	if rewardValue >= CARD_VALUE:
 		reward.append("Card")
 		rewardValue -= CARD_VALUE
+	if rewardValue >= CAR_VALUE:
+		reward.append(TrainCar.getRandomCar())
+		rewardValue -= CAR_VALUE
 	
 	while rewardValue > 0:
-		var extra_reward = randi_range(0,6)
+		var extra_reward = randi_range(0,5)
 		match extra_reward:
 			0:
-				if rewardValue >= CARD_VALUE:
-					reward.append("Card")
-					rewardValue -= CARD_VALUE
-			1:
 				reward.append("ER")
 				rewardValue -= EMERGENCY_TRACK_VALUE
-			2:
+			1:
 				if rewardValue >= GOLD_VALUE:
 					reward.append("Gold")
 					rewardValue -= GOLD_VALUE
-			3:
+			2:
 				if rewardValue >= SHOP_VALUE and "Shop" not in reward:
 					reward.append("Shop")
 					rewardValue -= SHOP_VALUE
-			4:
-				if rewardValue >= COMMON_CAR_VALUE:
+			3:
+				if rewardValue >= CAR_VALUE:
 					reward.append(TrainCar.COMMON_CARS.pick_random())
-					rewardValue -= COMMON_CAR_VALUE
-			5:
+					rewardValue -= CAR_VALUE
+			4:
 				if "PlusSpeed" not in reward and rewardValue >= MINUS_SPEED_VALUE:
 					reward.append("MinusSpeed")
 					rewardValue -= MINUS_SPEED_VALUE

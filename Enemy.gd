@@ -22,6 +22,15 @@ func _init(enemyName, cell:Vector2i, facing:Global.DIR, terrain:Terrain):
 	self.enemyName = enemyName
 	self.cell = cell
 	self.facing = facing
+	match facing:
+		Global.DIR.U:
+			self.rotation -= PI/2
+		Global.DIR.R:
+			pass
+		Global.DIR.D:
+			self.rotation += PI/2
+		Global.DIR.L:
+			self.rotation += PI
 	self.terrain = terrain
 	texture = load("res://Assets/Enemies/" + enemyName + ".png")
 	if enemyName in TOOLTIP_TEXT:

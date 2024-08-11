@@ -63,8 +63,29 @@ static var CAR_INFO = {
 		FIELDS.TYPES: [TYPE.TRAINMOVEMENT],
 		FIELDS.RARITY: RARITY.RARE,
 		},
-	
 }
+
+static var commons = []
+static var uncommons = []
+static var rares = []
+static var carListsSorted = false
+
+static func getRandomCar():
+	if not carListsSorted:
+		for carName in CAR_INFO.keys():
+			if CAR_INFO[carName][FIELDS.RARITY] == RARITY.COMMON:
+				commons.append(carName)
+			elif CAR_INFO[carName][FIELDS.RARITY] == RARITY.UNCOMMON:
+				uncommons.append(carName)
+			else:
+				rares.append(carName)
+		
+		carListsSorted = true
+	
+	var rarity = randi_range(0,100)
+	if rarity < 50: return commons.pick_random()
+	if rarity < 85: return uncommons.pick_random()
+	else: return rares.pick_random()
 
 func _init(carName):
 	self.carName = carName

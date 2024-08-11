@@ -58,7 +58,7 @@ func fadeInRewards():
 	fadeInScene(rewards)
 
 func getNextMap():
-	return ["Corridor", "LostTrack"].pick_random()
+	return ["Corridor", "LostTrack", "SlugForest"].pick_random()
 
 func card_selected():
 	self.mapName = getNextMap()
