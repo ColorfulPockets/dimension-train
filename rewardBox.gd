@@ -22,7 +22,7 @@ func setText(text:String):
 		# TODO: Clean up this hard coded stuff
 		line = line.erase(0, len("+[color=Green]"))
 		line = line.erase(line.find("[/color]"), len("[/color]"))
-		if line in TrainCar.ALL_CARS:
+		if line in TrainCar.getAllCars():
 			tooltip.text += "\n[color=Green]" + line + "[/color]: " + TrainCar.CAR_INFO[line][TrainCar.FIELDS.TOOLTIP]
 	
 	tooltip.text = tooltip.text.erase(0)

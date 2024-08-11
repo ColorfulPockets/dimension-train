@@ -342,7 +342,7 @@ func addReward(cell:Vector2i, rewardValue:float):
 					rewardValue -= SHOP_VALUE
 			3:
 				if rewardValue >= CAR_VALUE:
-					reward.append(TrainCar.COMMON_CARS.pick_random())
+					reward.append(TrainCar.getRandomCar())
 					rewardValue -= CAR_VALUE
 			4:
 				if "PlusSpeed" not in reward and rewardValue >= MINUS_SPEED_VALUE:

@@ -16,10 +16,6 @@ var carName: String
 var types: Array
 var rarity: RARITY
 
-const COMMON_CARS = ["Cargo Car", "Brake Car"]
-const UNCOMMON_CARS = ["Magnet Car"]
-const ALL_CARS = COMMON_CARS + UNCOMMON_CARS
-
 enum FIELDS {TOOLTIP, TYPES, RARITY}
 #TODO: create github issue to turn this into a const eventually
 static var CAR_INFO = {
@@ -68,11 +64,13 @@ static var CAR_INFO = {
 static var commons = []
 static var uncommons = []
 static var rares = []
+static var allCars = []
 static var carListsSorted = false
 
-static func getRandomCar():
+static func populateLists():
 	if not carListsSorted:
 		for carName in CAR_INFO.keys():
+			allCars.append(carName)
 			if CAR_INFO[carName][FIELDS.RARITY] == RARITY.COMMON:
 				commons.append(carName)
 			elif CAR_INFO[carName][FIELDS.RARITY] == RARITY.UNCOMMON:
@@ -81,6 +79,13 @@ static func getRandomCar():
 				rares.append(carName)
 		
 		carListsSorted = true
+
+static func getAllCars():
+	populateLists()
+	return allCars
+
+static func getRandomCar():
+	populateLists()
 	
 	var rarity = randi_range(0,100)
 	if rarity < 50: return commons.pick_random()
