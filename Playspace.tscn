@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=39 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -16,17 +16,22 @@
 [ext_resource type="Texture2D" uid="uid://dpnwgr1lfoj42" path="res://Assets/Icons/EndTurnCircle_white.png" id="12_esqij"]
 [ext_resource type="Texture2D" uid="uid://dj4iwdkmj7hvc" path="res://Assets/Icons/EndTurnCircle_red.png" id="13_12f88"]
 [ext_resource type="Script" path="res://EndTurnButton.gd" id="14_3mfda"]
-[ext_resource type="Script" path="res://LeftBarContainer.gd" id="15_4tvj0"]
 [ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="15_n5iw7"]
 [ext_resource type="Texture2D" uid="uid://bqcfywvunh1s7" path="res://Assets/Icons/Wood.png" id="17_3v13u"]
+[ext_resource type="Script" path="res://TopBar HBox.gd" id="17_21g6v"]
 [ext_resource type="Texture2D" uid="uid://dhiybsqjvdali" path="res://Assets/Icons/Metal.png" id="18_xfgll"]
 [ext_resource type="Texture2D" uid="uid://rcx7qkoeksij" path="res://Assets/Icons/Rail.png" id="19_allsf"]
+[ext_resource type="Script" path="res://MetalCount.gd" id="20_8rj36"]
 [ext_resource type="Script" path="res://RailLeftToPlace.gd" id="20_hbuuu"]
 [ext_resource type="Script" path="res://EnergyDisplay.gd" id="22_rrjhi"]
 [ext_resource type="Texture2D" uid="uid://xvyn13wydkkp" path="res://Assets/Icons/Coin.png" id="22_sadbf"]
 [ext_resource type="Script" path="res://MiddleBarContainer.gd" id="22_whwbt"]
+[ext_resource type="Script" path="res://WoodCount.gd" id="23_g4l2l"]
 [ext_resource type="Script" path="res://TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
+[ext_resource type="Script" path="res://RailCount.gd" id="24_np3rd"]
+[ext_resource type="Script" path="res://EmergencyRailCount.gd" id="25_lalij"]
+[ext_resource type="Script" path="res://CoinCount.gd" id="26_iu0uo"]
 [ext_resource type="Script" path="res://OverlayManager.gd" id="26_mtkk4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
@@ -4186,7 +4191,6 @@ local_coords = true
 trail_lifetime = 0.1
 
 [node name="DrawPile" type="TextureButton" parent="FixedElements"]
-layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
 focus_mode = 0
@@ -4197,6 +4201,7 @@ texture_disabled = ExtResource("2_1tsry")
 script = ExtResource("4_q8v2y")
 
 [node name="Cards" type="Control" parent="FixedElements"]
+layout_mode = 3
 anchors_preset = 0
 
 [node name="CardTargetLine" type="Line2D" parent="FixedElements"]
@@ -4212,7 +4217,6 @@ local_coords = true
 trail_lifetime = 0.1
 
 [node name="DiscardPile" type="TextureButton" parent="FixedElements"]
-layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
 focus_mode = 0
@@ -4223,19 +4227,16 @@ texture_disabled = ExtResource("8_m8g5r")
 script = ExtResource("8_1nc4h")
 
 [node name="DrawPileCardCount" type="Label" parent="FixedElements"]
-layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 theme_override_font_sizes/font_size = 100
 
 [node name="DiscardPileCardCount" type="Label" parent="FixedElements"]
-layout_mode = 0
 offset_right = 40.0
 offset_bottom = 137.0
 theme_override_font_sizes/font_size = 100
 
 [node name="EndTurnButton" type="TextureButton" parent="FixedElements"]
-layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 focus_mode = 0
@@ -4256,80 +4257,91 @@ Turn"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LeftBarContainer" type="Control" parent="FixedElements"]
-anchors_preset = 0
-offset_left = 25.0
-offset_top = 150.0
-offset_right = 375.0
-offset_bottom = 1750.0
-script = ExtResource("15_4tvj0")
+[node name="Top Bar" type="ColorRect" parent="FixedElements"]
+offset_right = 3840.0
+offset_bottom = 150.0
+color = Color(0.49419, 0.000172693, 0.494187, 1)
 
-[node name="LeftBar" type="Sprite2D" parent="FixedElements/LeftBarContainer"]
-modulate = Color(0.247059, 0.247059, 0.247059, 0.576471)
-scale = Vector2(300, 1600)
-texture = ExtResource("15_n5iw7")
-centered = false
+[node name="TopBar HBox" type="HBoxContainer" parent="FixedElements/Top Bar"]
+layout_mode = 0
+offset_right = 829.0
+offset_bottom = 23.0
+size_flags_vertical = 3
+theme_override_constants/separation = 100
+script = ExtResource("17_21g6v")
 
-[node name="WoodIcon" type="Sprite2D" parent="FixedElements/LeftBarContainer"]
+[node name="LeftSpace" type="MarginContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="Wood Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="WoodIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Wood Hbox"]
+layout_mode = 2
 texture = ExtResource("17_3v13u")
-centered = false
+expand_mode = 3
 
-[node name="WoodCount" type="Label" parent="FixedElements/LeftBarContainer"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-theme_override_font_sizes/font_size = 100
-
-[node name="MetalIcon" type="Sprite2D" parent="FixedElements/LeftBarContainer"]
-texture = ExtResource("18_xfgll")
-centered = false
-
-[node name="MetalCount" type="Label" parent="FixedElements/LeftBarContainer"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-theme_override_font_sizes/font_size = 100
-
-[node name="RailIcon" type="Sprite2D" parent="FixedElements/LeftBarContainer"]
-texture = ExtResource("19_allsf")
-centered = false
-
-[node name="RailCount" type="Label" parent="FixedElements/LeftBarContainer"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-theme_override_font_sizes/font_size = 100
-
-[node name="EmergencyRailIcon" type="Sprite2D" parent="FixedElements/LeftBarContainer"]
-modulate = Color(1, 0.54902, 0.486275, 1)
-texture = ExtResource("19_allsf")
-centered = false
-
-[node name="EmergencyRailCount" type="Label" parent="FixedElements/LeftBarContainer"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-theme_override_constants/line_spacing = -20
-theme_override_font_sizes/font_size = 60
+[node name="WoodCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Wood Hbox"]
+layout_mode = 2
 text = "5"
-horizontal_alignment = 1
-vertical_alignment = 1
+script = ExtResource("23_g4l2l")
 
-[node name="CoinIcon" type="Sprite2D" parent="FixedElements/LeftBarContainer"]
-modulate = Color(1, 0.54902, 0.486275, 1)
+[node name="Metal Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="MetalIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Metal Hbox"]
+layout_mode = 2
+texture = ExtResource("18_xfgll")
+expand_mode = 3
+
+[node name="MetalCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Metal Hbox"]
+layout_mode = 2
+text = "5"
+script = ExtResource("20_8rj36")
+
+[node name="Rail HBox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="RailIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Rail HBox"]
+layout_mode = 2
+texture = ExtResource("19_allsf")
+expand_mode = 3
+
+[node name="RailCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Rail HBox"]
+layout_mode = 2
+text = "5"
+script = ExtResource("24_np3rd")
+
+[node name="ER Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="EmergencyRailIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/ER Hbox"]
+modulate = Color(1, 0.486275, 0.482353, 1)
+layout_mode = 2
+texture = ExtResource("19_allsf")
+expand_mode = 3
+
+[node name="EmergencyRailCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/ER Hbox"]
+layout_mode = 2
+text = "20"
+script = ExtResource("25_lalij")
+
+[node name="Coin Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="CoinIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Coin Hbox"]
+layout_mode = 2
 texture = ExtResource("22_sadbf")
-centered = false
+expand_mode = 3
 
-[node name="CoinCount" type="Label" parent="FixedElements/LeftBarContainer"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 137.0
-theme_override_font_sizes/font_size = 100
+[node name="CoinCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Coin Hbox"]
+layout_mode = 2
+text = "1"
+script = ExtResource("26_iu0uo")
 
 [node name="RailLeftToBuild" type="Label" parent="FixedElements"]
 visible = false
 z_index = 11
-layout_mode = 0
 offset_right = 400.0
 offset_bottom = 200.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -4340,7 +4352,7 @@ script = ExtResource("20_hbuuu")
 [node name="MiddleBarContainer" type="Control" parent="FixedElements"]
 visible = false
 z_index = 13
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 0
 offset_right = 1200.0
 offset_bottom = 200.0

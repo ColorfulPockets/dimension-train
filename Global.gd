@@ -1,6 +1,6 @@
 extends Node
 
-var devmode = false
+var devmode = true
 
 # GLOBAL SIGNALS
 signal cardFunctionStarted
@@ -10,6 +10,7 @@ signal overlayShowing
 signal overlayHidden
 
 # GLOBAL VARIABLES
+var topBarFontSize = 70
 
 const base_layer = 0
 const resource_counts_layer = 1
