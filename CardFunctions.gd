@@ -9,12 +9,12 @@ signal selection(selected_or_cancelled)
 
 var highlight_tiles = false
 
-func Chop(_cardInfo, displayConfirmation:bool = true):
+func Harvest(_cardInfo, displayConfirmation:bool = true):
 	var discard
 	if displayConfirmation:
 		middleBarContainer.visible = true
 		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-		middleBarContainer.setText("Chop Trees\n(Esc to cancel)")
+		middleBarContainer.setText("Harvest\n(Esc to cancel)")
 		terrain.targeting = true
 		discard = await terrain.confirmed
 	
@@ -32,6 +32,13 @@ func Chop(_cardInfo, displayConfirmation:bool = true):
 			terrain.set_cell(0, tile, 0, Global.wood)
 			Stats.removeEmergencyRail(1)
 			discard = Global.FUNCTION_STATES.Success
+		if terrain.get_cell_atlas_coords(0,tile) == Global.rock:
+			terrain.set_cell(0, tile, 0, Global.metal)
+			discard = Global.FUNCTION_STATES.Success
+		if terrain.get_cell_atlas_coords(0,tile) == Global.corrupt_rock:
+			terrain.set_cell(0, tile, 0, Global.metal)
+			Stats.removeEmergencyRail(1)
+			discard = Global.FUNCTION_STATES.Success
 			
 	if "Swarm" in Stats.powersInPlay and discard == Global.FUNCTION_STATES.Success:
 		var lastHighlightedTargetArea = terrain.lastHighlightedTargetArea
@@ -45,70 +52,12 @@ func Chop(_cardInfo, displayConfirmation:bool = true):
 
 	return discard
 
-func Mine(_cardInfo, displayConfirmation:bool = true):
-	var discard
-	if displayConfirmation:
-		middleBarContainer.visible = true
-		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-		middleBarContainer.setText("Mine Stone\n(Esc to cancel)")
-		
-		terrain.targeting = true
-		
-		discard = await terrain.confirmed
-		
-		if discard != Global.FUNCTION_STATES.Success:
-			middleBarContainer.visible = false
-			return discard
-		
-	discard = Global.FUNCTION_STATES.Fail
-	for tile in terrain.highlighted_cells:
-		if terrain.get_cell_atlas_coords(0,tile) == Global.rock:
-			terrain.set_cell(0, tile, 0, Global.metal)
-			discard = Global.FUNCTION_STATES.Success
-		if terrain.get_cell_atlas_coords(0,tile) == Global.corrupt_rock:
-			terrain.set_cell(0, tile, 0, Global.metal)
-			Stats.removeEmergencyRail(1)
-			discard = Global.FUNCTION_STATES.Success
-	
-	if "Swarm" in Stats.powersInPlay and discard == Global.FUNCTION_STATES.Success:
-		var lastHighlightedTargetArea = terrain.lastHighlightedTargetArea
-		terrain.pseudoHighlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea + Vector2i(2,2))
-		emptyPseudoHighlighted()
-		# Gotta reset the highlight in case something else cares about it
-		terrain.highlightCells(terrain.lastHighlightedMousePosition, lastHighlightedTargetArea)
-	
-	terrain.targeting = false
-	
-	middleBarContainer.visible = false
-	return discard
-
 #Replaces all harvestables in pseudohighlighted area with empty tiles
 func emptyPseudoHighlighted():
 	for tile in terrain.pseudoHighlightedCells:
 		if tile not in terrain.highlighted_cells:
 			if terrain.get_cell_atlas_coords(0,tile) in Global.harvestable_tiles:
 				terrain.set_cell(0, tile, 0, Global.empty)
-
-func Blast(_cardInfo):
-	var discard
-	middleBarContainer.visible = true
-	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-	middleBarContainer.setText("Chop and Mine\n(Esc to cancel)")
-	terrain.targeting = true
-	discard = await terrain.confirmed
-
-	if discard != Global.FUNCTION_STATES.Success:
-		middleBarContainer.visible = false
-		return discard
-		
-	discard = await Chop(_cardInfo, false)
-	
-	if discard != Global.FUNCTION_STATES.Success:
-		discard = await (Mine(_cardInfo, false))
-	else:
-		await Mine(_cardInfo, false)
-	
-	return discard
 
 func Gather(_cardInfo, displayConfirmation=true):
 	var discard
@@ -318,7 +267,7 @@ func Slow(cardInfo):
 func Gust(cardInfo):
 	middleBarContainer.visible = true
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-	middleBarContainer.setText("Chop Trees\n(Esc to cancel)")
+	middleBarContainer.setText("Harvest\n(Esc to cancel)")
 	terrain.targeting = true
 	var discard = await terrain.confirmed
 	
@@ -326,7 +275,7 @@ func Gust(cardInfo):
 		middleBarContainer.visible = false
 		return discard
 	
-	Chop(cardInfo, false)
+	Harvest(cardInfo, false)
 	
 	Draw(cardInfo, false)
 	
@@ -427,7 +376,7 @@ func Recycle(_cardInfo):
 func Swarm(_cardInfo):
 	terrain.clearHighlights()
 	
-	var confirmed = await confirmIfEnabled("Clear around Chops and Mines")
+	var confirmed = await confirmIfEnabled("Swarm")
 		
 	if confirmed == Global.FUNCTION_STATES.Success:
 		Stats.powersInPlay.append("Swarm")

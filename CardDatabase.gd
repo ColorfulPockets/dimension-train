@@ -3,27 +3,16 @@ extends Node
 var fields = Global.CARD_FIELDS
 
 var DATA = {
-	"Chop":
+	"Harvest":
 		{
-			fields.Name: "Chop",
+			fields.Name: "Harvest",
 			fields.Rarity: "Starter",
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Harvesting,
-			fields.Text: "Chop TARGETAREA",
+			fields.Text: "Harvest TARGETAREA",
 			fields.TargetArea: Vector2i(2,2),
-			fields.Function: "Chop",
+			fields.Function: "Harvest",
 			fields.MousePointer: load("res://Assets/Icons/Chop_mouse.png"),
-		},
-	"Mine":
-		{
-			fields.Name: "Mine",
-			fields.Rarity: "Starter",
-			fields.EnergyCost: 1,
-			fields.Type: Global.CARD_TYPES.Harvesting,
-			fields.Text: "Mine TARGETAREA",
-			fields.TargetArea: Vector2i(2,2),
-			fields.Function: "Mine",
-			fields.MousePointer: load("res://Assets/Icons/Mine_mouse.png"),
 		},
 	"Gather":
 		{
@@ -76,10 +65,10 @@ var DATA = {
 			fields.Rarity: "Common",
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Harvesting,
-			fields.Text: "Mine TARGETAREA",
+			fields.Text: "Harvest TARGETAREA",
 			fields.TargetArea: Vector2i(3,2),
-			fields.Function: "Mine",
-			fields.MousePointer: load("res://Assets/Icons/Mine_mouse.png"),
+			fields.Function: "Harvest",
+			fields.MousePointer: load("res://Assets/Icons/Chop_mouse.png"),
 		},
 	"Gust":
 		{
@@ -87,7 +76,7 @@ var DATA = {
 			fields.Rarity: "Common",
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Harvesting,
-			fields.Text: "Chop TARGETAREA, then draw ARGDraw card.",
+			fields.Text: "Harvest TARGETAREA, then draw ARGDraw card.",
 			fields.TargetArea: Vector2i(2,2),
 			fields.Function: "Gust",
 			fields.MousePointer: load("res://Assets/Icons/Chop_mouse.png"),
@@ -131,9 +120,9 @@ var DATA = {
 			fields.Rarity: "Uncommon",
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Harvesting,
-			fields.Text: "Mine TARGETAREA",
+			fields.Text: "Harvest TARGETAREA",
 			fields.TargetArea: Vector2i(4,4),
-			fields.Function: "Mine",
+			fields.Function: "Harvest",
 			fields.MousePointer: load("res://Assets/Icons/Bridge_mouse.png"),
 		},
 	"Levitate":
@@ -194,19 +183,8 @@ var DATA = {
 			fields.Rarity: "Rare",
 			fields.EnergyCost: 3,
 			fields.Type: Global.CARD_TYPES.Technology,
-			fields.Text: "Whenever you Chop or Mine, Clear all squares around the highlighted area.",
+			fields.Text: "Whenever you Harvest, Clear all squares around the highlighted area.",
 			fields.Function: "Swarm",
-			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
-		},
-	"Blast":
-		{
-			fields.Name: "Blast",
-			fields.Rarity: "Common",
-			fields.EnergyCost: 1,
-			fields.Type: Global.CARD_TYPES.Harvesting,
-			fields.Text: "Chop and Mine TARGETAREA.",
-			fields.Function: "Blast",
-			fields.TargetArea: Vector2i(2,2),
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
 	"AutoManufacture":
