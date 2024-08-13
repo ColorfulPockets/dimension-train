@@ -59,6 +59,10 @@ func emptyPseudoHighlighted():
 			if terrain.get_cell_atlas_coords(0,tile) in Global.harvestable_tiles:
 				terrain.set_cell(0, tile, 0, Global.empty)
 
+# Keep track of where they were gathered from in order to reset the map after a non-confirmation
+var gatheredWoodLocations = []
+var gatheredMetalLocations = []
+var gatherFailedDueToNonGathering = false
 func Gather(_cardInfo, displayConfirmation=true):
 	var discard
 	if displayConfirmation:
@@ -72,18 +76,23 @@ func Gather(_cardInfo, displayConfirmation=true):
 		
 		if discard != Global.FUNCTION_STATES.Success:
 			middleBarContainer.visible = false
+			gatherFailedDueToNonGathering = false
 			return discard
 		
 	discard = Global.FUNCTION_STATES.Fail
 	var startingWoodCount = Stats.woodCount
 	var startingMetalCount = Stats.metalCount
+	gatheredWoodLocations = []
+	gatheredMetalLocations = []
 	for tile in terrain.highlighted_cells:
 		if terrain.get_cell_atlas_coords(0,tile) == Global.wood:
 			terrain.set_cell(0, tile, 0, Global.empty)
+			gatheredWoodLocations.append(tile)
 			Stats.woodCount += 1
 			discard = Global.FUNCTION_STATES.Success
 		elif terrain.get_cell_atlas_coords(0,tile) == Global.metal:
 			terrain.set_cell(0, tile, 0, Global.empty)
+			gatheredMetalLocations.append(tile)
 			Stats.metalCount += 1
 			discard = Global.FUNCTION_STATES.Success
 	
@@ -98,6 +107,9 @@ func Gather(_cardInfo, displayConfirmation=true):
 	terrain.targeting = false
 	
 	middleBarContainer.visible = false
+	
+	if discard == Global.FUNCTION_STATES.Fail:
+		gatherFailedDueToNonGathering = true
 	return discard
 
 func Build(cardInfo):
@@ -152,89 +164,21 @@ func buildRail(numBuilt:int, buildOver:Array):
 	
 	return discard
 	
-func Manufacture(cardInfo:Dictionary, displayConfirmation:bool = true):
-	terrain.clearHighlights()
-	var numManufactured
-	var confirmed
-	
-	numManufactured = cardInfo[Global.CARD_FIELDS.Arguments]["Manufacture"]
-	
-	if displayConfirmation:
-		
-		middleBarContainer.setText("Manufacture " + str(min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)) + " rails.\n(Enter to confirm, Esc to cancel)")
-		middleBarContainer.visible = true
-		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-		
-		confirmed = await confirmation
-		
-		middleBarContainer.visible = false
-	
-	if confirmed == Global.FUNCTION_STATES.Success or !displayConfirmation:
-		var num_to_manufacture = min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)
-		for i in range(int(num_to_manufacture/2)):
-			Stats.woodCount -= 1
-			Stats.metalCount -= 1
-			Stats.railCount += 2
-
-	return confirmed
 
 func Factory(cardInfo):
-	middleBarContainer.visible = true
-	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-	middleBarContainer.setText("Gather materials\n(Esc to cancel)")
-	
-	terrain.targeting = true
-	
-	var discard = await terrain.confirmed
-	
-	if discard != Global.FUNCTION_STATES.Success:
-		middleBarContainer.visible = false
-		return discard
 		
-	var harvested_wood = []
-	var harvested_metal = []
-	for tile in terrain.highlighted_cells:
-		if terrain.get_cell_atlas_coords(0,tile) == Global.wood:
-			harvested_wood.append(tile)
-			terrain.set_cell(0, tile, 0, Global.empty)
-			Stats.woodCount += 1
-		elif terrain.get_cell_atlas_coords(0,tile) == Global.metal:
-			harvested_metal.append(tile)
-			terrain.set_cell(0, tile, 0, Global.empty)
-			Stats.metalCount += 1
+	var confirmed = await Gather(cardInfo)
 	
-	terrain.targeting = false
-	
-	middleBarContainer.visible = false
-	
-	# Manufacture
-	terrain.clearHighlights()
-	var numManufactured
-
-	numManufactured = cardInfo[Global.CARD_FIELDS.Arguments]["Manufacture"]
-	
-	middleBarContainer.setText("Manufacture " + str(min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)) + " rails.\n(Enter to confirm, Esc to cancel)")
-	middleBarContainer.visible = true
-	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-	
-	var confirmed = await confirmation
-	
-	middleBarContainer.visible = false
-	
-	if confirmed == Global.FUNCTION_STATES.Success:
-		var num_to_manufacture = min(numManufactured, Stats.woodCount*2, Stats.metalCount*2)
-		for i in range(int(num_to_manufacture/2)):
-			Stats.woodCount -= 1
-			Stats.metalCount -= 1
-			Stats.railCount += 2
-	else:
-		for tile in harvested_wood:
-			terrain.set_cell(0, tile, 0, Global.wood)
-			Stats.woodCount -= 1
-		for tile in harvested_metal:
-			terrain.set_cell(0, tile, 0, Global.metal)
-			Stats.metalCount += 1
+	if confirmed == Global.FUNCTION_STATES.Success or gatherFailedDueToNonGathering:
+		confirmed = await Build(cardInfo)
 			
+	if confirmed != Global.FUNCTION_STATES.Success:
+		for tile in gatheredWoodLocations:
+			terrain.set_cell(Global.base_layer, tile, 0, Global.wood)
+		for tile in gatheredMetalLocations:
+			terrain.set_cell(Global.base_layer, tile, 0, Global.metal)
+			
+		
 	return confirmed
 
 func Slow(cardInfo):
@@ -398,11 +342,13 @@ func AutoManufacture(_cardInfo):
 func Turbo(_cardInfo):
 	terrain.clearHighlights()
 	
-	var confirmed = await confirmIfEnabled("Convert all rails to energy")
+	var confirmed = await confirmIfEnabled("Convert all wood and stone to energy")
 		
 	if confirmed == Global.FUNCTION_STATES.Success:
-		Stats.currentEnergy += Stats.railCount
-		Stats.railCount = 0
+		Stats.currentEnergy += Stats.woodCount
+		Stats.currentEnergy += Stats.metalCount
+		Stats.woodCount = 0
+		Stats.metalCount = 0
 		
 	return confirmed
 

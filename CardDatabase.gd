@@ -36,28 +36,17 @@ var DATA = {
 			fields.MousePointer: load("res://Assets/Icons/Build_mouse.png"),
 			fields.Arguments: {"Build": 100 if Global.devmode else 4},
 		},
-	"Manufacture":
-		{
-			fields.Name: "Manufacture",
-			fields.Rarity: "Starter",
-			fields.EnergyCost: 1,
-			fields.Type: Global.CARD_TYPES.Logistics,
-			fields.Text: "Manufacture ARGManufacture",
-			fields.Function: "Manufacture",
-			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
-			fields.Arguments: {"Manufacture": 4}
-		},
 	"Factory":
 		{
 			fields.Name: "Factory",
 			fields.Rarity: "Starter",
 			fields.EnergyCost: 2,
 			fields.Type: Global.CARD_TYPES.Logistics,
-			fields.Text: "Gather TARGETAREA, then Manufacture ARGManufacture",
+			fields.Text: "Gather TARGETAREA, then Build ARGBuild",
 			fields.TargetArea: Vector2i(2,2),
 			fields.Function: "Factory",
 			fields.MousePointer: load("res://Assets/Icons/Gather_mouse.png"),
-			fields.Arguments: {"Manufacture": 6}
+			fields.Arguments: {"Build": 3}
 		},
 	"Drill":
 		{
@@ -203,7 +192,7 @@ var DATA = {
 			fields.Rarity: "Uncommon",
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Logistics,
-			fields.Text: "Remove all rails, then gain energy equal to the number of rails removed.",
+			fields.Text: "Remove all wood and stone, then gain energy equal to the number of wood and stone removed.",
 			fields.Function: "Turbo",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},

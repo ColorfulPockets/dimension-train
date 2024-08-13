@@ -7,13 +7,11 @@ var confirmCardClicks = true
 var levelCounter = 0
 
 var woodCount = 0
-var starterWoodCount = 0
+var starterWoodCount = 100 if Global.devmode else 5
 var metalCount = 0
-var starterMetalCount = 0
+var starterMetalCount = 100 if Global.devmode else 5
 var emergencyRailCount = 20
 var erc = 20
-var railCount = 0
-var starterRail = 100 if Global.devmode else 5
 var coinCount = 0
 var startingTrainSpeed = 100 if Global.devmode else 0
 var turnCounter = 0
@@ -40,7 +38,7 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Scoop","Bridge","Factory","Manufacture", "Harvest", "Harvest", "Gather", "Build", "Build", "Gather"]
+var startingDeckNames = ["Harvest", "Harvest", "Gather", "Gather", "Build", "Build"]
 var deck = []
 var rareChance = 0.1
 
@@ -55,7 +53,6 @@ var trainCars = []
 
 func startLevel():
 	turnCounter = 0
-	railCount =  starterRail
 	woodCount = starterWoodCount
 	metalCount = starterMetalCount
 	currentEnergy = maxEnergy

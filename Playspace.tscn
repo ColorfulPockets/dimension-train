@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=38 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -29,7 +29,6 @@
 [ext_resource type="Script" path="res://WoodCount.gd" id="23_g4l2l"]
 [ext_resource type="Script" path="res://TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Text.gd" id="23_wu33i"]
-[ext_resource type="Script" path="res://RailCount.gd" id="24_np3rd"]
 [ext_resource type="Script" path="res://EmergencyRailCount.gd" id="25_lalij"]
 [ext_resource type="Script" path="res://CoinCount.gd" id="26_iu0uo"]
 [ext_resource type="Script" path="res://OverlayManager.gd" id="26_mtkk4"]
@@ -4191,6 +4190,7 @@ local_coords = true
 trail_lifetime = 0.1
 
 [node name="DrawPile" type="TextureButton" parent="FixedElements"]
+layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
 focus_mode = 0
@@ -4217,6 +4217,7 @@ local_coords = true
 trail_lifetime = 0.1
 
 [node name="DiscardPile" type="TextureButton" parent="FixedElements"]
+layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
 focus_mode = 0
@@ -4227,16 +4228,19 @@ texture_disabled = ExtResource("8_m8g5r")
 script = ExtResource("8_1nc4h")
 
 [node name="DrawPileCardCount" type="Label" parent="FixedElements"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 theme_override_font_sizes/font_size = 100
 
 [node name="DiscardPileCardCount" type="Label" parent="FixedElements"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 137.0
 theme_override_font_sizes/font_size = 100
 
 [node name="EndTurnButton" type="TextureButton" parent="FixedElements"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 focus_mode = 0
@@ -4258,6 +4262,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Top Bar" type="ColorRect" parent="FixedElements"]
+layout_mode = 0
 offset_right = 3840.0
 offset_bottom = 150.0
 color = Color(0.49419, 0.000172693, 0.494187, 1)
@@ -4299,19 +4304,6 @@ layout_mode = 2
 text = "5"
 script = ExtResource("20_8rj36")
 
-[node name="Rail HBox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
-layout_mode = 2
-
-[node name="RailIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Rail HBox"]
-layout_mode = 2
-texture = ExtResource("19_allsf")
-expand_mode = 3
-
-[node name="RailCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Rail HBox"]
-layout_mode = 2
-text = "5"
-script = ExtResource("24_np3rd")
-
 [node name="ER Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
 layout_mode = 2
 
@@ -4342,6 +4334,7 @@ script = ExtResource("26_iu0uo")
 [node name="RailLeftToBuild" type="Label" parent="FixedElements"]
 visible = false
 z_index = 11
+layout_mode = 0
 offset_right = 400.0
 offset_bottom = 200.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)

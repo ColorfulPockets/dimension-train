@@ -230,10 +230,11 @@ func advanceTrain():
 			# Some train cars will do something that may avert the emergency.  If so, we will skip the next block
 			#The check for emergencyTrackUsed lets us know if we've already allowed some emergency track laying
 			if not emergencyTrackUsed and get_cell_atlas_coords(Global.rail_layer, nextLocation) not in Global.rail_tiles:
-				if "AutoBuild" in Stats.powersInPlay and Stats.railCount > 0:
+				if "AutoBuild" in Stats.powersInPlay and (Stats.woodCount > 0 and Stats.metalCount > 0):
 					if get_cell_atlas_coords(Global.base_layer, nextLocation) in Global.empty_tiles:
 						set_cell_directional(nextLocation, Global.DIRECTIONAL_TILES.RAIL, Global.oppositeDir(trainOutgoing), trainOutgoing, Global.rail_layer)
-						Stats.railCount -= 1
+						Stats.woodCount -= 1
+						Stats.metalCount -= 1
 						recalcEmergency = true
 				
 				if not recalcEmergency:
@@ -586,9 +587,9 @@ func buildRail(numRail, buildOver:Array):
 		numRailToBuild = min(numRail, Stats.emergencyRailCount)
 		highlightCells(get_viewport().get_mouse_position(), Vector2i.ONE)
 		return true
-	elif !useEmergencyRail and Stats.railCount > 0:
+	elif !useEmergencyRail and Stats.metalCount > 0 and Stats.woodCount > 0:
 		buildingRail = true
-		numRailToBuild = min(numRail, Stats.railCount)
+		numRailToBuild = min(numRail, Stats.metalCount, Stats.woodCount)
 		highlightCells(get_viewport().get_mouse_position(), Vector2i.ONE)
 		return true
 	else:
@@ -645,7 +646,8 @@ func buildRailOn(mousePosition):
 		if useEmergencyRail:
 			Stats.emergencyRailCount -= amountAdded
 		else:
-			Stats.railCount -= amountAdded
+			Stats.woodCount -= amountAdded
+			Stats.metalCount -= amountAdded
 
 func swapInOut(location, layer = Global.rail_layer):
 	set_cell_directional(location, directionalCellMap[location.x][location.y], outgoingMap[location.x][location.y], incomingMap[location.x][location.y], layer)
@@ -695,7 +697,8 @@ func resetPartialRail():
 		outgoingMap[rail.x][rail.y] = DIR.NONE
 		incomingMap[rail.x][rail.y] = DIR.NONE
 		directionalCellMap[rail.x][rail.y] = null
-		Stats.railCount += 1
+		Stats.woodCount += 1
+		Stats.metalCount += 1
 	partialRailBuilt.clear()
 	revealedTiles = originalRevealedTiles
 	recalculateRailRoute()
