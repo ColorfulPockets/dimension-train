@@ -44,14 +44,14 @@ const trees = [tree, corrupt_tree]
 const rock = Vector2i(0,3)
 const corrupt_rock = Vector2i(1,3)
 const rocks = [rock, corrupt_rock]
-const harvestable_tiles = rocks + trees
+const harvestable = rocks + trees
 const empty = Vector2i(0,0)
 const bridge = Vector2i(5,6)
 const highlight = Vector2i(2,4)
 const grid_outline = Vector2i(1,4)
 const wood = Vector2i(4,4)
 const metal = Vector2i(10,4)
-const collectable = [wood, metal]
+const gatherable = [wood, metal]
 const metal_shine1 = Vector2i(8,4)
 const metal_shine2 = Vector2i(9,4)
 const rail_straight = Vector2i(6,4)
@@ -72,7 +72,7 @@ const fog = Vector2i(11,4)
 const delete = Vector2i(-1, -1)
 const empty_tiles = [empty, bridge]
 
-enum CARD_TYPES {Harvesting, Logistics, Technology}
+enum CARD_TYPES {Harvesting, Logistics, Weapons, Technology}
 enum CARD_FIELDS {
 	Name, 
 	Type, 

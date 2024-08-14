@@ -9,17 +9,31 @@ signal selection(selected_or_cancelled)
 
 var highlight_tiles = false
 
-func Harvest(_cardInfo, displayConfirmation:bool = true):
+func containsTileType(highlightedTiles, tileType):
+	var containsHarvestables = func(highlightedTiles):
+		for tile in highlightedTiles:
+			if terrain.get_cell_atlas_coords(0,tile) in tileType:
+				return true
+		
+		return false
+	
+	terrain.target(containsHarvestables)
+
+var harvestFailedDueToNonHarvesting = false
+func Harvest(_cardInfo, displayConfirmation:bool = true, confirmationString:String = "Harvest\n(Esc to cancel)"):
 	var discard
 	if displayConfirmation:
 		middleBarContainer.visible = true
 		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-		middleBarContainer.setText("Harvest\n(Esc to cancel)")
-		terrain.targeting = true
+		middleBarContainer.setText(confirmationString)
+		
+		terrain.target(func(tiles): return containsTileType(tiles, Global.harvestable))
+		
 		discard = await terrain.confirmed
 	
 		if discard != Global.FUNCTION_STATES.Success:
 			middleBarContainer.visible = false
+			harvestFailedDueToNonHarvesting = false
 			return discard
 	
 	discard = Global.FUNCTION_STATES.Fail
@@ -49,6 +63,9 @@ func Harvest(_cardInfo, displayConfirmation:bool = true):
 	terrain.targeting = false
 
 	middleBarContainer.visible = false
+	
+	if discard == Global.FUNCTION_STATES.Fail:
+		harvestFailedDueToNonHarvesting = true
 
 	return discard
 
@@ -56,21 +73,21 @@ func Harvest(_cardInfo, displayConfirmation:bool = true):
 func emptyPseudoHighlighted():
 	for tile in terrain.pseudoHighlightedCells:
 		if tile not in terrain.highlighted_cells:
-			if terrain.get_cell_atlas_coords(0,tile) in Global.harvestable_tiles:
+			if terrain.get_cell_atlas_coords(0,tile) in Global.harvestable:
 				terrain.set_cell(0, tile, 0, Global.empty)
 
 # Keep track of where they were gathered from in order to reset the map after a non-confirmation
 var gatheredWoodLocations = []
 var gatheredMetalLocations = []
 var gatherFailedDueToNonGathering = false
-func Gather(_cardInfo, displayConfirmation=true):
+func Gather(_cardInfo, displayConfirmation=true, confirmationString:String = "Gather materials\n(Esc to cancel)"):
 	var discard
 	if displayConfirmation:
 		middleBarContainer.visible = true
 		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-		middleBarContainer.setText("Gather materials\n(Esc to cancel)")
+		middleBarContainer.setText(confirmationString)
 		
-		terrain.targeting = true
+		terrain.target(func(tiles): return containsTileType(tiles, Global.gatherable))
 		
 		discard = await terrain.confirmed
 		
@@ -126,6 +143,30 @@ func Build(cardInfo):
 	
 	return discard
 
+func Blast(cardInfo):
+	terrain.clearHighlights()
+	
+	var checkOrthogonal = func (highlightedTiles) :
+		for tile in highlightedTiles:
+			var orthogonalToTrainCar = false
+			for location in terrain.trainLocations:
+				if location.x == tile.x or location.y == tile.y:
+					orthogonalToTrainCar = true
+			if not orthogonalToTrainCar:
+				return false
+		
+		return true
+	
+	terrain.target(checkOrthogonal)
+	
+	var confirmed = await confirmTarget("Blast " + str(cardInfo[Global.CARD_FIELDS.Arguments]["Blast"]))
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		pass
+	
+	return confirmed
+
+
 func AutoBuild(_cardInfo):
 	if Stats.confirmCardClicks:
 		middleBarContainer.setText("Enable Autobuild\n(Enter to confirm, Esc to cancel)")
@@ -167,7 +208,7 @@ func buildRail(numBuilt:int, buildOver:Array):
 
 func Factory(cardInfo):
 		
-	var confirmed = await Gather(cardInfo)
+	var confirmed = await Gather(cardInfo, true, "Gather materials\n(Esc to cancel, Enter to Gather nothing)")
 	
 	if confirmed == Global.FUNCTION_STATES.Success or gatherFailedDueToNonGathering:
 		confirmed = await Build(cardInfo)
@@ -209,25 +250,13 @@ func Slow(cardInfo):
 		return Global.FUNCTION_STATES.Success
 
 func Gust(cardInfo):
-	middleBarContainer.visible = true
-	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-	middleBarContainer.setText("Harvest\n(Esc to cancel)")
-	terrain.targeting = true
-	var discard = await terrain.confirmed
+	var discard = await Harvest(cardInfo, true, "Harvest\n(Esc to cancel, Enter to continue)")
 	
-	if discard != Global.FUNCTION_STATES.Success:
-		middleBarContainer.visible = false
-		return discard
-	
-	Harvest(cardInfo, false)
-	
-	Draw(cardInfo, false)
-	
-	terrain.targeting = false
-
-	middleBarContainer.visible = false
-
-	return Global.FUNCTION_STATES.Success
+	if discard == Global.FUNCTION_STATES.Success or harvestFailedDueToNonHarvesting:
+		Draw(cardInfo, false)
+		return Global.FUNCTION_STATES.Success
+		
+	return discard
 
 func Draw(cardInfo, displayConfirmation:bool = true):
 	terrain.clearHighlights()
@@ -266,7 +295,7 @@ func Bridge(_cardInfo):
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	middleBarContainer.setText("Bridge over water\n(Esc to cancel)")
 	
-	terrain.targeting = true
+	terrain.target(func(tiles): return containsTileType(tiles, [Global.water]))
 	
 	var discard = await terrain.confirmed
 	
@@ -377,7 +406,7 @@ func Transmute(_cardInfo):
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	middleBarContainer.setText("Transmute Terrain\n(Esc to cancel)")
 	
-	terrain.targeting = true
+	terrain.target()
 	
 	var discard = await terrain.confirmed
 	
@@ -404,7 +433,7 @@ func Transmute(_cardInfo):
 			elif vec1.x > vec2.x: return false
 			else: return vec1.y < vec2.y
 	)
-	terrain.targeting = true
+	terrain.target()
 	
 	discard  = await terrain.confirmed
 	
@@ -449,7 +478,7 @@ func Reforest(cardInfo):
 	middleBarContainer.visible = true
 	middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 	middleBarContainer.setText("Reforest\n(Esc to cancel)")
-	terrain.targeting = true
+	terrain.target(func(tiles): return containsTileType(tiles, Global.empty_tiles))
 	discard = await terrain.confirmed
 
 	if discard != Global.FUNCTION_STATES.Success:
@@ -468,17 +497,12 @@ func Reforest(cardInfo):
 
 	return discard
 	
-# Best template for effect involving targeting
 func Scoop(cardInfo):
-	terrain.clearHighlights()
-	
-	terrain.targeting = true
-	
-	var confirmed = await confirmTarget("Gather and draw " + str(cardInfo[Global.CARD_FIELDS.Arguments]["Draw"]))
+	var confirmed = await Gather(cardInfo, true, "Gather and draw " + str(cardInfo[Global.CARD_FIELDS.Arguments]["Draw"]) + "\n(Esc. to cancel, Enter to continue)")
 		
-	if confirmed == Global.FUNCTION_STATES.Success:
-		Gather(cardInfo, false)
+	if confirmed == Global.FUNCTION_STATES.Success or gatherFailedDueToNonGathering:
 		Draw(cardInfo, false)
+		return Global.FUNCTION_STATES.Success
 	
 	return confirmed
 

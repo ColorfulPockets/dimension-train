@@ -36,6 +36,18 @@ var DATA = {
 			fields.MousePointer: load("res://Assets/Icons/Build_mouse.png"),
 			fields.Arguments: {"Build": 100 if Global.devmode else 4},
 		},
+	"Blast":
+		{
+			fields.Name: "Blast",
+			fields.Rarity: "Starter",
+			fields.EnergyCost: 1,
+			fields.Type: Global.CARD_TYPES.Weapons,
+			fields.Text: "Blast TARGETAREA orthogonal to any train car for ARGBlast damage.",
+			fields.TargetArea: Vector2i(1,1),
+			fields.Function: "Blast",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+			fields.Arguments: {"Blast": 1},
+		},
 	"Factory":
 		{
 			fields.Name: "Factory",

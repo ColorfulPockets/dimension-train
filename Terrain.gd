@@ -439,12 +439,30 @@ func screenPositionToMapPosition(screenPosition):
 func mapPositionToScreenPosition(mapPosition:Vector2i):
 	return map_to_local(mapPosition)*scale - fixedElements.position
 
+func target(acceptHighlight:Callable = func(_tiles): return true) :
+	self.acceptHighlight = acceptHighlight
+	targeting = true
+	
+
 # These are useful for powers that need to expand on the area that was previously highlighted
 var lastHighlightedMousePosition
 var lastHighlightedTargetArea:Vector2i
 var lastPseudoHighlightedMousePosition
 var lastPseudoHighlightedTargetArea
 var pseudoHighlightedCells
+
+var acceptHighlight:Callable = func(_tile): return true
+
+# returns true if all highlighted tiles are within the map
+func checkInBounds(currently_highlighted_tiles):
+	for highlighted_tile in currently_highlighted_tiles:
+		if not( 0 <= highlighted_tile[0] \
+			and highlighted_tile[0] < mapShape[0] \
+			and 0 <= highlighted_tile[1] \
+			and highlighted_tile[1] < mapShape[1]):
+				return false
+	
+	return true
 
 # Draws the highlight and updates which cells are highlighted
 func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
@@ -493,15 +511,8 @@ func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 						(addX + i)*tile_set.tile_size.x*scale.x, 
 						-1*(addY + j)*tile_set.tile_size.y*scale.y)))
 	currently_highlighted_tiles = remove_duplicates(currently_highlighted_tiles)
-	var containsOutOfBoundsCell = false
-	for highlighted_tile in currently_highlighted_tiles:
-		if not( 0 <= highlighted_tile[0] \
-			and highlighted_tile[0] < mapShape[0] \
-			and 0 <= highlighted_tile[1] \
-			and highlighted_tile[1] < mapShape[1]):
-				containsOutOfBoundsCell = true
 	
-	if not containsOutOfBoundsCell:
+	if checkInBounds(currently_highlighted_tiles) and acceptHighlight.call(currently_highlighted_tiles):
 		highlighted_cells = currently_highlighted_tiles
 		drawHighlights(highlighted_cells)
 	
