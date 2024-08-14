@@ -4,7 +4,7 @@ class_name Corridor extends Tile
 
 func _init():
 	cells = Global.rotate_array([
-		[T, T, T, G, E, M, M, M, M, M, E, G, T, T, T],
+		[T, T, T, 1, E, M, M, M, M, M, E, 2, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
 		[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
@@ -20,19 +20,8 @@ func _init():
 		[E, E, E, E, E, E, E, E, E, E, E, E, E, E, E],
 		[E, E, E, E, E, E, E, L, E, E, E, E, E, E, E]])
 	
-	directions = {
-		Vector2i(14,3) : [DIR.L, DIR.R],
-		Vector2i(14,11) : [DIR.L, DIR.R],
+	cell_info = {
+		1: goalWithRewards(8),
+		2: goalWithRewards(8),
 	}
-	
-		
-	rewardValues = {
-		Vector2i(14,3) : 8,
-		Vector2i(14,11) : 8,
-	}
-	
-	enemies = [
-		
-	]
-	
 	

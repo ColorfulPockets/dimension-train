@@ -1,6 +1,11 @@
 class_name Terrain extends TileMap
 
-enum {E, T, M, R, W, L, G, X}
+const E = -1
+const T = -2
+const M = -3
+const W = -4
+const L = -5
+const X = -6
 
 signal confirmed(confirmed_or_cancelled)
 signal building_rail
@@ -92,15 +97,15 @@ func setMap(mapName):
 	makeMetalShine()
 
 func setUpMap():
-	for enemyVals in map.enemies:
-		var enemy = Enemy.new(enemyVals[0], enemyVals[1], enemyVals[2], self)
-		enemy.centered = true
-		enemy.scale *= 0.5
-		enemy.position = mapPositionToScreenPosition(enemy.cell) / scale
-		enemies.append(enemy)
-		add_child(enemy)
+	#for enemyVals in map.enemies:
+		#var enemy = Enemy.new(enemyVals[0], enemyVals[1], enemyVals[2], self)
+		#enemy.centered = true
+		#enemy.scale *= 0.5
+		#enemy.position = mapPositionToScreenPosition(enemy.cell) / scale
+		#enemies.append(enemy)
+		#add_child(enemy)
 	
-	
+	Global.clearRewards()
 	mapShape = Vector2i(map.cells.size(), map.cells[0].size())
 	for i in range(mapShape.x + trainCars.size()):
 		outgoingMap.append([])
@@ -116,11 +121,8 @@ func setUpMap():
 			# The indexing is backwards because it's row, column (which is y, x)
 			var cellEnum = map.cells[y][x]
 			var cellPosition = Vector2i(x, y)
-			var cellDirections = [DIR.L, DIR.R]
 			# Add the grid overlay to everything
 			set_cell(Global.grid_layer, cellPosition, 0, Global.grid_outline)
-			if map.directions.has(cellPosition):
-				cellDirections = map.directions[cellPosition]
 			if cellEnum == W:
 				set_cell(0,cellPosition, 0, Global.water)
 			elif cellEnum == T:
@@ -129,21 +131,27 @@ func setUpMap():
 				set_cell(0,cellPosition, 0, Global.rock)
 			elif cellEnum == E:
 				set_cell(0,cellPosition, 0, Global.empty)
-			#TODO: figure out how to handle existing rail as bidirectional
-			elif cellEnum == R:
-				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cellDirections[0], cellDirections[1])
-				set_cell(Global.base_layer, cellPosition, 0, Global.empty)
+			elif cellEnum == X:
+				var randomTile = [Global.tree, Global.rock, Global.empty]
+				set_cell(0, cellPosition, 0, randomTile[randi_range(0,2)])
 			elif cellEnum == L:
 				railEndpoint = cellPosition
 				railStartpoint = cellPosition
 				lastRailPlaced = cellPosition
-			elif cellEnum == G:
-				set_cell(Global.base_layer, cellPosition, 0, Global.empty)
-				set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cellDirections[0], cellDirections[1], Global.rail_layer)
-				goalCells.append(cellPosition)
-			elif cellEnum == X:
-				var randomTile = [Global.tree, Global.rock, Global.empty]
-				set_cell(0, cellPosition, 0, randomTile[randi_range(0,2)])
+			#TODO: figure out how to handle existing rail as bidirectional
+			else:
+				var cell_info = map.cell_info[cellEnum]
+				if cell_info[Tile.Type] == Tile.TYPES.Rail:
+					set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cell_info[Tile.Directions][0], cell_info[Tile.Directions][1], Global.rail_layer)
+					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
+				elif map.cell_info[cellEnum][Tile.Type] == Tile.TYPES.Goal:
+					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
+					set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cell_info[Tile.Directions][0], cell_info[Tile.Directions][1], Global.rail_layer)
+					Global.addReward(cellPosition, cell_info[Tile.Rewards])
+					var rewardPosition = mapPositionToScreenPosition(Global.stepInDirection(cellPosition, outgoingMap[cellPosition.x][cellPosition.y]))
+					rewardPosition -= Vector2(tile_set.tile_size)*scale/2
+					PLAYSPACE.spawnRewardBox(cellPosition, rewardPosition)
+			
 
 	
 	for i in range(trainCars.size()):
@@ -153,14 +161,6 @@ func setUpMap():
 		connectedCells.append(railEndpoint + Vector2i(-i,0))
 		trainLocations.append(railEndpoint + Vector2i(-i,0))
 		
-	Global.clearRewards()
-	
-	for cell in goalCells:
-		Global.addReward(cell, map.rewardValues[cell])
-		var rewardPosition = mapPositionToScreenPosition(Global.stepInDirection(cell, outgoingMap[cell.x][cell.y]))
-		rewardPosition -= Vector2(tile_set.tile_size)*scale/2
-		PLAYSPACE.spawnRewardBox(cell, rewardPosition)
-						
 
 #GPT
 func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_segments: int = 10) -> Array:
