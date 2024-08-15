@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var CardDb = preload("res://CardDatabase.gd").new()
+@onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
 const CardBase = preload("res://Cards/CardBase.tscn")
 signal card_selected
 

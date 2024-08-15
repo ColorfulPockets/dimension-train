@@ -11,14 +11,13 @@ config_version=5
 [application]
 
 config/name="Dimension Train"
-run/main_scene="res://Playspace.tscn"
+run/main_scene="res://Playspace/Playspace.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
 
 [autoload]
 
-Global="*res://Global.gd"
-Stats="*res://Stats.gd"
+Global="*res://Globals/Global.gd"
+Stats="*res://Globals/Stats.gd"
 
 [display]
 

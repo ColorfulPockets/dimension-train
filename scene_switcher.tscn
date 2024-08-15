@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://du2javvixcoh7"]
 
 [ext_resource type="Script" path="res://SceneSwitcher.gd" id="1_4s6fu"]
-[ext_resource type="PackedScene" uid="uid://bnur704ugkxqv" path="res://overworld.tscn" id="2_eev2n"]
+[ext_resource type="PackedScene" uid="uid://bnur704ugkxqv" path="res://Overworld/overworld.tscn" id="2_eev2n"]
 [ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="3_iq88p"]
 [ext_resource type="Texture2D" uid="uid://bblsfuib0bw1k" path="res://Assets/Particles/Swirl.png" id="4_u18r4"]
 

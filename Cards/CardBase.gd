@@ -10,7 +10,7 @@ signal rewardSelected(card)
 @onready var current_playspace:Playspace = Stats.current_playspace
 @onready var OVERLAY_MANAGER = $"../../../FixedElements/DarkenedBackground"
 
-@onready var CardDb = preload("res://CardDatabase.gd").new()
+@onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
 
 var CardName = "Chop"
 

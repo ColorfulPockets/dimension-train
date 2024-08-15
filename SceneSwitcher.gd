@@ -14,7 +14,7 @@ func _ready():
 	currentScene.drawMap(currentLocation)
 
 func loadMapBackground():
-	var map = load("res://Playspace.tscn").instantiate()
+	var map = load("res://Playspace/Playspace.tscn").instantiate()
 	
 	call_deferred("fadeInMap")
 	
@@ -40,7 +40,7 @@ func moveToRewards():
 	previousScene.queue_free()
 
 func loadRewardsBackground():
-	var rewards = load("res://card_reward.tscn").instantiate()
+	var rewards = load("res://Card Reward/card_reward.tscn").instantiate()
 	
 	call_deferred("fadeInRewards")
 	

@@ -3,7 +3,7 @@ class_name Playspace extends Node2D
 const CardBase = preload("res://Cards/CardBase.tscn")
 const NORMAL_CURSOR = preload("res://Assets/Icons/cursor.png")
 
-@onready var rewardScene:PackedScene = preload("res://reward.tscn")
+@onready var rewardScene:PackedScene = preload("res://Playspace/reward.tscn")
 
 @onready var deckNames = Stats.deck.duplicate()
 @onready var middleBarContainer:MiddleBarContainer = $FixedElements/MiddleBarContainer

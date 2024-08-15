@@ -35,7 +35,7 @@ var _timer: Timer
 #####################################
 # ONREADY VARIABLES
 #####################################
-@onready var visuals_res: PackedScene = load("res://tooltip.tscn")
+@onready var visuals_res: PackedScene = load("res://Tooltips/tooltip.tscn")
 @onready var owner_node = get_parent()
 @onready var offset: Vector2 = Vector2(offset_x, offset_y)
 @onready var padding: Vector2 = Vector2(padding_x, padding_y)

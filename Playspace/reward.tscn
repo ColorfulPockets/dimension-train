@@ -1,18 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://7dwe1q8vl8bk"]
+[gd_scene load_steps=3 format=3 uid="uid://don53ifogsn1r"]
 
-[ext_resource type="Theme" uid="uid://c8cjm3vg4wc4" path="res://UI_Theme.tres" id="1_55gj8"]
+[ext_resource type="Theme" uid="uid://c4yjqxcrmosju" path="res://Playspace/Reward_Theme.tres" id="1_vwawi"]
+[ext_resource type="Script" path="res://Playspace/rewardBox.gd" id="2_cqdr5"]
 
-[node name="Tooltip" type="PanelContainer"]
+[node name="Reward" type="PanelContainer"]
 offset_left = 1.0
-offset_right = 515.0
-offset_bottom = 100.0
+offset_right = 335.0
+offset_bottom = 80.0
 size_flags_horizontal = 4
 size_flags_vertical = 0
-theme = ExtResource("1_55gj8")
+theme = ExtResource("1_vwawi")
+script = ExtResource("2_cqdr5")
 
 [node name="Label" type="RichTextLabel" parent="."]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
+mouse_filter = 2
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 theme_override_font_sizes/italics_font_size = 40
