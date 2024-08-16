@@ -1,10 +1,10 @@
 class_name Enemy extends Sprite2D
 
 @onready var FIXED_ELEMENTS = $"../../FixedElements"
+@onready var TERRAIN = $".."
 
 var cell:Vector2i
 var facing:Global.DIR
-var terrain:Terrain
 
 var mouseIn:bool = false
 signal mouse_entered
@@ -18,10 +18,10 @@ static var TOOLTIP_TEXT = {
 	"Corrupt Slug": "Moves 1 space forward per turn. Leaves a trail of Corrupted terrain which removes 1 Emergency Rail when harvested.",
 }
 
-func _init(enemyName, cell:Vector2i, facing:Global.DIR, terrain:Terrain):
+func _init(enemyName, cell:Vector2i):
 	self.enemyName = enemyName
 	self.cell = cell
-	self.facing = facing
+	self.facing = Global.DIR.L
 	match facing:
 		Global.DIR.U:
 			self.rotation -= PI/2
@@ -31,7 +31,6 @@ func _init(enemyName, cell:Vector2i, facing:Global.DIR, terrain:Terrain):
 			self.rotation += PI/2
 		Global.DIR.L:
 			self.rotation += PI
-	self.terrain = terrain
 	texture = load("res://Assets/Enemies/" + enemyName + ".png")
 	if enemyName in TOOLTIP_TEXT:
 		var tooltip = Tooltip.new("[color=Red]"+enemyName+": [/color]"+TOOLTIP_TEXT[enemyName], 3)
@@ -40,7 +39,7 @@ func _init(enemyName, cell:Vector2i, facing:Global.DIR, terrain:Terrain):
 	
 	match enemyName:
 		"Corrupt Slug":
-			pass
+			self.facing = randi_range(1,4)
 
 func takeActions() -> Array[Array]:
 	match enemyName:
@@ -48,20 +47,20 @@ func takeActions() -> Array[Array]:
 			var new_terrain
 			var old_cell = cell
 			var old_facing = facing
-			match terrain.get_cell_atlas_coords(Global.base_layer, cell):
+			match TERRAIN.get_cell_atlas_coords(Global.base_layer, cell):
 				Global.tree:
 					new_terrain = Global.corrupt_tree
 				Global.rock:
 					new_terrain = Global.corrupt_rock
 				_:
-					new_terrain = terrain.get_cell_atlas_coords(Global.base_layer, cell)
+					new_terrain = TERRAIN.get_cell_atlas_coords(Global.base_layer, cell)
 			
-			terrain.set_cell(Global.base_layer, cell, 0, new_terrain)
+			TERRAIN.set_cell(Global.base_layer, cell, 0, new_terrain)
 			
 			var new_cell = Global.stepInDirection(cell, facing)
 			
 			# Bounce off edge
-			if new_cell.x < 0 or new_cell.y < 0 or new_cell.x >= terrain.mapShape.x or new_cell.y >= terrain.mapShape.y:
+			if new_cell.x < 0 or new_cell.y < 0 or new_cell.x >= TERRAIN.mapShape.x or new_cell.y >= TERRAIN.mapShape.y:
 				facing = Global.oppositeDir(facing)
 			
 			cell = Global.stepInDirection(cell, facing)

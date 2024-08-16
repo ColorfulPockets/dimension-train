@@ -102,14 +102,6 @@ func setMap(mapName):
 	startTurn()
 
 func setUpMap():
-	#for enemyVals in map.enemies:
-		#var enemy = Enemy.new(enemyVals[0], enemyVals[1], enemyVals[2], self)
-		#enemy.centered = true
-		#enemy.scale *= 0.5
-		#enemy.position = mapPositionToScreenPosition(enemy.cell) / scale
-		#enemies.append(enemy)
-		#add_child(enemy)
-	
 	Global.clearRewards()
 	mapShape = Vector2i(map.cells.size(), map.cells[0].size())
 	for i in range(mapShape.x + trainCars.size()):
@@ -162,12 +154,11 @@ func setUpMap():
 					spawner.centered = true
 					spawner.scale *= 0.5
 					spawner.position = mapPositionToScreenPosition(cellPosition) / scale
+					spawner.highlightedCells = radiusAroundCell(cellPosition, spawner.spawnerRadius)
 					spawners.append(spawner)
 					add_child(spawner)
 					spawner.initCounter()
-					var spawnerHighlightCells = radiusAroundCell(cellPosition, spawner.spawnerRadius)
-					print(spawnerHighlightCells)
-					drawHighlights(spawnerHighlightCells, true)
+					drawHighlights(spawner.highlightedCells, true)
 
 	
 	for i in range(trainCars.size()):
@@ -176,7 +167,6 @@ func setUpMap():
 		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(-i,0)) / scale
 		connectedCells.append(railEndpoint + Vector2i(-i,0))
 		trainLocations.append(railEndpoint + Vector2i(-i,0))
-		
 
 func radiusAroundCell(cell, radius):
 	var x = cell.x
@@ -190,7 +180,17 @@ func radiusAroundCell(cell, radius):
 
 func startTurn():
 	for spawner in spawners:
-		var action:Spawner.INTENT = spawner.chooseAction()
+		spawner.chooseAction()
+		spawner.spawnIfSpawning()
+
+func spawnEnemy(enemyName:String, enemyLocation:Vector2i):
+	var enemy = Enemy.new(enemyName, enemyLocation)
+	enemy.centered = true
+	enemy.scale *= 0.5
+	#enemy.position = mapPositionToScreenPosition2(enemy.cell) / scale
+	enemy.position = map_to_local(enemy.cell)
+	enemies.append(enemy)
+	add_child(enemy)
 
 #GPT
 func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_segments: int = 10) -> Array:
@@ -467,6 +467,9 @@ func screenPositionToMapPosition(screenPosition):
 	return local_to_map((screenPosition + fixedElements.position) / scale)
 	
 func mapPositionToScreenPosition(mapPosition:Vector2i):
+	return map_to_local(mapPosition)*scale - fixedElements.position
+	
+func mapPositionToScreenPosition2(mapPosition:Vector2i):
 	return map_to_local(mapPosition)*scale - fixedElements.position
 
 func target(acceptHighlight:Callable = func(_tiles): return true) :

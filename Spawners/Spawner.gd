@@ -13,6 +13,7 @@ signal mouse_exited
 var previousActions:Array[INTENT] = []
 var spawnerName
 var spawnerRadius
+var highlightedCells:Array
 var enemySpawned
 var numSpawned
 var counter
@@ -42,30 +43,41 @@ func initCounter():
 	PLAYSPACE.add_child(counter)
 
 #Called at the start of the turn to add enemies
-func startTurnAction():
-	pass
+func spawnIfSpawning():
+	if previousActions[-1] == INTENT.Spawn:
+		var cells = highlightedCells.duplicate(true)
+		var i = 0
+		while i < numSpawned and cells.size() > 0:
+			var chosen_cell = cells.pick_random()
+			if chosen_cell in TERRAIN.trainLocations:
+				cells.remove_at(cells.find(chosen_cell))
+			else:
+				TERRAIN.spawnEnemy(enemySpawned, chosen_cell)
+				cells.remove_at(cells.find(chosen_cell))
+				i += 1
 
 #Called at the end of the turn to apply debuffs and self-buff
 func endTurnAction():
 	pass
 
-func chooseAction() -> INTENT:
+#Logic for spawner patterns
+func chooseAction():
 	var intent:INTENT = INTENT.Spawn
 	match spawnerName:
 		"Swamp":
-			if previousActions.size() > 2:
+			# Can't do the same thing 3 times in a row
+			if previousActions.size() >= 2:
 				if previousActions[-1] == previousActions[-2]:
 					if previousActions[-1] == INTENT.Spawn:
 						intent = INTENT.Debuff
 					else:
 						intent = INTENT.Spawn
-			if randi_range(0,1) == 0:
+			elif randi_range(0,1) == 0:
 				intent = INTENT.Debuff
 			else:
 				intent = INTENT.Spawn
 	
 	previousActions.append(intent)
-	return intent
 	
 func debuff():
 	pass
