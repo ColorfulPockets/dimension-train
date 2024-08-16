@@ -36,7 +36,7 @@ func _init():
 		11: railWithDirections([DIR.U, DIR.R]),
 		12: railWithDirections([DIR.L, DIR.R]),
 		
-		13: spawnerWithName("Slug Thrower")
+		13: spawnerWithName("Swamp", 4)
 	}
 	
 	

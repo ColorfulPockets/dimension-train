@@ -19,9 +19,10 @@ const rail_layer = 3
 const temporary_rail_layer = 4
 const fog_layer = 5
 const grid_layer = 6
-const highlight_layer = 7
-const enemy_layer = 8
-const max_layer = 8
+const spawner_highlight_layer = 7
+const highlight_layer = 8
+const enemy_layer = 9
+const max_layer = 10
 
 const TRAIN_MOVEMENT_TIME = 0.5
 const FADE_TIME = 0.2
@@ -38,6 +39,27 @@ const VIEWPORT_SIZE = Vector2(3840, 2160)
 
 const TILE_SHAPE = Vector2i(10,10)
 
+const highlight = Vector2i(2,4)
+const highlight_l  = Vector2i(2,0)
+const highlight_u  = Vector2i(3,0)
+const highlight_r  = Vector2i(4,0)
+const highlight_d  = Vector2i(5,0)
+const highlight_ld = Vector2i(6,0)
+const highlight_lu = Vector2i(7,0)
+const highlight_ru = Vector2i(8,0)
+const highlight_rd = Vector2i(9,0)
+
+const spawner_highlight = Vector2i(3,4)
+const spawner_highlight_l  = Vector2i(2,1)
+const spawner_highlight_u  = Vector2i(3,1)
+const spawner_highlight_r  = Vector2i(4,1)
+const spawner_highlight_d  = Vector2i(5,1)
+const spawner_highlight_ld = Vector2i(6,1)
+const spawner_highlight_lu = Vector2i(7,1)
+const spawner_highlight_ru = Vector2i(8,1)
+const spawner_highlight_rd = Vector2i(9,1)
+
+
 const tree = Vector2i(4,2)
 const corrupt_tree = Vector2i(3,2)
 const trees = [tree, corrupt_tree]
@@ -47,7 +69,6 @@ const rocks = [rock, corrupt_rock]
 const harvestable = rocks + trees
 const empty = Vector2i(0,0)
 const bridge = Vector2i(5,6)
-const highlight = Vector2i(2,4)
 const grid_outline = Vector2i(1,4)
 const wood = Vector2i(4,4)
 const metal = Vector2i(10,4)

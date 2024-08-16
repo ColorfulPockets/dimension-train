@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Playspace/Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
-[ext_resource type="Texture2D" uid="uid://dqrs44ocueoyf" path="res://Assets/Tiles/Tileset_my_version.png" id="2_g6npi"]
+[ext_resource type="Texture2D" uid="uid://boa5qnruxfk5q" path="res://Assets/Tiles/Tileset_my_version.png" id="2_g6npi"]
 [ext_resource type="Script" path="res://Cards/CardFunctions.gd" id="2_tmeg0"]
 [ext_resource type="Texture2D" uid="uid://d3anf6ui5dklw" path="res://Assets/Icons/DrawPile_white.png" id="3_qwl87"]
 [ext_resource type="Script" path="res://Playspace/DrawPile.gd" id="4_q8v2y"]

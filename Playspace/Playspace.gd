@@ -365,6 +365,7 @@ func endTurn():
 		await terrain.enemyTurn()
 		await get_tree().create_timer(0.25).timeout
 		drawHand()
+		await terrain.startTurn()
 		Stats.currentEnergy = Stats.maxEnergy
 		await handDrawn
 		endingTurn = false

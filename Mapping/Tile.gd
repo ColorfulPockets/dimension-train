@@ -9,7 +9,7 @@ const W = -4
 const L = -5
 const X = -6
 enum TYPES {Goal, Rail, Spawner}
-enum {Directions, Type, Rewards, SpawnerName}
+enum {Directions, Type, Rewards, SpawnerName, SpawnerCount}
 static var DIR = Global.DIR
 
 var cells:Array[Array]
@@ -33,8 +33,9 @@ static func railWithDirections(dirs:Array[Global.DIR]) :
 		Directions: dirs,
 	}
 
-static func spawnerWithName(spawnerName: String):
+static func spawnerWithName(spawnerName: String, spawnerCount: int):
 	return {
 		Type: TYPES.Spawner,
-		SpawnerName: spawnerName
+		SpawnerName: spawnerName,
+		SpawnerCount: spawnerCount
 	}

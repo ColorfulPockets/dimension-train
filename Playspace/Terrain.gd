@@ -7,6 +7,8 @@ const W = -4
 const L = -5
 const X = -6
 
+#const TrainCar = preload("res://TrainCar.gd")
+
 signal confirmed(confirmed_or_cancelled)
 signal building_rail
 signal rail_built(built_or_not)
@@ -44,6 +46,7 @@ var useEmergencyRail = false
 
 var trainCars:Array[TrainCar] = []
 var enemies:Array[Enemy] = []
+var spawners:Array[Spawner] = []
 
 var trainCrashed = false
 var trainSucceeded = false
@@ -95,6 +98,8 @@ func setMap(mapName):
 	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
 	
 	makeMetalShine()
+	
+	startTurn()
 
 func setUpMap():
 	#for enemyVals in map.enemies:
@@ -144,14 +149,25 @@ func setUpMap():
 				if cell_info[Tile.Type] == Tile.TYPES.Rail:
 					set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cell_info[Tile.Directions][0], cell_info[Tile.Directions][1], Global.rail_layer)
 					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
-				elif map.cell_info[cellEnum][Tile.Type] == Tile.TYPES.Goal:
+				elif cell_info[Tile.Type] == Tile.TYPES.Goal:
 					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
 					set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cell_info[Tile.Directions][0], cell_info[Tile.Directions][1], Global.rail_layer)
 					Global.addReward(cellPosition, cell_info[Tile.Rewards])
 					var rewardPosition = mapPositionToScreenPosition(Global.stepInDirection(cellPosition, outgoingMap[cellPosition.x][cellPosition.y]))
 					rewardPosition -= Vector2(tile_set.tile_size)*scale/2
 					PLAYSPACE.spawnRewardBox(cellPosition, rewardPosition)
-			
+				elif cell_info[Tile.Type] == Tile.TYPES.Spawner:
+					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
+					var spawner = Spawner.new(cell_info[Tile.SpawnerName], cell_info[Tile.SpawnerCount], cellPosition)
+					spawner.centered = true
+					spawner.scale *= 0.5
+					spawner.position = mapPositionToScreenPosition(cellPosition) / scale
+					spawners.append(spawner)
+					add_child(spawner)
+					spawner.initCounter()
+					var spawnerHighlightCells = radiusAroundCell(cellPosition, spawner.spawnerRadius)
+					print(spawnerHighlightCells)
+					drawHighlights(spawnerHighlightCells, true)
 
 	
 	for i in range(trainCars.size()):
@@ -161,6 +177,20 @@ func setUpMap():
 		connectedCells.append(railEndpoint + Vector2i(-i,0))
 		trainLocations.append(railEndpoint + Vector2i(-i,0))
 		
+
+func radiusAroundCell(cell, radius):
+	var x = cell.x
+	var y = cell.y
+	var cells = []
+	for i in range(x-radius, x+radius+1):
+		for j in range(y-radius, y+radius+1):
+			cells.append(Vector2i(i,j))
+	cells = rejectOutOfBounds(cells)
+	return cells
+
+func startTurn():
+	for spawner in spawners:
+		var action:Spawner.INTENT = spawner.chooseAction()
 
 #GPT
 func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_segments: int = 10) -> Array:
@@ -464,6 +494,18 @@ func checkInBounds(currently_highlighted_tiles):
 	
 	return true
 
+# Takes an array of coordinates and returns those which are in bounds
+func rejectOutOfBounds(tiles):
+	var acceptedTiles = []
+	for tile in tiles:
+		if  0 <= tile[0] \
+			and tile[0] < mapShape[0] \
+			and 0 <= tile[1] \
+			and tile[1] < mapShape[1]:
+				acceptedTiles.append(tile)
+	
+	return acceptedTiles
+
 # Draws the highlight and updates which cells are highlighted
 func highlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=false):
 	clearHighlights()
@@ -584,9 +626,64 @@ func pseudoHighlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=f
 	
 	pseudoHighlightedCells = currently_highlighted_tiles
 
-func drawHighlights(highlightedCells):
-	for highlightedCell in highlightedCells:
-			set_cell(Global.highlight_layer,highlightedCell, 0, Global.highlight)
+func drawHighlights(cells, enemyColor:bool = false):
+	var highlight_single = Global.highlight
+	var highlight_l = Global.highlight_l
+	var highlight_r = Global.highlight_r
+	var highlight_u = Global.highlight_u
+	var highlight_d = Global.highlight_d
+	var highlight_lu = Global.highlight_lu
+	var highlight_ld = Global.highlight_ld
+	var highlight_ru = Global.highlight_ru
+	var highlight_rd = Global.highlight_rd
+	var layer = Global.highlight_layer
+	
+	if enemyColor:
+		highlight_single = Global.spawner_highlight
+		highlight_l = Global.spawner_highlight_l
+		highlight_r = Global.spawner_highlight_r
+		highlight_u = Global.spawner_highlight_u
+		highlight_d = Global.spawner_highlight_d
+		highlight_lu = Global.spawner_highlight_lu
+		highlight_ld = Global.spawner_highlight_ld
+		highlight_ru = Global.spawner_highlight_ru
+		highlight_rd = Global.spawner_highlight_rd
+		layer = Global.spawner_highlight_layer
+	
+	if cells.size() == 1:
+		set_cell(layer, cells[0], 0, highlight_single)
+	else:
+		var highest_x = -INF
+		var lowest_x = INF
+		var highest_y = -INF
+		var lowest_y = INF
+		for cell in cells:
+			highest_x = max(cell.x, highest_x)
+			highest_y = max(cell.y, highest_y)
+			lowest_y = min(cell.y, lowest_y)
+			lowest_x = min(cell.x, lowest_x)
+			
+		for cell in cells:
+			if cell.x == highest_x:
+				if cell.y == lowest_y:
+					set_cell(layer, cell, 0, highlight_ru)
+				elif cell.y == highest_y:
+					set_cell(layer, cell, 0, highlight_rd)
+				else:
+					set_cell(layer, cell, 0, highlight_r)
+			elif cell.x == lowest_x:
+				if cell.y == lowest_y:
+					set_cell(layer, cell, 0, highlight_lu)
+				elif cell.y == highest_y:
+					set_cell(layer, cell, 0, highlight_ld)
+				else:
+					set_cell(layer, cell, 0, highlight_l)
+					
+			elif cell.y == lowest_y:
+				set_cell(layer, cell, 0, highlight_u)
+			elif cell.y == highest_y:
+				set_cell(layer, cell, 0, highlight_d)
+	
 
 func buildRail(numRail, buildOver:Array):
 	self.buildOver = buildOver

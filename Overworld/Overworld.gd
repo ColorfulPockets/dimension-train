@@ -70,7 +70,7 @@ func drawMap(currentLocation):
 					maps = ["Diverging"]
 					#maps = ["TestTrack"]
 				"Mountain":
-					maps = ["TestTrack"]
+					maps = ["SlugForest"]
 				"Forest":
 					pass
 				_:
