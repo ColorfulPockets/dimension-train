@@ -1,10 +1,13 @@
 class_name Enemy extends Sprite2D
 
 @onready var FIXED_ELEMENTS = $"../../FixedElements"
+@onready var PLAYSPACE = $"../.."
 @onready var TERRAIN = $".."
 
 var cell:Vector2i
 var facing:Global.DIR
+var health:int
+var healthCounter:HealthCounter
 
 var mouseIn:bool = false
 signal mouse_entered
@@ -36,10 +39,32 @@ func _init(enemyName, cell:Vector2i):
 		var tooltip = Tooltip.new("[color=Red]"+enemyName+": [/color]"+TOOLTIP_TEXT[enemyName], 3)
 		tooltip.visuals_res = load("res://tooltip.tscn")
 		add_child(tooltip)
-	
+		
 	match enemyName:
 		"Corrupt Slug":
 			self.facing = randi_range(1,4)
+			self.health = 1
+	
+	match self.facing:
+		Global.DIR.L:
+			pass
+		Global.DIR.U:
+			rotation += PI/2
+		Global.DIR.R:
+			rotation += PI
+		Global.DIR.D:
+			rotation -= PI/2
+	
+
+func initHealthCounter():
+	healthCounter = HealthCounter.new()
+	healthCounter.text = str(health)
+	healthCounter.add_theme_font_size_override("font_size", 100)
+	healthCounter.add_theme_constant_override("outline_size", 50)
+	healthCounter.add_theme_color_override("font_outline_color", Color.BLACK)
+	healthCounter.scale *= 0.1
+	healthCounter.position -= healthCounter.size/2
+	add_child(healthCounter)
 
 func takeActions() -> Array[Array]:
 	match enemyName:
@@ -57,13 +82,15 @@ func takeActions() -> Array[Array]:
 			
 			TERRAIN.set_cell(Global.base_layer, cell, 0, new_terrain)
 			
-			var new_cell = Global.stepInDirection(cell, facing)
+			var occupied_cells = TERRAIN.getEnemyAndSpawnerCells()
+			while cell in occupied_cells:
+				var new_cell = Global.stepInDirection(cell, facing)
+				# Bounce off edge
+				if new_cell.x < 0 or new_cell.y < 0 or new_cell.x >= TERRAIN.mapShape.x or new_cell.y >= TERRAIN.mapShape.y:
+					facing = Global.oppositeDir(facing)
+				cell = Global.stepInDirection(cell, facing)
 			
-			# Bounce off edge
-			if new_cell.x < 0 or new_cell.y < 0 or new_cell.x >= TERRAIN.mapShape.x or new_cell.y >= TERRAIN.mapShape.y:
-				facing = Global.oppositeDir(facing)
 			
-			cell = Global.stepInDirection(cell, facing)
 			
 			return [[old_cell, cell], [old_facing, facing]]
 			
@@ -80,6 +107,13 @@ func destroy(collision:bool):
 	match enemyName:
 		"Corrupt Slug":
 			pass
+	
+	TERRAIN.destroyEnemy(self)
+
+func damage(amount:int):
+	self.health -= amount
+	if self.health < 1:
+		destroy(false)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

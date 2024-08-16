@@ -191,6 +191,7 @@ func spawnEnemy(enemyName:String, enemyLocation:Vector2i):
 	enemy.position = map_to_local(enemy.cell)
 	enemies.append(enemy)
 	add_child(enemy)
+	enemy.initHealthCounter()
 
 #GPT
 func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_segments: int = 10) -> Array:
@@ -298,16 +299,7 @@ func advanceTrain():
 			if TrainCar.TYPE.TRAINMOVEMENT in trainCars[i].types:
 				await trainCars[i].onMovement(trainLocation, nextLocation)
 			
-			var enemiesToRemove = []
-			for enemyIndex in range(len(enemies)):
-				var enemy = enemies[enemyIndex]
-				if nextLocation == enemy.cell:
-					enemy.destroy(true)
-					enemiesToRemove.append(enemyIndex)
-					enemy.queue_free()
-					
-			for indexIndex in range(len(enemiesToRemove)-1, -1, -1):
-				enemies.remove_at(enemiesToRemove[indexIndex])
+			destroyEnemiesInCells([nextLocation])
 			
 			# If there is something that can be collected near the train, but not in front, collect it
 			match outgoingMap[nextLocation.x][nextLocation.y]:
@@ -369,6 +361,32 @@ func advanceTrain():
 
 var enemiesMoved = 0
 
+func destroyEnemiesInCells(cells:Array):
+	var enemiesToRemove = []
+	for enemyIndex in range(len(enemies)):
+		var enemy = enemies[enemyIndex]
+		if enemy.cell in cells:
+			enemiesToRemove.append(enemy)
+			enemy.queue_free()
+			
+	for enemy in enemiesToRemove:
+		enemy.destroy(true)
+
+func destroyEnemy(enemy:Enemy):
+	var index = enemies.find(enemy)
+	if index != -1:
+		enemies.remove_at(index)
+		enemy.queue_free()
+
+func getEnemyAndSpawnerCells():
+	var cells = []
+	for enemy in enemies:
+		cells.append(enemy.cell)
+	for spawner in spawners:
+		cells.append(spawner.cell)
+		
+	return cells
+
 #TODO: This definitely doesn't work right for non linear paths, so fix that
 func moveSpriteThroughCells(sprite:Sprite2D, cellPath, dirPath):
 	for i in range(1,len(cellPath)):
@@ -410,9 +428,10 @@ func moveSpriteThroughCells(sprite:Sprite2D, cellPath, dirPath):
 	
 
 func enemyTurn():
+	enemies.shuffle()
 	for enemy in enemies:
 		var enemyReturn = enemy.takeActions()
-		moveSpriteThroughCells(enemy, enemyReturn[0], enemyReturn[1])
+		await moveSpriteThroughCells(enemy, enemyReturn[0], enemyReturn[1])
 		
 	while enemiesMoved < len(enemies):
 		await get_tree().create_timer(0.1).timeout

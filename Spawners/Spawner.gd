@@ -46,7 +46,11 @@ func initCounter():
 func spawnIfSpawning():
 	if previousActions[-1] == INTENT.Spawn:
 		var cells = highlightedCells.duplicate(true)
+		cells.remove_at(cells.find(cell))
 		var i = 0
+		for enemy in TERRAIN.enemies:
+			if enemy.cell in cells:
+				cells.remove_at(cells.find(enemy.cell))
 		while i < numSpawned and cells.size() > 0:
 			var chosen_cell = cells.pick_random()
 			if chosen_cell in TERRAIN.trainLocations:
@@ -76,7 +80,7 @@ func chooseAction():
 				intent = INTENT.Debuff
 			else:
 				intent = INTENT.Spawn
-	
+			
 	previousActions.append(intent)
 	
 func debuff():

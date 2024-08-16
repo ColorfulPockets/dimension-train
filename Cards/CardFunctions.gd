@@ -146,23 +146,26 @@ func Build(cardInfo):
 func Blast(cardInfo):
 	terrain.clearHighlights()
 	
-	var checkOrthogonal = func (highlightedTiles) :
+	var checkOrthogonalForEnemy = func (highlightedTiles) :
 		for tile in highlightedTiles:
-			var orthogonalToTrainCar = false
 			for location in terrain.trainLocations:
 				if location.x == tile.x or location.y == tile.y:
-					orthogonalToTrainCar = true
-			if not orthogonalToTrainCar:
-				return false
+					for enemy in terrain.enemies:
+						if enemy.cell == tile:
+							return true
 		
-		return true
+		return false
 	
-	terrain.target(checkOrthogonal)
+	terrain.target(checkOrthogonalForEnemy)
 	
-	var confirmed = await confirmTarget("Blast " + str(cardInfo[Global.CARD_FIELDS.Arguments]["Blast"]))
+	var damage:int = cardInfo[Global.CARD_FIELDS.Arguments]["Blast"]
+	
+	var confirmed = await confirmTarget("Blast " + str(damage))
 		
 	if confirmed == Global.FUNCTION_STATES.Success:
-		pass
+		for enemy in terrain.enemies:
+			if enemy.cell in terrain.highlighted_cells:
+				enemy.damage(damage)
 	
 	return confirmed
 
