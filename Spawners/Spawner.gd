@@ -30,6 +30,9 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 		"Swamp":
 			enemySpawned = "Corrupt Slug"
 			spawnerRadius = 2
+		"Guard Factory":
+			enemySpawned = "Guard"
+			spawnerRadius = 2
 	
 	var tooltip = Tooltip.new("[color=Red]"+spawnerName+": [/color] Spawns [color=Red]" + enemySpawned + "[/color]", 3)
 	tooltip.visuals_res = load("res://tooltip.tscn")
@@ -46,11 +49,12 @@ func initCounter():
 func spawnIfSpawning():
 	if previousActions[-1] == INTENT.Spawn:
 		var cells = highlightedCells.duplicate(true)
-		cells.remove_at(cells.find(cell))
+		# Remove enemy and spawner locations so we don't overlap
+		var occupied_cells = TERRAIN.getEnemyAndSpawnerCells()
+		for occupied_cell in occupied_cells:
+			if occupied_cell in cells:
+				cells.remove_at(cells.find(occupied_cell))
 		var i = 0
-		for enemy in TERRAIN.enemies:
-			if enemy.cell in cells:
-				cells.remove_at(cells.find(enemy.cell))
 		while i < numSpawned and cells.size() > 0:
 			var chosen_cell = cells.pick_random()
 			if chosen_cell in TERRAIN.trainLocations:
@@ -62,7 +66,14 @@ func spawnIfSpawning():
 
 #Called at the end of the turn to apply debuffs and self-buff
 func endTurnAction():
-	pass
+	if previousActions[-1] == INTENT.Increase:
+		numSpawned += 1
+		counter.text = str(numSpawned)
+	
+	if previousActions[-1] == INTENT.Debuff:
+		match spawnerName:
+			"Swamp":
+				Stats.debuffs.append("Slimed")
 
 #Logic for spawner patterns
 func chooseAction():
@@ -78,6 +89,11 @@ func chooseAction():
 						intent = INTENT.Spawn
 			elif randi_range(0,1) == 0:
 				intent = INTENT.Debuff
+			else:
+				intent = INTENT.Spawn
+		"Guard Factory":
+			if randi_range(0,2) == 0:
+				intent = INTENT.Increase
 			else:
 				intent = INTENT.Spawn
 			

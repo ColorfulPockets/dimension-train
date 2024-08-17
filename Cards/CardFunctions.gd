@@ -103,11 +103,20 @@ func Gather(_cardInfo, displayConfirmation=true, confirmationString:String = "Ga
 	gatheredMetalLocations = []
 	for tile in terrain.highlighted_cells:
 		if terrain.get_cell_atlas_coords(0,tile) == Global.wood:
+			# Slimed gives 50% chance to miss when collecting
+			if "Slimed" in Stats.debuffs:
+				if randi_range(0, 1) == 0:
+					discard = Global.FUNCTION_STATES.Success
+					continue
 			terrain.set_cell(0, tile, 0, Global.empty)
 			gatheredWoodLocations.append(tile)
 			Stats.woodCount += 1
 			discard = Global.FUNCTION_STATES.Success
 		elif terrain.get_cell_atlas_coords(0,tile) == Global.metal:
+			if "Slimed" in Stats.debuffs:
+				if randi_range(0, 1) == 0:
+					discard = Global.FUNCTION_STATES.Success
+					continue
 			terrain.set_cell(0, tile, 0, Global.empty)
 			gatheredMetalLocations.append(tile)
 			Stats.metalCount += 1

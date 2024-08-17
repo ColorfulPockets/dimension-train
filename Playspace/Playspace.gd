@@ -363,6 +363,7 @@ func endTurn():
 			await get_tree().create_timer(0.05).timeout
 		await terrain.advanceTrain()
 		await terrain.enemyTurn()
+		await terrain.spawnerTurn()
 		await get_tree().create_timer(0.25).timeout
 		drawHand()
 		await terrain.startTurn()

@@ -7,7 +7,7 @@ func _init():
 		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, 1], #15
 		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
 		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
-		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+		[X, 7, X, X, X, X, X, X, X, X, X, X, X, X, X],
 		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
 		[E, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
 		[E, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
@@ -28,6 +28,8 @@ func _init():
 		4: railWithDirections([DIR.L, DIR.R]),
 		5: railWithDirections([DIR.L, DIR.R]),
 		6: railWithDirections([DIR.L, DIR.R]),
+		
+		7: spawnerWithName("Guard Factory", 1)
 	}
 	
 	

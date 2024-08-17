@@ -387,6 +387,9 @@ func getEnemyAndSpawnerCells():
 		
 	return cells
 
+func getOccupiedCells():
+	return getEnemyAndSpawnerCells() + trainLocations
+
 #TODO: This definitely doesn't work right for non linear paths, so fix that
 func moveSpriteThroughCells(sprite:Sprite2D, cellPath, dirPath):
 	for i in range(1,len(cellPath)):
@@ -437,7 +440,10 @@ func enemyTurn():
 		await get_tree().create_timer(0.1).timeout
 	
 	enemiesMoved = 0
-		
+	
+func spawnerTurn():
+	for spawner in spawners:
+		spawner.endTurnAction()
 
 func moveTrainCarsAlongPoints(pointsToMoveThrough, speed):
 	var i = 0
@@ -796,11 +802,17 @@ func recalculateRailRoute(clearUnderRail:bool = false):
 		changeIncoming(currentPosition, Global.oppositeDir(prev_outgoing))
 		prev_outgoing = outgoingMap[currentPosition.x][currentPosition.y]
 		railEndpoint = currentPosition
+		
+		# If the next cell is an endpoint, don't continue the line
+		if get_cell_atlas_coords(Global.rail_layer, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) == Global.rail_endpoint:
+			break
+			
 		currentPosition = Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])
 		if currentPosition in connectedCells:
 			break
 		if currentPosition.x >= len(outgoingMap) or currentPosition.y >= len(outgoingMap[0]):
 			break 
+			
 		#If the cell is a rail connected on both sides, but neither side is part of the connected cells, can't continue the line
 		if get_cell_atlas_coords(0, Global.stepInDirection(currentPosition, outgoingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles \
 			and get_cell_atlas_coords(Global.rail_layer, Global.stepInDirection(currentPosition, incomingMap[currentPosition.x][currentPosition.y])) in Global.rail_tiles:
