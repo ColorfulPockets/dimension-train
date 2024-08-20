@@ -93,47 +93,34 @@ func takeActions() -> Array[Array]:
 			return [[old_cell, cell], [old_facing, facing]]
 		
 		"Guard":
+			var getDistance = func(cell1, cell2):
+				return sqrt((cell1.x - cell2.x)**2 + (cell1.y - cell2.y)**2)
 			var closest_train_cell = Vector2i(INF, INF)
 			var minDistance = INF
 			var train_locations_copy = TERRAIN.trainLocations.duplicate()
 			train_locations_copy.shuffle()
 			for location in train_locations_copy:
-				var distance = min(abs(cell.x-location.x), abs(cell.y-location.y))
+				var distance = getDistance.call(cell, location)
 				if distance < minDistance:
 					minDistance = distance
 					closest_train_cell = location
-
-			var oldCell = cell
+			
 			var newCell = cell
-			var xChanged = false
-			var yChanged = false
-			if closest_train_cell.x > cell.x:
-				newCell.x += 1
-				xChanged = true
-			elif closest_train_cell.x < cell.x:
-				newCell.x -= 1
-				xChanged = true
+			var bestDistance = minDistance
+#			# Doing this instead of ranges because it randomizes what goes first
+			var xVals = [-1,0,1]
+			var yVals = [-1,0,1]
+			xVals.shuffle()
+			yVals.shuffle()
+			for x in xVals:
+				for y in yVals:
+					var potentialNewCell = cell + Vector2i(x,y)
+					if potentialNewCell not in occupied_cells and TERRAIN.checkInBounds([potentialNewCell]):
+						if getDistance.call(cell + Vector2i(x,y), closest_train_cell) < bestDistance:
+							newCell = potentialNewCell
+							bestDistance = getDistance.call(cell + Vector2i(x,y), closest_train_cell)
 			
-			if closest_train_cell.y > cell.y:
-				newCell.y += 1
-				yChanged = true
-			elif closest_train_cell.y < cell.y:
-				newCell.y -= 1
-				yChanged = true
-			
-			while newCell in occupied_cells and newCell != cell:
-				#randomize which direction to try to adjust
-				if randi_range(0,1) == 0:
-					if xChanged:
-						newCell.x = cell.x
-					elif yChanged:
-						newCell.y = cell.y
-				else:
-					if yChanged:
-						newCell.y = cell.y
-					elif xChanged:
-						newCell.x = cell.x
-			
+			var oldCell = cell
 			cell = newCell
 			
 			return [[oldCell, cell], [facing, facing]]
