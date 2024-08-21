@@ -14,6 +14,9 @@ var mouseIn:bool = false
 signal mouse_entered
 signal mouse_exited
 
+signal drawRangeHighlight(cell, range)
+signal clearRangeHighlight
+
 var enemyName: String
 
 const ENEMIES = ["Corrupt Slug"]
@@ -135,6 +138,8 @@ func destroy(collision:bool):
 	if "Recycle" in Stats.powersInPlay:
 		Stats.addEmergencyRail(2)
 		
+	clearRangeHighlight.emit()
+	
 	match enemyName:
 		"Corrupt Slug":
 			pass
@@ -161,8 +166,10 @@ func _input(event):
 			if not mouseIn:
 				mouseIn = true
 				mouse_entered.emit()
+				drawRangeHighlight.emit(cell, range)
 		else:
 			if mouseIn:
 				mouseIn = false
 				mouse_exited.emit()
+				clearRangeHighlight.emit()
 				

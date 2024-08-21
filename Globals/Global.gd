@@ -20,9 +20,10 @@ const temporary_rail_layer = 4
 const fog_layer = 5
 const grid_layer = 6
 const spawner_highlight_layer = 7
-const highlight_layer = 8
-const enemy_layer = 9
-const max_layer = 10
+const range_highlight_layer = 8
+const highlight_layer = 9
+const enemy_layer = 10
+const max_layer = 11
 
 const TRAIN_MOVEMENT_TIME = 0.5
 const FADE_TIME = 0.2
@@ -59,6 +60,15 @@ const spawner_highlight_lu = Vector2i(7,1)
 const spawner_highlight_ru = Vector2i(8,1)
 const spawner_highlight_rd = Vector2i(9,1)
 
+const range_highlight = Vector2i(3,5)
+const range_highlight_l  = Vector2i(10,0)
+const range_highlight_u  = Vector2i(11,0)
+const range_highlight_r  = Vector2i(12,0)
+const range_highlight_d  = Vector2i(13,0)
+const range_highlight_ld = Vector2i(14,0)
+const range_highlight_lu = Vector2i(15,0)
+const range_highlight_ru = Vector2i(16,0)
+const range_highlight_rd = Vector2i(17,0)
 
 const tree = Vector2i(4,2)
 const corrupt_tree = Vector2i(3,2)

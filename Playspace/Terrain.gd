@@ -56,6 +56,8 @@ var trainSucceeded = false
 @onready var PLAYSPACE:Playspace = $".."
 
 var highlighted_cells:Array[Vector2i] = []
+var enemyHighlights:Array = []
+var spawnerHighlights:Array = []
 var pseudohighlighted_cells:Array[Vector2i] = []
 var locked_highlights:Array[Vector2i] = []
 
@@ -158,7 +160,9 @@ func setUpMap():
 					spawners.append(spawner)
 					add_child(spawner)
 					spawner.initCounter()
-					drawHighlights(spawner.highlightedCells, true)
+					spawner.drawRangeHighlight.connect(drawSpawnerRange)
+					# 1 is code for spawner color
+					spawner.clearRangeHighlight.connect(func(): clearHighlights(1))
 
 	
 	for i in range(trainCars.size()):
@@ -192,6 +196,20 @@ func spawnEnemy(enemyName:String, enemyLocation:Vector2i):
 	enemies.append(enemy)
 	add_child(enemy)
 	enemy.initHealthCounter()
+	enemy.drawRangeHighlight.connect(drawEnemyRange)
+	enemy.clearRangeHighlight.connect(func():clearHighlights(2))
+
+func drawEnemyRange(cell, range):
+	var range_cells:Array = radiusAroundCell(cell, range)
+	enemyHighlights += range_cells
+	# 2 is the code for range color
+	drawHighlights(range_cells, 2)
+
+func drawSpawnerRange(cell, range):
+	var range_cells:Array = radiusAroundCell(cell, range)
+	spawnerHighlights += range_cells
+	# 2 is the code for range color
+	drawHighlights(range_cells, 1)
 
 #GPT
 func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_segments: int = 10) -> Array:
@@ -431,6 +449,8 @@ func moveSpriteThroughCells(sprite:Sprite2D, cellPath, dirPath):
 	
 
 func enemyTurn():
+	# Remove enemy range highlights
+	clearHighlights(true)
 	enemies.shuffle()
 	for enemy in enemies:
 		var enemyReturn = enemy.takeActions()
@@ -471,12 +491,21 @@ func randomTerrainVector():
 	else:
 		return Global.empty
 
-func clearHighlights():
-	for cell in highlighted_cells:
-		if cell not in locked_highlights:
-			set_cell(Global.highlight_layer,cell, 0, Global.delete)
-	
-	highlighted_cells.clear()
+func clearHighlights(type:int=0):
+	# spawner
+	if type == 1:
+		for cell in spawnerHighlights:
+			set_cell(Global.spawner_highlight_layer,cell, 0, Global.delete)
+	# enemy
+	elif type == 2:
+		for cell in enemyHighlights:
+			set_cell(Global.range_highlight_layer,cell, 0, Global.delete)
+	else:
+		for cell in highlighted_cells:
+			if cell not in locked_highlights:
+				set_cell(Global.highlight_layer,cell, 0, Global.delete)
+		
+		highlighted_cells.clear()
 	
 func clearPseudoHighlights():
 	pseudohighlighted_cells.clear()
@@ -654,7 +683,8 @@ func pseudoHighlightCells(mousePosition, targetArea:Vector2i, fromTopLeft:bool=f
 	
 	pseudoHighlightedCells = currently_highlighted_tiles
 
-func drawHighlights(cells, enemyColor:bool = false):
+# enemy color 0 = highlight, 1 = spawner, 2 = enemyrange
+func drawHighlights(cells, enemyColor:int = 0):
 	var highlight_single = Global.highlight
 	var highlight_l = Global.highlight_l
 	var highlight_r = Global.highlight_r
@@ -666,7 +696,7 @@ func drawHighlights(cells, enemyColor:bool = false):
 	var highlight_rd = Global.highlight_rd
 	var layer = Global.highlight_layer
 	
-	if enemyColor:
+	if enemyColor == 1:
 		highlight_single = Global.spawner_highlight
 		highlight_l = Global.spawner_highlight_l
 		highlight_r = Global.spawner_highlight_r
@@ -677,6 +707,17 @@ func drawHighlights(cells, enemyColor:bool = false):
 		highlight_ru = Global.spawner_highlight_ru
 		highlight_rd = Global.spawner_highlight_rd
 		layer = Global.spawner_highlight_layer
+	elif enemyColor == 2:
+		highlight_single = Global.range_highlight
+		highlight_l = Global.range_highlight_l
+		highlight_r = Global.range_highlight_r
+		highlight_u = Global.range_highlight_u
+		highlight_d = Global.range_highlight_d
+		highlight_lu = Global.range_highlight_lu
+		highlight_ld = Global.range_highlight_ld
+		highlight_ru = Global.range_highlight_ru
+		highlight_rd = Global.range_highlight_rd
+		layer = Global.range_highlight_layer
 	
 	if cells.size() == 1:
 		set_cell(layer, cells[0], 0, highlight_single)

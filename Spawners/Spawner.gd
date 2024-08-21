@@ -10,6 +10,9 @@ var mouseIn:bool = false
 signal mouse_entered
 signal mouse_exited
 
+signal drawRangeHighlight(cell, range)
+signal clearRangeHighlight
+
 var previousActions:Array[INTENT] = []
 var spawnerName
 var spawnerRadius
@@ -117,8 +120,10 @@ func _input(event):
 			if not mouseIn:
 				mouseIn = true
 				mouse_entered.emit()
+				drawRangeHighlight.emit(cell, spawnerRadius)
 		else:
 			if mouseIn:
 				mouseIn = false
 				mouse_exited.emit()
+				clearRangeHighlight.emit()
 				
