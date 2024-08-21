@@ -23,7 +23,7 @@ const ENEMIES = ["Corrupt Slug"]
 
 static var TOOLTIP_TEXT = {
 	"Corrupt Slug": "Moves 1 space forward. Leaves a trail of Corrupted terrain which removes 1 Emergency Rail when harvested.",
-	"Guard": "Moves 1 space towards the train, then shoots a projectile dealing 1 damage."
+	"Guard": "Moves 1 space towards the train, then shoots a projectile dealing 2 damage."
 }
 
 func _init(enemyName, cell:Vector2i):
@@ -96,6 +96,9 @@ func takeActions() -> Array[Array]:
 			return [[old_cell, cell], [old_facing, facing]]
 		
 		"Guard":
+			#########################
+			######### MOVE ##########
+			#########################
 			var getDistance = func(cell1, cell2):
 				return sqrt((cell1.x - cell2.x)**2 + (cell1.y - cell2.y)**2)
 			var closest_train_cell = Vector2i(INF, INF)
@@ -125,6 +128,16 @@ func takeActions() -> Array[Array]:
 			
 			var oldCell = cell
 			cell = newCell
+			
+			#######################
+			###### ATTACK #########
+			#######################
+			var range_cells = TERRAIN.radiusAroundCell(cell, range)
+			for train_cell in TERRAIN.trainLocations:
+				if train_cell in range_cells:
+					# TODO: add animation
+					Stats.removeEmergencyRail(2)
+					break
 			
 			return [[oldCell, cell], [facing, facing]]
 			
