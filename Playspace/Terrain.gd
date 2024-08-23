@@ -211,6 +211,38 @@ func drawSpawnerRange(cell, range):
 	# 2 is the code for range color
 	drawHighlights(range_cells, 1)
 
+
+func shootProjectile(fromCell, toCell):
+	var fromPos = map_to_local(fromCell)
+	var toPos = map_to_local(toCell)
+	await animate_circle(fromPos, toPos, 0.3)
+
+#GPT
+# Function to animate the circle from start_pos to end_pos over duration (in seconds)
+func animate_circle(start_pos: Vector2, end_pos: Vector2, duration: float):
+	var circle_instance = create_circle_instance(start_pos)
+	
+	var time_passed := 0.0
+	
+	while time_passed < duration:
+		var t = time_passed / duration
+		circle_instance.position = start_pos.lerp(end_pos, t)
+		circle_instance.queue_redraw()
+		time_passed += get_process_delta_time()
+		await get_tree().process_frame
+	
+	circle_instance.position = end_pos
+	circle_instance.queue_free()
+
+# Helper function to create and add a red circle instance to the scene
+func create_circle_instance(position: Vector2) -> Node2D:
+	var circle_instance = Projectile.new()
+	circle_instance.position = position
+	
+	add_child(circle_instance)
+	
+	return circle_instance
+
 #GPT
 func interpolate_quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, num_segments: int = 10) -> Array:
 	var curve_points = []
@@ -453,8 +485,9 @@ func enemyTurn():
 	clearHighlights(true)
 	enemies.shuffle()
 	for enemy in enemies:
-		var enemyReturn = enemy.takeActions()
+		var enemyReturn = await enemy.takeActions()
 		await moveSpriteThroughCells(enemy, enemyReturn[0], enemyReturn[1])
+		enemy.afterMoveActions()
 		
 	while enemiesMoved < len(enemies):
 		await get_tree().create_timer(0.1).timeout
@@ -523,8 +556,6 @@ func screenPositionToMapPosition(screenPosition):
 func mapPositionToScreenPosition(mapPosition:Vector2i):
 	return map_to_local(mapPosition)*scale - fixedElements.position
 	
-func mapPositionToScreenPosition2(mapPosition:Vector2i):
-	return map_to_local(mapPosition)*scale - fixedElements.position
 
 func target(acceptHighlight:Callable = func(_tiles): return true) :
 	self.acceptHighlight = acceptHighlight

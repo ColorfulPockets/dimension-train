@@ -129,6 +129,13 @@ func takeActions() -> Array[Array]:
 			var oldCell = cell
 			cell = newCell
 			
+			return [[oldCell, cell], [facing, facing]]
+			
+	return [[]]
+
+func afterMoveActions():
+	match enemyName:
+		"Guard":
 			#######################
 			###### ATTACK #########
 			#######################
@@ -136,12 +143,9 @@ func takeActions() -> Array[Array]:
 			for train_cell in TERRAIN.trainLocations:
 				if train_cell in range_cells:
 					# TODO: add animation
+					await TERRAIN.shootProjectile(cell, train_cell)
 					Stats.removeEmergencyRail(2)
 					break
-			
-			return [[oldCell, cell], [facing, facing]]
-			
-	return [[]]
 
 # Called when the train runs over the enemy
 # Collision is true if the train collided with the enemy to kill it

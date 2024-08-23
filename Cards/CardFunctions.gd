@@ -174,6 +174,7 @@ func Blast(cardInfo):
 	if confirmed == Global.FUNCTION_STATES.Success:
 		for enemy in terrain.enemies:
 			if enemy.cell in terrain.highlighted_cells:
+				await terrain.shootProjectile(terrain.trainLocations[0], enemy.cell)
 				enemy.damage(damage)
 	
 	return confirmed
