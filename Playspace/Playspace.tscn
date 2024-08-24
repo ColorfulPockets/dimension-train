@@ -4331,6 +4331,11 @@ layout_mode = 2
 text = "1"
 script = ExtResource("26_iu0uo")
 
+[node name="BuffsAndDebuffs" type="HBoxContainer" parent="FixedElements"]
+layout_mode = 0
+offset_top = 150.0
+offset_bottom = 150.0
+
 [node name="RailLeftToBuild" type="Label" parent="FixedElements"]
 visible = false
 z_index = 11

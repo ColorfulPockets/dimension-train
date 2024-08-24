@@ -361,9 +361,16 @@ func endTurn():
 		while cardsInHand.size() > 0:
 			cardDiscarded(0)
 			await get_tree().create_timer(0.05).timeout
+		for debuff:Debuff in $FixedElements/BuffsAndDebuffs.get_children():
+			debuff.endTurn()
 		await terrain.advanceTrain()
 		await terrain.enemyTurn()
 		await terrain.spawnerTurn()
+		for debuff_node in $FixedElements/BuffsAndDebuffs.get_children():
+			debuff_node.queue_free()
+		for debuffName in Stats.debuffs.keys():
+			var debuffTextureRect:Debuff = Debuff.new(debuffName, Stats.debuffs[debuffName])
+			$FixedElements/BuffsAndDebuffs.add_child(debuffTextureRect)
 		await get_tree().create_timer(0.25).timeout
 		drawHand()
 		await terrain.startTurn()

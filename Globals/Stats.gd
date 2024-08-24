@@ -43,7 +43,7 @@ var deck = []
 var rareChance = 0.1
 
 var powersInPlay = []
-var debuffs = []
+var debuffs:Dictionary = {"Slimed": 2}
 
 var current_playspace:Playspace
 

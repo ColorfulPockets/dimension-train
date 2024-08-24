@@ -41,13 +41,15 @@ var _timer: Timer
 @onready var padding: Vector2 = Vector2(padding_x, padding_y)
 @onready var extents: Vector2
 
-var text:String
+var text
 var fixedElementsLayersUp:int
+var textIsCallable:bool = false
 
 #####################################
 # OVERRIDE FUNCTIONS
 #####################################
-func _init(text:String, fixedElementsLayersUp:int) -> void:
+func _init(text, fixedElementsLayersUp:int, textIsCallable:bool = false) -> void:
+	self.textIsCallable = textIsCallable
 	self.text = text
 	self.fixedElementsLayersUp = fixedElementsLayersUp
 
@@ -72,7 +74,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if _visuals.visible:
-		$"./Tooltip/Label".text = self.text
+		if textIsCallable:
+			$"./Tooltip/Label".text = self.text.call()
+		else:
+			$"./Tooltip/Label".text = self.text
 		var border = Vector2(get_viewport().size) - padding
 		extents = $"./Tooltip".size
 		var base_pos = _get_screen_pos()
@@ -84,10 +89,11 @@ func _process(delta: float) -> void:
 		var final_y = base_pos.y - extents.y - offset.y
 		if final_y < padding.y:
 			final_y = base_pos.y + offset.y
-		match fixedElementsLayersUp:
-			1: $"./Tooltip".position = Vector2(final_x, final_y) + $"../FixedElements".position
-			2: $"./Tooltip".position = Vector2(final_x, final_y) + $"../../FixedElements".position
-			3: $"./Tooltip".position = Vector2(final_x, final_y) + $"../../../FixedElements".position
+		var layersUpString = ""
+		for i in range(fixedElementsLayersUp):
+			layersUpString += "../"
+		layersUpString += "FixedElements"
+		$"./Tooltip".position = Vector2(final_x, final_y) + get_node(layersUpString).position
 
 #####################################
 # API FUNCTIONS

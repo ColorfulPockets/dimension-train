@@ -16,12 +16,15 @@ signal clearRangeHighlight
 var previousActions:Array[INTENT] = []
 var spawnerName
 var spawnerRadius
+var debuffName:String
 var highlightedCells:Array
 var enemySpawned
 var numSpawned
 var counter
 # Position on map
 var cell
+var debuffDisplay:Debuff
+var debuffShowing = false
 
 func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 	self.spawnerName = spawnerName
@@ -33,11 +36,20 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 		"Swamp":
 			enemySpawned = "Corrupt Slug"
 			spawnerRadius = 2
+			debuffName = "Slimed"
 		"Guard Factory":
 			enemySpawned = "Guard"
 			spawnerRadius = 2
 	
-	var tooltip = Tooltip.new("[color=Red]"+spawnerName+": [/color] Spawns [color=Red]" + enemySpawned + "[/color]", 3)
+	var getTooltipText = func():
+		var text = "[color=Red]"+spawnerName+": [/color] Spawns [color=Red]" + enemySpawned + "[/color]"
+		
+		if previousActions[-1] == INTENT.Debuff:
+			text += "\n\nApplying "+debuffDisplay.process_tooltip()
+		
+		return text
+	
+	var tooltip = Tooltip.new(getTooltipText, 3, true)
 	tooltip.visuals_res = load("res://tooltip.tscn")
 	add_child(tooltip)
 
@@ -76,7 +88,25 @@ func endTurnAction():
 	if previousActions[-1] == INTENT.Debuff:
 		match spawnerName:
 			"Swamp":
-				Stats.debuffs.append("Slimed")
+				if "Slimed" in Stats.debuffs.keys():
+					Stats.debuffs["Slimed"] += 2
+				else:
+					Stats.debuffs["Slimed"] = 2
+
+#Tells Terrain which debuff sprite to spawn
+func displayDebuff():
+	match spawnerName:
+		"Swamp":
+			debuffDisplay = Debuff.new("Slimed", 2, true, 0.2)
+			debuffDisplay.position -= texture.get_size()/2
+			debuffDisplay.position -= Vector2(0, texture.get_size().y/2)
+			debuffShowing = true
+			add_child(debuffDisplay)
+
+func clearDebuffDisplay():
+	if debuffShowing:
+		debuffDisplay.queue_free()
+		debuffShowing = false
 
 #Logic for spawner patterns
 func chooseAction():
@@ -99,7 +129,11 @@ func chooseAction():
 				intent = INTENT.Increase
 			else:
 				intent = INTENT.Spawn
-			
+	
+	if intent == INTENT.Debuff:
+		displayDebuff()
+	else:
+		clearDebuffDisplay()
 	previousActions.append(intent)
 	
 func debuff():
