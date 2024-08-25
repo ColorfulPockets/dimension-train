@@ -2,6 +2,7 @@ class_name Debuff extends TextureRect
 
 const DEBUFF_TOOLTIP = {
 	"Slimed": "For the next VALUE turn(s), each resource you Gather has a 50% chance to not be gathered.",
+	"Increase": "This spawner will incrase the number of enemies it spawns by 1."
 }
 
 var value = 1
@@ -14,7 +15,7 @@ func _init(debuffName:String, value, isPreview:bool = false, scale:float = 1):
 	self.isPreview = isPreview
 	self.scale *= scale
 	self.value = value
-	custom_minimum_size = Vector2(150,150)
+	custom_minimum_size = Vector2(128,128)
 	texture = load("res://Assets/Debuffs/" + debuffName + ".png")
 	
 	

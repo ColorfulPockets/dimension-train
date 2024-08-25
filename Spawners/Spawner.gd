@@ -23,8 +23,13 @@ var numSpawned
 var counter
 # Position on map
 var cell
+
+
 var debuffDisplay:Debuff
 var debuffShowing = false
+
+var increaseDisplay:Debuff
+var increaseShowing = false
 
 func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 	self.spawnerName = spawnerName
@@ -46,6 +51,10 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 		
 		if previousActions[-1] == INTENT.Debuff:
 			text += "\n\nApplying "+debuffDisplay.process_tooltip()
+		if previousActions[-1] == INTENT.Increase:
+			text += "\n\nIncreasing number of enemies spawned by 1."
+		if previousActions[-1] == INTENT.Spawn:
+			text += "\n\nNot taking an action this turn (spawned at start of turn)."
 		
 		return text
 	
@@ -93,20 +102,37 @@ func endTurnAction():
 				else:
 					Stats.debuffs["Slimed"] = 2
 
+func spawnDebuff(name, number):
+	debuffDisplay = Debuff.new(name, number, true, 0.1)
+	debuffDisplay.position -= texture.get_size()/4
+	debuffDisplay.position -= Vector2(0, texture.get_size().y/4)
+	debuffShowing = true
+	add_child(debuffDisplay)
+
 #Tells Terrain which debuff sprite to spawn
 func displayDebuff():
 	match spawnerName:
 		"Swamp":
-			debuffDisplay = Debuff.new("Slimed", 2, true, 0.2)
-			debuffDisplay.position -= texture.get_size()/2
-			debuffDisplay.position -= Vector2(0, texture.get_size().y/2)
-			debuffShowing = true
-			add_child(debuffDisplay)
+			spawnDebuff("Slimed", 2)
 
 func clearDebuffDisplay():
 	if debuffShowing:
 		debuffDisplay.queue_free()
 		debuffShowing = false
+		
+func displayIncrease():
+	increaseDisplay = Debuff.new("Increase", 1, true, 0.125)
+	increaseDisplay.position -= texture.get_size()/2
+	increaseDisplay.position.x += 8
+	increaseDisplay.position -= Vector2(0, texture.get_size().y/4)
+	increaseShowing = true
+	add_child(increaseDisplay)
+
+
+func clearIncreaseDisplay():
+	if increaseShowing:
+		increaseDisplay.queue_free()
+		increaseShowing = false
 
 #Logic for spawner patterns
 func chooseAction():
@@ -132,8 +158,13 @@ func chooseAction():
 	
 	if intent == INTENT.Debuff:
 		displayDebuff()
+		clearIncreaseDisplay()
+	elif intent == INTENT.Increase:
+		displayIncrease()
+		clearDebuffDisplay()
 	else:
 		clearDebuffDisplay()
+		clearIncreaseDisplay()
 	previousActions.append(intent)
 	
 func debuff():
