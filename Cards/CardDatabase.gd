@@ -43,7 +43,7 @@ var DATA = {
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Weapons,
 			fields.Text: "Blast TARGETAREA orthogonal to any train car for ARGBlast damage.",
-			fields.TargetArea: Vector2i(1,1),
+			fields.TargetArea: Vector2i(2,2),
 			fields.Function: "Blast",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 			fields.Arguments: {"Blast": 1},

@@ -1,23 +1,28 @@
 extends Node2D
 
 @onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
+@onready var skipTexture = preload("res://Assets/UI/Skip Button.png")
+@onready var skipHoverTexture = preload("res://Assets/UI/Skip Hover.png")
 const CardBase = preload("res://Cards/CardBase.tscn")
 signal card_selected
 
-var commons = []
-var uncommons = []
-var rares = []
+static var commons = []
+static var uncommons = []
+static var rares = []
+static var cardListsInstantiated = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	for cardName in CardDb.DATA.keys():
-		match CardDb.DATA[cardName][Global.CARD_FIELDS.Rarity]:
-			"Common":
-				commons.append(cardName)
-			"Uncommon":
-				uncommons.append(cardName) 
-			"Rare":
-				rares.append(cardName)
+	if not cardListsInstantiated:
+		for cardName in CardDb.DATA.keys():
+			match CardDb.DATA[cardName][Global.CARD_FIELDS.Rarity]:
+				"Common":
+					commons.append(cardName)
+				"Uncommon":
+					uncommons.append(cardName) 
+				"Rare":
+					rares.append(cardName)
+		cardListsInstantiated = true
 	chooseCards()
 
 const HORIZONTAL_SPACING = 50
@@ -50,10 +55,21 @@ func chooseCards():
 		card_shown.inReward = true
 		card_shown.position = (get_viewport_rect().size / 2 + (i-1)*Vector2(card_shown.size.x*card_shown.scale.x + HORIZONTAL_SPACING,0)) - card_shown.size/2
 		card_shown.fadeIn()
+	
+	# Add Skip button
+	var skipButton:TextureButton = TextureButton.new()
+	skipButton.texture_normal = skipTexture
+	skipButton.texture_hover = skipHoverTexture
+	skipButton.scale *= 0.5
+	skipButton.position = get_viewport_rect().size / 2 - skipButton.scale*skipButton.texture_normal.get_size()/2 + Vector2(0,600)
+	skipButton.pressed.connect(func(): cardSelected(null))
+	
+	add_child(skipButton)
+	
 
 func cardSelected(card):
-	# Reparent card node so it isn't freed when we free the reward scene
-	Stats.deck.append(card.CardName)
+	if card != null:
+		Stats.deck.append(card.CardName)
 	card_selected.emit()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

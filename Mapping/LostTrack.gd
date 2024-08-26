@@ -7,21 +7,21 @@ func _init():
 		[X, X, X, X, X, 3, 4, X, X, X, X, X, X, X, X],
 		[X, X, X, X, 5, 6, X, X, X, X, X, X, X, X, X],
 		[X, X, X, 7, 8, X, X, X, X, X, X, X, X, X, X],
+		[X, X, X, X, X, X, X, 15, X, X, X, X, X, X, X],
 		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
-		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
-		[E, X, X, X, X, X, X, X, X, X, W, X, X, X, 1],
+		[E, X, X, X, X, X, X, X, X, X, W, X, X, X, 1], # 14
 		[E, E, X, X, X, X, X, X, W, W, W, W, W, W, E],
 		[L, E, E, E, E, E, W, W, W, W, W, W, W, W, W],
 		[E, E, X, X, X, X, X, X, W, W, W, W, W, W, E],
 		[E, X, X, X, X, X, 9, 10, X, X, W, X, X, X, X],
 		[X, X, X, 11, 12, X, X, X, X, X, X, X, X, X, X],
-		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+		[X, X, X, 16, X, X, X, X, X, X, X, X, X, X, X],
 		[X, X, X, X, 13, 14, X, X, X, X, X, X, X, X, X],
-		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, 2],
+		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, 2], # 12
 		[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X]]
 	
 	cell_info = {
-		1: goalWithRewards(12),
+		1: goalWithRewards(14),
 		2: goalWithRewards(12),
 		
 		3: railWithDirections([DIR.D, DIR.R]),
@@ -37,5 +37,8 @@ func _init():
 		12: railWithDirections([DIR.L, DIR.R]),
 		13: railWithDirections([DIR.L, DIR.R]),
 		14: railWithDirections([DIR.L, DIR.R]),
+
+		15: spawnerWithName("Guard Factory", 1),
+		16: spawnerWithName("Guard Factory", 1),
 	}
 	
