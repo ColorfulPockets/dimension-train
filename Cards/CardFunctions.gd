@@ -156,13 +156,19 @@ func Blast(cardInfo):
 	terrain.clearHighlights()
 	
 	var checkOrthogonalForEnemy = func (highlightedTiles) :
+		var orthogonal = false
 		for tile in highlightedTiles:
 			for location in terrain.trainLocations:
 				if location.x == tile.x or location.y == tile.y:
-					for enemy in terrain.enemies:
-						if enemy.cell == tile:
-							return true
+					orthogonal = true
+					break
+		if not orthogonal: return false
 		
+		for tile in highlightedTiles:
+			for enemy in terrain.enemies:
+				if enemy.cell == tile:
+					return true
+
 		return false
 	
 	terrain.target(checkOrthogonalForEnemy)
@@ -172,8 +178,11 @@ func Blast(cardInfo):
 	var confirmed = await confirmTarget("Blast " + str(damage))
 		
 	if confirmed == Global.FUNCTION_STATES.Success:
-		for enemy in terrain.enemies:
-			if enemy.cell in terrain.highlighted_cells:
+		var targetedCells = terrain.highlighted_cells.duplicate()
+		var numEnemies = terrain.enemies.size()
+		for i in range(numEnemies-1, -1, -1):
+			var enemy = terrain.enemies[i]
+			if enemy.cell in targetedCells:
 				await terrain.shootProjectile(terrain.trainLocations[0], enemy.cell)
 				enemy.damage(damage)
 	

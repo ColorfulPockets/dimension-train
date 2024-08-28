@@ -8,7 +8,7 @@ signal rewardSelected(card)
 
 
 @onready var current_playspace:Playspace = Stats.current_playspace
-@onready var OVERLAY_MANAGER = $"../../../FixedElements/DarkenedBackground"
+@onready var OVERLAY_MANAGER = $"../../../../../FixedElements/DarkenedBackground"
 
 @onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
 

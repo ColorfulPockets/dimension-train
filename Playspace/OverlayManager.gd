@@ -5,7 +5,7 @@ var state = 0
 var t = 0
 const ALPHA = 180
 
-const TOP_MARGIN = 200
+const TOP_MARGIN = 400
 const BOTTOM_MARGIN = 500
 const SPACING = 20
 

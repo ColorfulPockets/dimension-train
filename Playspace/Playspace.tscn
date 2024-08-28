@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=29 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace/Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -17,22 +17,28 @@
 [ext_resource type="Texture2D" uid="uid://dj4iwdkmj7hvc" path="res://Assets/Icons/EndTurnCircle_red.png" id="13_12f88"]
 [ext_resource type="Script" path="res://Playspace/EndTurnButton.gd" id="14_3mfda"]
 [ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="15_n5iw7"]
-[ext_resource type="Texture2D" uid="uid://bqcfywvunh1s7" path="res://Assets/Icons/Wood.png" id="17_3v13u"]
-[ext_resource type="Script" path="res://Playspace/TopBar HBox.gd" id="17_21g6v"]
-[ext_resource type="Texture2D" uid="uid://dhiybsqjvdali" path="res://Assets/Icons/Metal.png" id="18_xfgll"]
-[ext_resource type="Texture2D" uid="uid://rcx7qkoeksij" path="res://Assets/Icons/Rail.png" id="19_allsf"]
-[ext_resource type="Script" path="res://Playspace/MetalCount.gd" id="20_8rj36"]
 [ext_resource type="Script" path="res://Playspace/RailLeftToPlace.gd" id="20_hbuuu"]
 [ext_resource type="Script" path="res://Playspace/EnergyDisplay.gd" id="22_rrjhi"]
-[ext_resource type="Texture2D" uid="uid://xvyn13wydkkp" path="res://Assets/Icons/Coin.png" id="22_sadbf"]
 [ext_resource type="Script" path="res://Playspace/MiddleBarContainer.gd" id="22_whwbt"]
-[ext_resource type="Script" path="res://Playspace/WoodCount.gd" id="23_g4l2l"]
 [ext_resource type="Script" path="res://Playspace/TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Playspace/Text.gd" id="23_wu33i"]
-[ext_resource type="Script" path="res://Playspace/EmergencyRailCount.gd" id="25_lalij"]
-[ext_resource type="Script" path="res://Playspace/CoinCount.gd" id="26_iu0uo"]
 [ext_resource type="Script" path="res://Playspace/OverlayManager.gd" id="26_mtkk4"]
-[ext_resource type="Texture2D" uid="uid://ck08eoegt5n3e" path="res://Assets/UI/Dimension Wheel.png" id="33_768xl"]
+
+[sub_resource type="Curve" id="Curve_6sqm0"]
+_data = [Vector2(0.00662251, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0.654607), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_m0xxu"]
+curve = SubResource("Curve_6sqm0")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ev6ji"]
+particle_flag_disable_z = true
+direction = Vector3(0, 1, 0)
+radial_velocity_max = 30.0
+gravity = Vector3(0, -15, 0)
+linear_accel_max = 6.74
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_m0xxu")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
 texture = ExtResource("2_g6npi")
@@ -4139,37 +4145,11 @@ texture = ExtResource("2_g6npi")
 [sub_resource type="TileSet" id="TileSet_bwcht"]
 sources/0 = SubResource("TileSetAtlasSource_4y60x")
 
-[sub_resource type="Curve" id="Curve_1bqdx"]
-_data = [Vector2(0.00662251, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0.654607), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_m0xxu"]
-curve = SubResource("Curve_1bqdx")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sqdg5"]
-particle_flag_disable_z = true
-direction = Vector3(0, 1, 0)
-radial_velocity_max = 30.0
-gravity = Vector3(0, -15, 0)
-linear_accel_max = 6.74
-scale_max = 2.0
-alpha_curve = SubResource("CurveTexture_m0xxu")
-
 [node name="Playspace" type="Node2D"]
 script = ExtResource("1_sx2pt")
 
 [node name="CardFunctions" type="Node" parent="."]
 script = ExtResource("2_tmeg0")
-
-[node name="Terrain" type="TileMap" parent="."]
-scale = Vector2(10, 10)
-tile_set = SubResource("TileSet_bwcht")
-format = 2
-layer_0/name = "base"
-layer_1/name = "highlight"
-layer_1/z_index = 1
-layer_1/tile_data = PackedInt32Array()
-script = ExtResource("8_krthj")
 
 [node name="FixedElements" type="Control" parent="."]
 layout_mode = 3
@@ -4182,7 +4162,7 @@ script = ExtResource("6_tohbi")
 anchor_mode = 0
 
 [node name="DrawPileParticles" type="GPUParticles2D" parent="FixedElements"]
-process_material = SubResource("ParticleProcessMaterial_sqdg5")
+process_material = SubResource("ParticleProcessMaterial_ev6ji")
 texture = ExtResource("9_agjnd")
 lifetime = 4.0
 preprocess = 2.0
@@ -4205,11 +4185,8 @@ script = ExtResource("4_q8v2y")
 layout_mode = 3
 anchors_preset = 0
 
-[node name="CardTargetLine" type="Line2D" parent="FixedElements"]
-visible = false
-
 [node name="DiscardPileParticles" type="GPUParticles2D" parent="FixedElements"]
-process_material = SubResource("ParticleProcessMaterial_sqdg5")
+process_material = SubResource("ParticleProcessMaterial_ev6ji")
 texture = ExtResource("9_agjnd")
 lifetime = 4.0
 preprocess = 2.0
@@ -4261,76 +4238,6 @@ text = "End
 Turn"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Top Bar" type="ColorRect" parent="FixedElements"]
-layout_mode = 0
-offset_right = 3840.0
-offset_bottom = 150.0
-color = Color(0.49419, 0.000172693, 0.494187, 1)
-
-[node name="TopBar HBox" type="HBoxContainer" parent="FixedElements/Top Bar"]
-layout_mode = 0
-offset_right = 829.0
-offset_bottom = 23.0
-size_flags_vertical = 3
-theme_override_constants/separation = 100
-script = ExtResource("17_21g6v")
-
-[node name="LeftSpace" type="MarginContainer" parent="FixedElements/Top Bar/TopBar HBox"]
-layout_mode = 2
-
-[node name="Wood Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
-layout_mode = 2
-
-[node name="WoodIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Wood Hbox"]
-layout_mode = 2
-texture = ExtResource("17_3v13u")
-expand_mode = 3
-
-[node name="WoodCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Wood Hbox"]
-layout_mode = 2
-text = "5"
-script = ExtResource("23_g4l2l")
-
-[node name="Metal Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
-layout_mode = 2
-
-[node name="MetalIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Metal Hbox"]
-layout_mode = 2
-texture = ExtResource("18_xfgll")
-expand_mode = 3
-
-[node name="MetalCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Metal Hbox"]
-layout_mode = 2
-text = "5"
-script = ExtResource("20_8rj36")
-
-[node name="ER Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
-layout_mode = 2
-
-[node name="EmergencyRailIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/ER Hbox"]
-modulate = Color(1, 0.486275, 0.482353, 1)
-layout_mode = 2
-texture = ExtResource("19_allsf")
-expand_mode = 3
-
-[node name="EmergencyRailCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/ER Hbox"]
-layout_mode = 2
-text = "20"
-script = ExtResource("25_lalij")
-
-[node name="Coin Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
-layout_mode = 2
-
-[node name="CoinIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Coin Hbox"]
-layout_mode = 2
-texture = ExtResource("22_sadbf")
-expand_mode = 3
-
-[node name="CoinCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Coin Hbox"]
-layout_mode = 2
-text = "1"
-script = ExtResource("26_iu0uo")
 
 [node name="BuffsAndDebuffs" type="HBoxContainer" parent="FixedElements"]
 layout_mode = 0
@@ -4441,6 +4348,13 @@ text = "Speed"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="SelectingBackground" type="Sprite2D" parent="FixedElements"]
+modulate = Color(0, 0, 0, 0.792157)
+scale = Vector2(3840, 2160)
+texture = ExtResource("15_n5iw7")
+centered = false
+script = ExtResource("26_mtkk4")
+
 [node name="DarkenedBackground" type="Sprite2D" parent="FixedElements"]
 modulate = Color(0, 0, 0, 0.792157)
 z_index = 12
@@ -4449,16 +4363,13 @@ texture = ExtResource("15_n5iw7")
 centered = false
 script = ExtResource("26_mtkk4")
 
-[node name="SelectingBackground" type="Sprite2D" parent="FixedElements"]
-modulate = Color(0, 0, 0, 0.792157)
-scale = Vector2(3840, 2160)
-texture = ExtResource("15_n5iw7")
-centered = false
-script = ExtResource("26_mtkk4")
-
-[node name="TextureRect" type="TextureRect" parent="FixedElements"]
-layout_mode = 0
-offset_left = 3584.0
-offset_right = 3840.0
-offset_bottom = 256.0
-texture = ExtResource("33_768xl")
+[node name="Terrain" type="TileMap" parent="."]
+z_index = -1
+scale = Vector2(10, 10)
+tile_set = SubResource("TileSet_bwcht")
+format = 2
+layer_0/name = "base"
+layer_1/name = "highlight"
+layer_1/z_index = 1
+layer_1/tile_data = PackedInt32Array()
+script = ExtResource("8_krthj")
