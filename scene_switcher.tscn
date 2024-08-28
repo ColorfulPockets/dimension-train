@@ -1,9 +1,53 @@
-[gd_scene load_steps=10 format=3 uid="uid://du2javvixcoh7"]
+[gd_scene load_steps=41 format=3 uid="uid://du2javvixcoh7"]
 
 [ext_resource type="Script" path="res://SceneSwitcher.gd" id="1_4s6fu"]
 [ext_resource type="PackedScene" uid="uid://bnur704ugkxqv" path="res://Overworld/overworld.tscn" id="2_eev2n"]
+[ext_resource type="Script" path="res://Playspace/FixedElements.gd" id="2_j7yxc"]
 [ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="3_iq88p"]
+[ext_resource type="Texture2D" uid="uid://btljyw1kj563m" path="res://Assets/Particles/spotlight_1_256.png" id="3_vn11s"]
+[ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="4_o1ih4"]
 [ext_resource type="Texture2D" uid="uid://bblsfuib0bw1k" path="res://Assets/Particles/Swirl.png" id="4_u18r4"]
+[ext_resource type="Texture2D" uid="uid://d3anf6ui5dklw" path="res://Assets/Icons/DrawPile_white.png" id="5_mfuqd"]
+[ext_resource type="Script" path="res://Playspace/DrawPile.gd" id="6_ou1du"]
+[ext_resource type="Texture2D" uid="uid://tfk6705h2sle" path="res://Assets/Icons/DiscardPile_black.png" id="7_ysmgw"]
+[ext_resource type="Texture2D" uid="uid://c5tfhn3wdxfnw" path="res://Assets/Icons/DiscardPile_white.png" id="8_dh0nr"]
+[ext_resource type="Script" path="res://Playspace/DiscardPile.gd" id="9_pfcsx"]
+[ext_resource type="Texture2D" uid="uid://bdflvy3n3a0yy" path="res://Assets/Icons/EndTurnCircle_blue.png" id="10_tteua"]
+[ext_resource type="Texture2D" uid="uid://dpnwgr1lfoj42" path="res://Assets/Icons/EndTurnCircle_white.png" id="11_jwtux"]
+[ext_resource type="Texture2D" uid="uid://dj4iwdkmj7hvc" path="res://Assets/Icons/EndTurnCircle_red.png" id="12_06sfv"]
+[ext_resource type="Script" path="res://Playspace/EndTurnButton.gd" id="13_src5q"]
+[ext_resource type="Script" path="res://Playspace/TopBar HBox.gd" id="14_iv70a"]
+[ext_resource type="Texture2D" uid="uid://bqcfywvunh1s7" path="res://Assets/Icons/Wood.png" id="15_wbl1v"]
+[ext_resource type="Script" path="res://Playspace/WoodCount.gd" id="16_amdfs"]
+[ext_resource type="Texture2D" uid="uid://dhiybsqjvdali" path="res://Assets/Icons/Metal.png" id="17_01vwa"]
+[ext_resource type="Script" path="res://Playspace/MetalCount.gd" id="18_c0g8u"]
+[ext_resource type="Texture2D" uid="uid://rcx7qkoeksij" path="res://Assets/Icons/Rail.png" id="19_uhc1h"]
+[ext_resource type="Script" path="res://Playspace/EmergencyRailCount.gd" id="20_30kth"]
+[ext_resource type="Texture2D" uid="uid://xvyn13wydkkp" path="res://Assets/Icons/Coin.png" id="21_4nyut"]
+[ext_resource type="Script" path="res://Playspace/CoinCount.gd" id="22_kmgqo"]
+[ext_resource type="Script" path="res://Playspace/RailLeftToPlace.gd" id="23_6b8ly"]
+[ext_resource type="Script" path="res://Playspace/MiddleBarContainer.gd" id="24_do4qe"]
+[ext_resource type="Script" path="res://Playspace/Text.gd" id="26_2wwlb"]
+[ext_resource type="Script" path="res://Playspace/EnergyDisplay.gd" id="27_8pikt"]
+[ext_resource type="Script" path="res://Playspace/TrainSpeedContainer.gd" id="28_q0f4r"]
+[ext_resource type="Script" path="res://Playspace/OverlayManager.gd" id="29_x702j"]
+[ext_resource type="Texture2D" uid="uid://ck08eoegt5n3e" path="res://Assets/UI/Dimension Wheel.png" id="30_jpk0k"]
+
+[sub_resource type="Curve" id="Curve_h1v3g"]
+_data = [Vector2(0.00662251, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0.654607), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_m0xxu"]
+curve = SubResource("Curve_h1v3g")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_i7jr5"]
+particle_flag_disable_z = true
+direction = Vector3(0, 1, 0)
+radial_velocity_max = 30.0
+gravity = Vector3(0, -15, 0)
+linear_accel_max = 6.74
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_m0xxu")
 
 [sub_resource type="Curve" id="Curve_qhcmh"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.483444, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -32,6 +76,299 @@ alpha_curve = SubResource("CurveTexture_50jpj")
 
 [node name="SceneSwitcher" type="Node"]
 script = ExtResource("1_4s6fu")
+
+[node name="FixedElements" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 3840.0
+offset_bottom = 2160.0
+script = ExtResource("2_j7yxc")
+
+[node name="Camera" type="Camera2D" parent="FixedElements"]
+anchor_mode = 0
+
+[node name="DrawPileParticles" type="GPUParticles2D" parent="FixedElements"]
+process_material = SubResource("ParticleProcessMaterial_i7jr5")
+texture = ExtResource("3_vn11s")
+lifetime = 4.0
+preprocess = 2.0
+randomness = 0.49
+local_coords = true
+trail_lifetime = 0.1
+
+[node name="DrawPile" type="TextureButton" parent="FixedElements"]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+focus_mode = 0
+texture_normal = ExtResource("4_o1ih4")
+texture_pressed = ExtResource("5_mfuqd")
+texture_hover = ExtResource("4_o1ih4")
+texture_disabled = ExtResource("4_o1ih4")
+script = ExtResource("6_ou1du")
+
+[node name="Cards" type="Control" parent="FixedElements"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CardTargetLine" type="Line2D" parent="FixedElements"]
+visible = false
+
+[node name="DiscardPileParticles" type="GPUParticles2D" parent="FixedElements"]
+process_material = SubResource("ParticleProcessMaterial_i7jr5")
+texture = ExtResource("3_vn11s")
+lifetime = 4.0
+preprocess = 2.0
+randomness = 0.49
+local_coords = true
+trail_lifetime = 0.1
+
+[node name="DiscardPile" type="TextureButton" parent="FixedElements"]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+focus_mode = 0
+texture_normal = ExtResource("7_ysmgw")
+texture_pressed = ExtResource("8_dh0nr")
+texture_hover = ExtResource("7_ysmgw")
+texture_disabled = ExtResource("7_ysmgw")
+script = ExtResource("9_pfcsx")
+
+[node name="DrawPileCardCount" type="Label" parent="FixedElements"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 100
+
+[node name="DiscardPileCardCount" type="Label" parent="FixedElements"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 137.0
+theme_override_font_sizes/font_size = 100
+
+[node name="EndTurnButton" type="TextureButton" parent="FixedElements"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+focus_mode = 0
+texture_normal = ExtResource("10_tteua")
+texture_pressed = ExtResource("11_jwtux")
+texture_hover = ExtResource("12_06sfv")
+script = ExtResource("13_src5q")
+
+[node name="Label" type="Label" parent="FixedElements/EndTurnButton"]
+layout_mode = 0
+offset_left = 65.0
+offset_top = 45.0
+offset_right = 235.0
+offset_bottom = 254.0
+theme_override_font_sizes/font_size = 75
+text = "End
+Turn"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Top Bar" type="ColorRect" parent="FixedElements"]
+layout_mode = 0
+offset_right = 3840.0
+offset_bottom = 150.0
+color = Color(0.49419, 0.000172693, 0.494187, 1)
+
+[node name="TopBar HBox" type="HBoxContainer" parent="FixedElements/Top Bar"]
+layout_mode = 0
+offset_right = 829.0
+offset_bottom = 23.0
+size_flags_vertical = 3
+theme_override_constants/separation = 100
+script = ExtResource("14_iv70a")
+
+[node name="LeftSpace" type="MarginContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="Wood Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="WoodIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Wood Hbox"]
+layout_mode = 2
+texture = ExtResource("15_wbl1v")
+expand_mode = 3
+
+[node name="WoodCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Wood Hbox"]
+layout_mode = 2
+text = "5"
+script = ExtResource("16_amdfs")
+
+[node name="Metal Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="MetalIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Metal Hbox"]
+layout_mode = 2
+texture = ExtResource("17_01vwa")
+expand_mode = 3
+
+[node name="MetalCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Metal Hbox"]
+layout_mode = 2
+text = "5"
+script = ExtResource("18_c0g8u")
+
+[node name="ER Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="EmergencyRailIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/ER Hbox"]
+modulate = Color(1, 0.486275, 0.482353, 1)
+layout_mode = 2
+texture = ExtResource("19_uhc1h")
+expand_mode = 3
+
+[node name="EmergencyRailCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/ER Hbox"]
+layout_mode = 2
+text = "20"
+script = ExtResource("20_30kth")
+
+[node name="Coin Hbox" type="HBoxContainer" parent="FixedElements/Top Bar/TopBar HBox"]
+layout_mode = 2
+
+[node name="CoinIcon" type="TextureRect" parent="FixedElements/Top Bar/TopBar HBox/Coin Hbox"]
+layout_mode = 2
+texture = ExtResource("21_4nyut")
+expand_mode = 3
+
+[node name="CoinCount" type="Label" parent="FixedElements/Top Bar/TopBar HBox/Coin Hbox"]
+layout_mode = 2
+text = "1"
+script = ExtResource("22_kmgqo")
+
+[node name="BuffsAndDebuffs" type="HBoxContainer" parent="FixedElements"]
+layout_mode = 0
+offset_top = 150.0
+offset_bottom = 150.0
+
+[node name="RailLeftToBuild" type="Label" parent="FixedElements"]
+visible = false
+z_index = 11
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 200.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 100
+script = ExtResource("23_6b8ly")
+
+[node name="MiddleBarContainer" type="Control" parent="FixedElements"]
+visible = false
+z_index = 13
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1200.0
+offset_bottom = 200.0
+script = ExtResource("24_do4qe")
+
+[node name="MiddleBar" type="Sprite2D" parent="FixedElements/MiddleBarContainer"]
+modulate = Color(0.231373, 0.231373, 0.231373, 0.819608)
+texture = ExtResource("3_iq88p")
+centered = false
+
+[node name="Text" type="Label" parent="FixedElements/MiddleBarContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -45.0
+offset_right = -19.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 65
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("26_2wwlb")
+
+[node name="EnergyDisplayHolder" type="Sprite2D" parent="FixedElements"]
+texture = ExtResource("11_jwtux")
+centered = false
+script = ExtResource("27_8pikt")
+
+[node name="EnergyDisplay" type="Sprite2D" parent="FixedElements/EnergyDisplayHolder"]
+modulate = Color(0.886275, 0, 0.886275, 1)
+texture = ExtResource("11_jwtux")
+centered = false
+
+[node name="Label" type="Label" parent="FixedElements/EnergyDisplayHolder"]
+offset_left = 65.0
+offset_top = 45.0
+offset_right = 235.0
+offset_bottom = 254.0
+theme_override_font_sizes/font_size = 100
+text = "3/3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TrainSpeedContainer" type="Control" parent="FixedElements"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 3615.0
+offset_top = 270.0
+offset_right = 3811.0
+offset_bottom = 485.0
+script = ExtResource("28_q0f4r")
+
+[node name="MiddleBar" type="Sprite2D" parent="FixedElements/TrainSpeedContainer"]
+modulate = Color(0, 0, 0, 1)
+texture = ExtResource("3_iq88p")
+centered = false
+
+[node name="SpeedLabel" type="Label" parent="FixedElements/TrainSpeedContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -158.0
+offset_top = -100.0
+offset_right = -121.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 100
+text = "12"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TrainSpeedLabel" type="Label" parent="FixedElements/TrainSpeedContainer"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 50
+text = "Speed"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DarkenedBackground" type="Sprite2D" parent="FixedElements"]
+modulate = Color(0, 0, 0, 0.792157)
+z_index = 12
+scale = Vector2(3840, 2160)
+texture = ExtResource("3_iq88p")
+centered = false
+script = ExtResource("29_x702j")
+
+[node name="SelectingBackground" type="Sprite2D" parent="FixedElements"]
+modulate = Color(0, 0, 0, 0.792157)
+scale = Vector2(3840, 2160)
+texture = ExtResource("3_iq88p")
+centered = false
+script = ExtResource("29_x702j")
+
+[node name="TextureRect" type="TextureRect" parent="FixedElements"]
+layout_mode = 0
+offset_left = 3584.0
+offset_right = 3840.0
+offset_bottom = 256.0
+texture = ExtResource("30_jpk0k")
 
 [node name="Overworld" parent="." instance=ExtResource("2_eev2n")]
 

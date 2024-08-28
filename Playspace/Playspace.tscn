@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=39 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace/Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -32,6 +32,7 @@
 [ext_resource type="Script" path="res://Playspace/EmergencyRailCount.gd" id="25_lalij"]
 [ext_resource type="Script" path="res://Playspace/CoinCount.gd" id="26_iu0uo"]
 [ext_resource type="Script" path="res://Playspace/OverlayManager.gd" id="26_mtkk4"]
+[ext_resource type="Texture2D" uid="uid://ck08eoegt5n3e" path="res://Assets/UI/Dimension Wheel.png" id="33_768xl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
 texture = ExtResource("2_g6npi")
@@ -4402,10 +4403,10 @@ vertical_alignment = 1
 [node name="TrainSpeedContainer" type="Control" parent="FixedElements"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 3467.0
-offset_top = 134.0
-offset_right = 3663.0
-offset_bottom = 349.0
+offset_left = 3615.0
+offset_top = 270.0
+offset_right = 3811.0
+offset_bottom = 485.0
 script = ExtResource("23_hpgys")
 
 [node name="MiddleBar" type="Sprite2D" parent="FixedElements/TrainSpeedContainer"]
@@ -4454,3 +4455,10 @@ scale = Vector2(3840, 2160)
 texture = ExtResource("15_n5iw7")
 centered = false
 script = ExtResource("26_mtkk4")
+
+[node name="TextureRect" type="TextureRect" parent="FixedElements"]
+layout_mode = 0
+offset_left = 3584.0
+offset_right = 3840.0
+offset_bottom = 256.0
+texture = ExtResource("33_768xl")
