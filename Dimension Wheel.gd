@@ -7,6 +7,21 @@ func addSegment(dimension:String, index:int):
 	segment.position += segment.size
 	segment.texture = texture
 	
+	var iconTexture = load("res://Assets/UI/Dimension Wheel/" + dimension + " Icon.png")
+	var icon:TextureRect = TextureRect.new()
+	icon.scale *= 0.35
+	icon.texture = iconTexture
+	
+	var base_angle = PI/8
+	var change_angle = PI/4
+	var hypotenuse = size.x / 3
+	var angle = base_angle + index*change_angle
+	var center = size/2
+	# X and Y are swapped from what you'd expect since we're measuring from the vertical axis
+	icon.position.x = center.x + hypotenuse*sin(angle)
+	icon.position.y = center.y - hypotenuse*cos(angle)
+	icon.position -= icon.scale*icon.size/2
+	
 	match index:
 		0:
 			segment.scale.x *= -1
@@ -40,14 +55,7 @@ func addSegment(dimension:String, index:int):
 			segment.position -= segment.size
 	
 	add_child(segment)
-	
-	var iconTexture = load("res://Assets/UI/Dimension Wheel/" + dimension + " Icon.png")
-	var icon:TextureRect = TextureRect.new()
-	icon.scale *= 0.35
-	icon.position = segment.size/2 
-	icon.texture = iconTexture
-	icon.rotation -= segment.rotation
-	segment.add_child(icon)
+	add_child(icon)
 	
 
 # Called when the node enters the scene tree for the first time.
