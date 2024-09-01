@@ -1,6 +1,78 @@
-[gd_scene load_steps=2 format=3 uid="uid://c166t2o78otvc"]
+[gd_scene load_steps=8 format=3 uid="uid://c166t2o78otvc"]
 
 [ext_resource type="Script" path="res://Card Reward/card_reward.gd" id="1_a366b"]
+[ext_resource type="Texture2D" uid="uid://bp3wokm6yf833" path="res://Assets/UI/Dimension Wheel/Water Box.png" id="2_duaab"]
+[ext_resource type="Texture2D" uid="uid://b6tycw67vy5kj" path="res://Assets/UI/Dimension Wheel/Fire Box.png" id="3_lc6lq"]
+[ext_resource type="Texture2D" uid="uid://dhw5108xw4e0j" path="res://Assets/UI/Dimension Wheel/Water Icon.png" id="3_xssan"]
+[ext_resource type="Texture2D" uid="uid://5iv2j0wgc28n" path="res://Assets/UI/Dimension Wheel/Ice Box.png" id="4_f4kw7"]
+[ext_resource type="Texture2D" uid="uid://elwlnemftrna" path="res://Assets/UI/Dimension Wheel/Fire Icon.png" id="5_fw0pm"]
+[ext_resource type="Texture2D" uid="uid://cfftu0xsbxhgg" path="res://Assets/UI/Dimension Wheel/Ice Icon.png" id="7_wdw6a"]
 
 [node name="CardReward" type="Node2D"]
 script = ExtResource("1_a366b")
+
+[node name="WaterBox" type="TextureRect" parent="."]
+offset_left = 1242.0
+offset_top = 420.0
+offset_right = 1498.0
+offset_bottom = 676.0
+texture = ExtResource("2_duaab")
+
+[node name="WaterIcon" type="TextureRect" parent="WaterBox"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_xssan")
+
+[node name="FireBox" type="TextureRect" parent="."]
+offset_left = 1792.0
+offset_top = 420.0
+offset_right = 2048.0
+offset_bottom = 676.0
+texture = ExtResource("3_lc6lq")
+
+[node name="FireIcon" type="TextureRect" parent="FireBox"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_fw0pm")
+
+[node name="IceBox" type="TextureRect" parent="."]
+offset_left = 2342.0
+offset_top = 420.0
+offset_right = 2598.0
+offset_bottom = 676.0
+texture = ExtResource("4_f4kw7")
+
+[node name="IceIcon" type="TextureRect" parent="IceBox"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_wdw6a")

@@ -42,10 +42,10 @@ var startingDeckNames = ["Gust", "Blast", "Blast", "Harvest", "Harvest", "Gather
 var deck = []
 var rareChance = 0.1
 
-var dimensionWheelSegments = ["Fire","Fire","Fire","Fire","Fire","Fire","Fire","Fire",]
+var dimensionWheelSegments = ["Fire",]
 
 var powersInPlay = []
-var debuffs:Dictionary = {"Slimed": 2}
+var debuffs:Dictionary = {}
 
 var current_playspace:Playspace
 

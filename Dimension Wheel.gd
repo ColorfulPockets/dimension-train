@@ -63,6 +63,11 @@ func _ready():
 	for i in range(Stats.dimensionWheelSegments.size()):
 		addSegment(Stats.dimensionWheelSegments[i], i)
 
+func resetWheel():
+	for child in get_children():
+		child.queue_free()
+	for i in range(Stats.dimensionWheelSegments.size()):
+		addSegment(Stats.dimensionWheelSegments[i], i)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

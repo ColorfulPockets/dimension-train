@@ -3,6 +3,7 @@ extends Node2D
 @onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
 @onready var skipTexture = preload("res://Assets/UI/Skip Button.png")
 @onready var skipHoverTexture = preload("res://Assets/UI/Skip Hover.png")
+
 const CardBase = preload("res://Cards/CardBase.tscn")
 signal card_selected
 
@@ -10,6 +11,9 @@ static var commons = []
 static var uncommons = []
 static var rares = []
 static var cardListsInstantiated = false
+var cardsToOffer = []
+# The dimension that Skip will push toward
+var skipType = "Water"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -28,7 +32,7 @@ func _ready():
 const HORIZONTAL_SPACING = 50
 
 func chooseCards():
-	var cardsToOffer = []
+	cardsToOffer = []
 	for i in range(3):
 		var cardChosen = ""
 		if randf_range(0.0,1.0) < Stats.rareChance:
@@ -64,12 +68,36 @@ func chooseCards():
 	skipButton.position = get_viewport_rect().size / 2 - skipButton.scale*skipButton.texture_normal.get_size()/2 + Vector2(0,600)
 	skipButton.pressed.connect(func(): cardSelected(null))
 	
+	var skipBox:TextureRect = TextureRect.new()
+	var types = ["Water", "Ice", "Fire"]
+	types.shuffle()
+	skipType = types.pop_front()
+	skipBox.texture = load("res://Assets/UI/Dimension Wheel/" + skipType + " Box.png")
+	var skipBoxIcon:TextureRect = TextureRect.new()
+	skipBoxIcon.texture = load("res://Assets/UI/Dimension Wheel/" + skipType + " Icon.png")
+	
+	skipBox.size = Vector2(256,256)
+	skipBox.position = Vector2(1920-skipBox.size.x/2, 1800)
+	skipBoxIcon.size = Vector2(128,128)
+	skipBoxIcon.position = skipBox.size/2 - skipBoxIcon.size/2
+	add_child(skipBox)
+	skipBox.add_child(skipBoxIcon)
 	add_child(skipButton)
 	
 
 func cardSelected(card):
 	if card != null:
 		Stats.deck.append(card.CardName)
+		match cardsToOffer.find(card.CardName):
+			0:
+				Stats.dimensionWheelSegments.append("Water")
+			1: 
+				Stats.dimensionWheelSegments.append("Fire")
+			2:
+				Stats.dimensionWheelSegments.append("Ice")
+	else:
+		Stats.dimensionWheelSegments.append(skipType)
+	$"../EverywhereUI/Dimension Wheel".resetWheel()
 	card_selected.emit()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
