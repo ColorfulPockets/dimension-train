@@ -38,11 +38,11 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Gust", "Blast", "Blast", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"]
+var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"]
 var deck = []
 var rareChance = 0.1
 
-var dimensionWheelSegments = ["Fire",]
+var dimensionWheelSegments = []
 
 var powersInPlay = []
 var debuffs:Dictionary = {}

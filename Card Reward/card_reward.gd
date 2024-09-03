@@ -86,17 +86,22 @@ func chooseCards():
 	
 
 func cardSelected(card):
+	var dimension
 	if card != null:
 		Stats.deck.append(card.CardName)
 		match cardsToOffer.find(card.CardName):
 			0:
-				Stats.dimensionWheelSegments.append("Water")
+				dimension = "Water"
 			1: 
-				Stats.dimensionWheelSegments.append("Fire")
+				dimension = "Fire"
 			2:
-				Stats.dimensionWheelSegments.append("Ice")
+				dimension = "Ice"
 	else:
-		Stats.dimensionWheelSegments.append(skipType)
+		dimension = skipType
+	
+	Stats.dimensionWheelSegments.append(dimension)
+	if Stats.dimensionWheelSegments.size() > 8:
+		Stats.dimensionWheelSegments.pop_front()
 	$"../EverywhereUI/Dimension Wheel".resetWheel()
 	card_selected.emit()
 

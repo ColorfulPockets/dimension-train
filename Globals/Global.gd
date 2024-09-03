@@ -1,6 +1,6 @@
 extends Node
 
-var devmode = true
+var devmode = false
 
 # GLOBAL SIGNALS
 signal cardFunctionStarted
