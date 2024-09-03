@@ -1,32 +1,18 @@
 extends Node2D
 
-@onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
 @onready var skipTexture = preload("res://Assets/UI/Skip Button.png")
 @onready var skipHoverTexture = preload("res://Assets/UI/Skip Hover.png")
 
 const CardBase = preload("res://Cards/CardBase.tscn")
 signal card_selected
 
-static var commons = []
-static var uncommons = []
-static var rares = []
-static var cardListsInstantiated = false
 var cardsToOffer = []
 # The dimension that Skip will push toward
 var skipType = "Water"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	if not cardListsInstantiated:
-		for cardName in CardDb.DATA.keys():
-			match CardDb.DATA[cardName][Global.CARD_FIELDS.Rarity]:
-				"Common":
-					commons.append(cardName)
-				"Uncommon":
-					uncommons.append(cardName) 
-				"Rare":
-					rares.append(cardName)
-		cardListsInstantiated = true
+	Global.instantiateCardLists()
 	chooseCards()
 
 const HORIZONTAL_SPACING = 50
@@ -36,17 +22,17 @@ func chooseCards():
 	for i in range(3):
 		var cardChosen = ""
 		if randf_range(0.0,1.0) < Stats.rareChance:
-			cardChosen = rares[randi_range(0,rares.size()-1)]
+			cardChosen = Global.chooseRare()
 			while cardChosen in cardsToOffer:
-				cardChosen = rares[randi_range(0,rares.size()-1)]
+				cardChosen = Global.chooseRare()
 		elif randf_range(0.0,1.0) < 0.3:
-			cardChosen = uncommons[randi_range(0,uncommons.size()-1)]
+			cardChosen = Global.chooseUncommon()
 			while cardChosen in cardsToOffer:
-				cardChosen = uncommons[randi_range(0,uncommons.size()-1)]
+				cardChosen = Global.chooseUncommon()
 		else:
-			cardChosen = commons[randi_range(0,commons.size()-1)]
+			cardChosen = Global.chooseCommon()
 			while cardChosen in cardsToOffer:
-				cardChosen = commons[randi_range(0,commons.size()-1)]
+				cardChosen = Global.chooseCommon()
 		cardsToOffer.append(cardChosen)
 	
 	for i in range(3):

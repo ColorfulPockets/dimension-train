@@ -90,7 +90,6 @@ func _process(_delta):
 	$FixedElements/DiscardPileCardCount.text = str(discardPile.size())
 	$FixedElements/DrawPileCardCount.text = str(drawPile.size())
 
-const CARDSIZE = Vector2(750/2,1050/2)
 # How much the cards should be rotated compared to their position on the ellipse
 const CARD_ANGLE = float(1)/float(4)
 
@@ -398,8 +397,8 @@ func drawCard(fromPosition, fromScale, new_card:CardBase = null):
 		new_card.moveTime = new_card.DRAWTIME
 	
 	new_card.card_pressed = false
-	new_card.targetscale = CARDSIZE / new_card.size
-	new_card.inSelectionScale = CARDSIZE / new_card.size
+	new_card.targetscale = Global.CARD_SIZE / new_card.size
+	new_card.inSelectionScale = Global.CARD_SIZE / new_card.size
 	
 	new_card.scale = fromScale
 	

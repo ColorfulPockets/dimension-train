@@ -1,6 +1,7 @@
-class_name CardBase extends Container
+class_name CardBase extends ColorRect
 
 signal rewardSelected(card)
+signal bought(card)
 
 @onready var types = Global.CARD_TYPES
 @onready var fields = Global.CARD_FIELDS
@@ -10,11 +11,9 @@ signal rewardSelected(card)
 @onready var current_playspace:Playspace = Stats.current_playspace
 @onready var OVERLAY_MANAGER = $"../../../../../FixedElements/DarkenedBackground"
 
-@onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
-
 var CardName = "Chop"
 
-@onready var CardInfo = CardDb.DATA[CardName]
+@onready var CardInfo = Global.CardDb.DATA[CardName]
 
 @onready var CardImg = str("res://Assets/Icons/",CardInfo[0],".png")
 
@@ -59,6 +58,8 @@ var other_card_pressed = false
 var mousedOver = false
 var cardPileShowing = false
 var inReward = false
+var inShop = false
+var price = 3
 
 var DRAWTIME = 0.3
 var REORGTIME = 0.15
@@ -73,15 +74,12 @@ var baseText:String
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Icon.texture = load(CardImg)
-	# Scale to 50px
-	$Icon.scale *= 0.09766
-	$Icon.position = Vector2(125,195)
 	
 	baseText = CardInfo[fields.Text]
 	replaceText()
-	$Name/Name.text = CardInfo[fields.Name]
+	$VBox/Name/Name.text = CardInfo[fields.Name]
 	
-	$Name/Name/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
+	$VBox/Name/Name/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
 		
 	
 	connect("mouse_entered",mouseEntered)
@@ -89,6 +87,11 @@ func _ready():
 	
 	Global.overlayShowing.connect(func(): cardPileShowing = true)
 	Global.overlayHidden.connect(func(): cardPileShowing = false)
+	
+	if CardName in Global.rares:
+		price = Global.RARE_PRICE
+	elif CardName in Global.uncommons:
+		price = Global.UNCOMMON_PRICE
 
 #GPT
 func replaceText():
@@ -111,7 +114,7 @@ func replaceText():
 			var argReplacement = str(CardInfo[Global.CARD_FIELDS.Arguments][key])
 			newText = newText.replace("ARG" + key, argReplacement)
 			
-	$BottomText/BottomText.text = newText
+	$VBox/BottomText/BottomText.text = newText
 
 # Since the cards are children of Stats, we need to reset some variables when adding them to the playspace
 func resetPlayspace():
@@ -124,7 +127,7 @@ func manualFocusRetrigger():
 		mouseEntered()
 
 func mouseEntered():
-	if inReward or (state == states.InSelection):
+	if inReward or inShop or (state == states.InSelection):
 		$HighlightBorder.visible = true
 		mousedOver = true
 		return
@@ -141,7 +144,7 @@ func mouseEntered():
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
-	if inReward or (state == states.InSelection):
+	if inReward or inShop or (state == states.InSelection):
 		$HighlightBorder.visible = false
 		mousedOver = false
 		return
@@ -413,6 +416,13 @@ func _input(event):
 			if event.pressed:
 				rewardSelected.emit(self)
 				moveToDeck()
+	elif mousedOver and inShop:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				var canAfford = Stats.coinCount >= price
+				if canAfford:
+					bought.emit(self)
+					moveToDeck()
 	elif mousedOver and not card_pressed and not current_playspace.endingTurn and not cardPileShowing and not inReward:
 		# Draw arrow with click and drag from card
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:

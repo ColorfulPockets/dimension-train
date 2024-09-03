@@ -37,8 +37,11 @@ const SPEED_CONTAINER_POSITION = Vector2(3615, 270)
 const POWER_POSITION = Vector2(3840/2, 2160/2)
 
 const VIEWPORT_SIZE = Vector2(3840, 2160)
+const CARD_SIZE = Vector2(325,525)
 
-const TILE_SHAPE = Vector2i(10,10)
+const RARE_PRICE = 6
+const UNCOMMON_PRICE = 4
+const COMMON_PRICE = 3
 
 const highlight = Vector2i(2,4)
 const highlight_l  = Vector2i(2,0)
@@ -431,3 +434,31 @@ func rotate_array(arr) -> Array[Array]:
 			row.append(arr[len(arr) - j - 1][i])
 		new_arr.append(row)
 	return new_arr
+
+
+static var commons = []
+static var uncommons = []
+static var rares = []
+static var cardListsInstantiated = false
+@onready var CardDb = preload("res://Cards/CardDatabase.gd").new()
+
+func instantiateCardLists():
+	if not cardListsInstantiated:
+		for cardName in CardDb.DATA.keys():
+			match CardDb.DATA[cardName][Global.CARD_FIELDS.Rarity]:
+				"Common":
+					commons.append(cardName)
+				"Uncommon":
+					uncommons.append(cardName) 
+				"Rare":
+					rares.append(cardName)
+		cardListsInstantiated = true
+
+func chooseRare():
+	return rares[randi_range(0,rares.size()-1)]
+	
+func chooseUncommon():
+	return uncommons[randi_range(0,uncommons.size()-1)]
+	
+func chooseCommon():
+	return commons[randi_range(0,commons.size()-1)]

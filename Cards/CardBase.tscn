@@ -1,99 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://dyqkclbhlvd8j"]
+[gd_scene load_steps=2 format=3 uid="uid://dyqkclbhlvd8j"]
 
 [ext_resource type="Script" path="res://Cards/CardBase.gd" id="1_n4mnx"]
-[ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="2_a7rfg"]
 
-[node name="CardBase" type="VBoxContainer"]
+[node name="CardBase" type="ColorRect"]
+custom_minimum_size = Vector2(250, 350)
 offset_right = 250.0
 offset_bottom = 350.0
 pivot_offset = Vector2(125, 175)
+mouse_filter = 1
 script = ExtResource("1_n4mnx")
 
-[node name="Background" type="Sprite2D" parent="."]
-scale = Vector2(250, 350)
-texture = ExtResource("2_a7rfg")
-centered = false
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 250.0
+offset_bottom = 350.0
+mouse_filter = 2
 
-[node name="Border2" type="Node2D" parent="."]
-
-[node name="Top" type="Sprite2D" parent="Border2"]
-modulate = Color(0, 0, 0, 1)
-scale = Vector2(250, 5)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Bottom" type="Sprite2D" parent="Border2"]
-modulate = Color(0, 0, 0, 1)
-position = Vector2(0, 345)
-scale = Vector2(250, 5)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Right" type="Sprite2D" parent="Border2"]
-modulate = Color(0, 0, 0, 1)
-position = Vector2(245, 0)
-scale = Vector2(5, 350)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Left" type="Sprite2D" parent="Border2"]
-modulate = Color(0, 0, 0, 1)
-scale = Vector2(5, 350)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Middle Line" type="Sprite2D" parent="Border2"]
-modulate = Color(0, 0, 0, 1)
-position = Vector2(0, 192)
-scale = Vector2(250, 6)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Bottom of Name" type="Sprite2D" parent="Border2"]
-modulate = Color(0, 0, 0, 1)
-position = Vector2(0, 40)
-scale = Vector2(250, 5)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="HighlightBorder" type="Node2D" parent="."]
-visible = false
-
-[node name="Top" type="Sprite2D" parent="HighlightBorder"]
-modulate = Color(0.160784, 0.964706, 0.960784, 1)
-scale = Vector2(250, 5)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Bottom" type="Sprite2D" parent="HighlightBorder"]
-modulate = Color(0.160784, 0.964706, 0.960784, 1)
-position = Vector2(0, 345)
-scale = Vector2(250, 5)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Right" type="Sprite2D" parent="HighlightBorder"]
-modulate = Color(0.160784, 0.964706, 0.960784, 1)
-position = Vector2(245, 0)
-scale = Vector2(5, 350)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Left" type="Sprite2D" parent="HighlightBorder"]
-modulate = Color(0.160784, 0.964706, 0.960784, 1)
-scale = Vector2(5, 350)
-texture = ExtResource("2_a7rfg")
-centered = false
-
-[node name="Icon" type="Sprite2D" parent="."]
-
-[node name="Name" type="MarginContainer" parent="."]
+[node name="Name" type="MarginContainer" parent="VBox"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="Name" type="Label" parent="Name"]
+[node name="Name" type="Label" parent="VBox/Name"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
@@ -101,7 +31,7 @@ text = "Testing"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="EnergyCost" type="Label" parent="Name/Name"]
+[node name="EnergyCost" type="Label" parent="VBox/Name/Name"]
 layout_mode = 2
 offset_left = 191.0
 offset_top = -7.0
@@ -113,15 +43,16 @@ text = "1"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="TopText" type="MarginContainer" parent="."]
+[node name="TopText" type="MarginContainer" parent="VBox"]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="TopText" type="Label" parent="TopText"]
+[node name="TopText" type="Label" parent="VBox/TopText"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 16
@@ -130,15 +61,16 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="BottomText" type="MarginContainer" parent="."]
+[node name="BottomText" type="MarginContainer" parent="VBox"]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="BottomText" type="Label" parent="BottomText"]
+[node name="BottomText" type="Label" parent="VBox/BottomText"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 16
@@ -146,3 +78,112 @@ text = "Testing"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="Border" type="Control" parent="."]
+layout_mode = 2
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Top" type="ColorRect" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(250, 1)
+layout_mode = 0
+offset_right = 250.0
+offset_bottom = 5.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Bottom" type="ColorRect" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(250, 5)
+layout_mode = 0
+offset_top = 345.0
+offset_right = 250.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Right" type="ColorRect" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(5, 350)
+layout_mode = 0
+offset_left = 245.0
+offset_right = 250.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Left" type="ColorRect" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(5, 350)
+layout_mode = 0
+offset_right = 5.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Middle Line" type="ColorRect" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(250, 5)
+layout_mode = 0
+offset_top = 192.0
+offset_bottom = 192.0
+mouse_filter = 2
+
+[node name="Bottom of Name" type="ColorRect" parent="Border"]
+modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(250, 5)
+layout_mode = 0
+offset_top = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="HighlightBorder" type="Control" parent="."]
+visible = false
+layout_mode = 2
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Top" type="ColorRect" parent="HighlightBorder"]
+custom_minimum_size = Vector2(250, 1)
+layout_mode = 0
+offset_right = 250.0
+offset_bottom = 5.0
+mouse_filter = 2
+color = Color(0, 1, 1, 1)
+
+[node name="Bottom" type="ColorRect" parent="HighlightBorder"]
+custom_minimum_size = Vector2(250, 5)
+layout_mode = 0
+offset_top = 345.0
+offset_right = 250.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0, 1, 1, 1)
+
+[node name="Right" type="ColorRect" parent="HighlightBorder"]
+custom_minimum_size = Vector2(5, 350)
+layout_mode = 0
+offset_left = 245.0
+offset_right = 250.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0, 1, 1, 1)
+
+[node name="Left" type="ColorRect" parent="HighlightBorder"]
+custom_minimum_size = Vector2(5, 350)
+layout_mode = 0
+offset_right = 5.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0, 1, 1, 1)
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+offset_left = 100.0
+offset_top = 167.0
+offset_right = 150.0
+offset_bottom = 217.0
+mouse_filter = 2
+expand_mode = 3
