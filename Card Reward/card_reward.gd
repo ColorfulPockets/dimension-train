@@ -41,7 +41,7 @@ func chooseCards():
 		card_shown.rewardSelected.connect(cardSelected, 1)
 		add_child(card_shown)
 		card_shown.state = Global.CARD_STATES.InOverlay
-		card_shown.scale *=2
+		card_shown.scale *= 2 
 		card_shown.inReward = true
 		card_shown.position = (get_viewport_rect().size / 2 + (i-1)*Vector2(card_shown.size.x*card_shown.scale.x + HORIZONTAL_SPACING,0)) - card_shown.size/2
 		card_shown.fadeIn()

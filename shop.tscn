@@ -14,7 +14,7 @@ offset_bottom = 2160.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
+theme_override_constants/separation = 50
 alignment = 1
 
 [node name="CardRow" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer"]
@@ -24,201 +24,206 @@ size_flags_vertical = 4
 theme_override_constants/separation = 200
 alignment = 1
 
-[node name="CommonCardBox1" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
+[node name="CardBox1" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox1"]
-custom_minimum_size = Vector2(365, 565)
+[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196143, 0.196143, 0.196143, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox1/BackgroundColor"]
-custom_minimum_size = Vector2(365, 565)
+[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1/BackgroundColor"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox1/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(325, 525)
+[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1/BackgroundColor/MarginContainer"]
+custom_minimum_size = Vector2(500, 700)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.371024, 0.362206, 0.343979, 1)
 
-[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox1"]
+[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1"]
 layout_mode = 2
 alignment = 1
 
-[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox1/PriceBox"]
+[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1/PriceBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 100
 text = "3"
 
-[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox1/PriceBox"]
+[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1/PriceBox"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 texture = ExtResource("2_s1cau")
 expand_mode = 3
 
-[node name="CommonCardBox2" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
+[node name="CardBox2" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox2"]
-custom_minimum_size = Vector2(365, 565)
+[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196143, 0.196143, 0.196143, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox2/BackgroundColor"]
-custom_minimum_size = Vector2(365, 565)
+[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2/BackgroundColor"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox2/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(325, 525)
+[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2/BackgroundColor/MarginContainer"]
+custom_minimum_size = Vector2(500, 700)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.371024, 0.362206, 0.343979, 1)
 
-[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox2"]
+[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2"]
 layout_mode = 2
 alignment = 1
 
-[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox2/PriceBox"]
+[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2/PriceBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 100
 text = "3"
 
-[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/CommonCardBox2/PriceBox"]
+[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2/PriceBox"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 texture = ExtResource("2_s1cau")
 expand_mode = 3
 
-[node name="UncommonCardBox1" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
+[node name="CardBox3" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox1"]
-custom_minimum_size = Vector2(365, 565)
+[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196143, 0.196143, 0.196143, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox1/BackgroundColor"]
-custom_minimum_size = Vector2(365, 565)
+[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3/BackgroundColor"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox1/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(325, 525)
+[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3/BackgroundColor/MarginContainer"]
+custom_minimum_size = Vector2(500, 700)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.371024, 0.362206, 0.343979, 1)
 
-[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox1"]
+[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3"]
 layout_mode = 2
 alignment = 1
 
-[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox1/PriceBox"]
+[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3/PriceBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 100
-text = "4"
+text = "3"
 
-[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox1/PriceBox"]
+[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3/PriceBox"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 texture = ExtResource("2_s1cau")
 expand_mode = 3
 
-[node name="UncommonCardBox2" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
+[node name="CardBox4" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox2"]
-custom_minimum_size = Vector2(365, 565)
+[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196143, 0.196143, 0.196143, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox2/BackgroundColor"]
-custom_minimum_size = Vector2(365, 565)
+[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4/BackgroundColor"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox2/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(325, 525)
+[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4/BackgroundColor/MarginContainer"]
+custom_minimum_size = Vector2(500, 700)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.371024, 0.362206, 0.343979, 1)
 
-[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox2"]
+[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4"]
 layout_mode = 2
 alignment = 1
 
-[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox2/PriceBox"]
+[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4/PriceBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 100
-text = "4"
+text = "3"
 
-[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/UncommonCardBox2/PriceBox"]
+[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4/PriceBox"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 texture = ExtResource("2_s1cau")
 expand_mode = 3
 
-[node name="RareCardBox" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
+[node name="CardBox5" type="VBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/RareCardBox"]
-custom_minimum_size = Vector2(365, 565)
+[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196143, 0.196143, 0.196143, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/RareCardBox/BackgroundColor"]
-custom_minimum_size = Vector2(365, 565)
+[node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5/BackgroundColor"]
+custom_minimum_size = Vector2(520, 720)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/RareCardBox/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(325, 525)
+[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5/BackgroundColor/MarginContainer"]
+custom_minimum_size = Vector2(500, 700)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.371024, 0.362206, 0.343979, 1)
 
-[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/RareCardBox"]
+[node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5"]
 layout_mode = 2
 alignment = 1
 
-[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/RareCardBox/PriceBox"]
+[node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5/PriceBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 100
-text = "6"
+text = "3"
 
-[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/RareCardBox/PriceBox"]
+[node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5/PriceBox"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 texture = ExtResource("2_s1cau")
