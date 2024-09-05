@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://cf354hjqtf1w0"]
+[gd_scene load_steps=30 format=3 uid="uid://cf354hjqtf1w0"]
 
 [ext_resource type="Script" path="res://Playspace/Playspace.gd" id="1_sx2pt"]
 [ext_resource type="Texture2D" uid="uid://rctgnsfq0pj5" path="res://Assets/Icons/DrawPile_black.png" id="2_1tsry"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://Cards/CardFunctions.gd" id="2_tmeg0"]
 [ext_resource type="Texture2D" uid="uid://d3anf6ui5dklw" path="res://Assets/Icons/DrawPile_white.png" id="3_qwl87"]
 [ext_resource type="Script" path="res://Playspace/DrawPile.gd" id="4_q8v2y"]
+[ext_resource type="Script" path="res://Playspace/Camera.gd" id="6_f16be"]
 [ext_resource type="Script" path="res://Playspace/FixedElements.gd" id="6_tohbi"]
 [ext_resource type="Script" path="res://Playspace/DiscardPile.gd" id="8_1nc4h"]
 [ext_resource type="Script" path="res://Playspace/Terrain.gd" id="8_krthj"]
@@ -23,22 +24,6 @@
 [ext_resource type="Script" path="res://Playspace/TrainSpeedContainer.gd" id="23_hpgys"]
 [ext_resource type="Script" path="res://Playspace/Text.gd" id="23_wu33i"]
 [ext_resource type="Script" path="res://Playspace/OverlayManager.gd" id="26_mtkk4"]
-
-[sub_resource type="Curve" id="Curve_6sqm0"]
-_data = [Vector2(0.00662251, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0.654607), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_m0xxu"]
-curve = SubResource("Curve_6sqm0")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ev6ji"]
-particle_flag_disable_z = true
-direction = Vector3(0, 1, 0)
-radial_velocity_max = 30.0
-gravity = Vector3(0, -15, 0)
-linear_accel_max = 6.74
-scale_max = 2.0
-alpha_curve = SubResource("CurveTexture_m0xxu")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4y60x"]
 texture = ExtResource("2_g6npi")
@@ -4145,21 +4130,45 @@ texture = ExtResource("2_g6npi")
 [sub_resource type="TileSet" id="TileSet_bwcht"]
 sources/0 = SubResource("TileSetAtlasSource_4y60x")
 
+[sub_resource type="Curve" id="Curve_6sqm0"]
+_data = [Vector2(0.00662251, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0.654607), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_m0xxu"]
+curve = SubResource("Curve_6sqm0")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ev6ji"]
+particle_flag_disable_z = true
+direction = Vector3(0, 1, 0)
+radial_velocity_max = 30.0
+gravity = Vector3(0, -15, 0)
+linear_accel_max = 6.74
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_m0xxu")
+
 [node name="Playspace" type="Node2D"]
 script = ExtResource("1_sx2pt")
 
 [node name="CardFunctions" type="Node" parent="."]
 script = ExtResource("2_tmeg0")
 
-[node name="FixedElements" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 3840.0
-offset_bottom = 2160.0
-script = ExtResource("6_tohbi")
+[node name="Terrain" type="TileMap" parent="."]
+z_index = -1
+scale = Vector2(10, 10)
+tile_set = SubResource("TileSet_bwcht")
+format = 2
+layer_0/name = "base"
+layer_1/name = "highlight"
+layer_1/z_index = 1
+layer_1/tile_data = PackedInt32Array()
+script = ExtResource("8_krthj")
 
-[node name="Camera" type="Camera2D" parent="FixedElements"]
+[node name="Camera" type="Camera2D" parent="."]
 anchor_mode = 0
+script = ExtResource("6_f16be")
+
+[node name="FixedElements" type="CanvasLayer" parent="."]
+script = ExtResource("6_tohbi")
 
 [node name="DrawPileParticles" type="GPUParticles2D" parent="FixedElements"]
 process_material = SubResource("ParticleProcessMaterial_ev6ji")
@@ -4171,7 +4180,6 @@ local_coords = true
 trail_lifetime = 0.1
 
 [node name="DrawPile" type="TextureButton" parent="FixedElements"]
-layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
 focus_mode = 0
@@ -4195,7 +4203,6 @@ local_coords = true
 trail_lifetime = 0.1
 
 [node name="DiscardPile" type="TextureButton" parent="FixedElements"]
-layout_mode = 0
 offset_right = 512.0
 offset_bottom = 512.0
 focus_mode = 0
@@ -4206,21 +4213,18 @@ texture_disabled = ExtResource("8_m8g5r")
 script = ExtResource("8_1nc4h")
 
 [node name="DrawPileCardCount" type="Label" parent="FixedElements"]
-layout_mode = 0
 offset_right = 40.0
-offset_bottom = 40.0
+offset_bottom = 137.0
 theme_override_font_sizes/font_size = 100
 
 [node name="DiscardPileCardCount" type="Label" parent="FixedElements"]
-layout_mode = 0
 offset_right = 40.0
 offset_bottom = 137.0
 theme_override_font_sizes/font_size = 100
 
 [node name="EndTurnButton" type="TextureButton" parent="FixedElements"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 300.0
+offset_bottom = 300.0
 focus_mode = 0
 texture_normal = ExtResource("11_roanm")
 texture_pressed = ExtResource("12_esqij")
@@ -4240,14 +4244,12 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BuffsAndDebuffs" type="HBoxContainer" parent="FixedElements"]
-layout_mode = 0
 offset_top = 150.0
 offset_bottom = 150.0
 
 [node name="RailLeftToBuild" type="Label" parent="FixedElements"]
 visible = false
 z_index = 11
-layout_mode = 0
 offset_right = 400.0
 offset_bottom = 200.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -4362,14 +4364,3 @@ scale = Vector2(3840, 2160)
 texture = ExtResource("15_n5iw7")
 centered = false
 script = ExtResource("26_mtkk4")
-
-[node name="Terrain" type="TileMap" parent="."]
-z_index = -1
-scale = Vector2(10, 10)
-tile_set = SubResource("TileSet_bwcht")
-format = 2
-layer_0/name = "base"
-layer_1/name = "highlight"
-layer_1/z_index = 1
-layer_1/tile_data = PackedInt32Array()
-script = ExtResource("8_krthj")

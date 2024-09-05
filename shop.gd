@@ -1,12 +1,13 @@
-extends Node2D
+extends Control
 
 const CardBase = preload("res://Cards/CardBase.tscn")
+
+var cards_offered = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Global.instantiateCardLists()
 	
-	var cards_offered = []
 	cards_offered.append(Global.chooseCommon())
 	var common2 = Global.chooseCommon()
 	while common2 in cards_offered:
@@ -26,11 +27,9 @@ func _ready():
 		var cardName = cards_offered[i]
 		var price:Label = get_node(NodePath("./FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/PriceBox/Price"))
 		var card = instantiateCard(cardName)
-		var marginContainer:MarginContainer = get_node(NodePath("FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/BackgroundColor/MarginContainer"))
 		var cardPlaceholder = get_node(NodePath("FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/BackgroundColor/MarginContainer/CardPlaceholder"))
 		card.reparent(cardPlaceholder)
 		card.position += card.size
-		#marginContainer.remove_child(cardPlaceholder)
 		
 		if cardName in Global.rares:
 			price.text = str(Global.RARE_PRICE)
@@ -52,6 +51,32 @@ func instantiateCard(name):
 
 func cardBought(card:CardBase):
 	Stats.coinCount -= card.price
+	var cardName = card.CardName
+	
+	var i = cards_offered.find(cardName)
+	
+	var price:Label = get_node(NodePath("./FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/PriceBox/Price"))
+	var coin:TextureRect = get_node(NodePath("./FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/PriceBox/CoinIcon"))
+	var cardPlaceholder = get_node(NodePath("FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/BackgroundColor/MarginContainer/CardPlaceholder"))
+	
+	reparent_and_keep_position_ui(card, self)
+	
+	price.modulate.a = 0
+	coin.modulate.a = 0
+
+#GPT
+func reparent_and_keep_position_ui(node: Control, new_parent: Control) -> void:
+	# Store the global position of the control node
+	var old_global_position = node.global_position
+
+	# Remove the node from its current parent and add it to the new parent
+	node.get_parent().remove_child(node)
+	new_parent.add_child(node)
+
+	# Restore the global position to keep the node in the same position on screen
+	node.global_position = old_global_position + node.size/2
+
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

@@ -93,7 +93,11 @@ func _process(delta: float) -> void:
 		for i in range(fixedElementsLayersUp):
 			layersUpString += "../"
 		layersUpString += "FixedElements"
-		$"./Tooltip".position = Vector2(final_x, final_y) + get_node(layersUpString).position
+		
+		
+		$"./Tooltip".top_level = true
+		$"./Tooltip".global_position = Vector2(final_x, final_y)
+		# + get_node(layersUpString).position
 
 #####################################
 # API FUNCTIONS

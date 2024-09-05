@@ -97,7 +97,7 @@ func setMap(mapName):
 	
 	setUpMap()
 	
-	fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
+	#fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
 	
 	makeMetalShine()
 	
@@ -554,7 +554,8 @@ func screenPositionToMapPosition(screenPosition):
 	return local_to_map((screenPosition + fixedElements.position) / scale)
 	
 func mapPositionToScreenPosition(mapPosition:Vector2i):
-	return map_to_local(mapPosition)*scale - fixedElements.position
+	return map_to_local(mapPosition)*scale
+	#return map_to_local(mapPosition)*scale - fixedElements.position
 	
 
 func target(acceptHighlight:Callable = func(_tiles): return true) :
