@@ -51,7 +51,7 @@ var spawners:Array[Spawner] = []
 var trainCrashed = false
 var trainSucceeded = false
 
-@onready var fixedElements = $"../FixedElements"
+@onready var camera = $"../../Camera"
 @onready var cardFunctions = $"../CardFunctions"
 @onready var PLAYSPACE:Playspace = $".."
 
@@ -97,7 +97,7 @@ func setMap(mapName):
 	
 	setUpMap()
 	
-	#fixedElements.position = map_to_local(Vector2(railEndpoint)*scale) - (fixedElements.size /2)*fixedElements.scale
+	camera.position = map_to_local(Vector2(railEndpoint)*scale) - (Global.VIEWPORT_SIZE /2)
 	
 	makeMetalShine()
 	
@@ -551,11 +551,10 @@ func clearLockedHighlights():
 			
 			
 func screenPositionToMapPosition(screenPosition):
-	return local_to_map((screenPosition + fixedElements.position) / scale)
+	return local_to_map((screenPosition + camera.position) / scale)
 	
 func mapPositionToScreenPosition(mapPosition:Vector2i):
-	return map_to_local(mapPosition)*scale
-	#return map_to_local(mapPosition)*scale - fixedElements.position
+	return map_to_local(mapPosition)*scale - camera.position
 	
 
 func target(acceptHighlight:Callable = func(_tiles): return true) :

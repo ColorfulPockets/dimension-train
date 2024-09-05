@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://du2javvixcoh7"]
+[gd_scene load_steps=22 format=3 uid="uid://du2javvixcoh7"]
 
 [ext_resource type="Script" path="res://SceneSwitcher.gd" id="1_4s6fu"]
 [ext_resource type="PackedScene" uid="uid://bnur704ugkxqv" path="res://Overworld/overworld.tscn" id="2_eev2n"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://Playspace/TopBar HBox.gd" id="14_iv70a"]
 [ext_resource type="Texture2D" uid="uid://bqcfywvunh1s7" path="res://Assets/Icons/Wood.png" id="15_wbl1v"]
 [ext_resource type="Script" path="res://Playspace/WoodCount.gd" id="16_amdfs"]
+[ext_resource type="Script" path="res://Playspace/Camera.gd" id="16_f8yx6"]
 [ext_resource type="Texture2D" uid="uid://dhiybsqjvdali" path="res://Assets/Icons/Metal.png" id="17_01vwa"]
 [ext_resource type="Script" path="res://Playspace/MetalCount.gd" id="18_c0g8u"]
 [ext_resource type="Texture2D" uid="uid://rcx7qkoeksij" path="res://Assets/Icons/Rail.png" id="19_uhc1h"]
@@ -142,3 +143,7 @@ texture = ExtResource("4_u18r4")
 lifetime = 15.0
 preprocess = 7.0
 randomness = 1.0
+
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+script = ExtResource("16_f8yx6")

@@ -17,6 +17,13 @@ var startingTrainSpeed = 100 if Global.devmode else 0
 var turnCounter = 0
 var trainSpeed = 0
 
+signal camera_controlled(controlled:bool)
+func setCameraStationary():
+	camera_controlled.emit(false)
+
+func setCameraControlled():
+	camera_controlled.emit(true)
+
 func addEmergencyRail(num:int): 
 	if emergencyRailCount + num <= erc:
 		emergencyRailCount += num

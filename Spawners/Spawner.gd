@@ -181,7 +181,7 @@ func _process(_delta):
 	
 func _input(event):
 	if event is InputEventMouseMotion:
-		if get_rect().has_point(to_local(event.position + FIXED_ELEMENTS.position)):
+		if get_rect().has_point(to_local(event.position)):
 			if not mouseIn:
 				mouseIn = true
 				mouse_entered.emit()

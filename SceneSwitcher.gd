@@ -9,6 +9,7 @@ const LOAD_TIME = 0.25
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	Stats.setCameraStationary()
 	$Background/Swirl.emitting = true
 	currentScene.map_selected.connect(mapSelected,2)
 	currentScene.drawMap(currentLocation)
@@ -28,6 +29,7 @@ func fadeInMap():
 	fadeInScene(map)
 	
 	currentScene = map
+	Stats.setCameraControlled()
 	currentScene.levelComplete.connect(moveToRewards)
 	
 func moveToRewards():
@@ -49,6 +51,7 @@ func loadRewardsBackground():
 func fadeInRewards():
 	var rewards = loaderThread.wait_to_finish()
 	
+	Stats.setCameraStationary()
 	currentScene = rewards
 	
 	currentScene.card_selected.connect(card_selected)
@@ -100,6 +103,7 @@ func fadeInScene(scene):
 func fadeInOverworld():
 	var overworld = loaderThread.wait_to_finish()
 	
+	Stats.setCameraStationary()
 	currentScene = overworld
 	
 	currentScene.map_selected.connect(mapSelected,1)
