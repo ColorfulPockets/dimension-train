@@ -63,7 +63,7 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 		
 		return text
 	
-	var tooltip = Tooltip.new(getTooltipText, 3, true)
+	var tooltip = Tooltip.new(getTooltipText, true)
 	tooltip.visuals_res = load("res://tooltip.tscn")
 	textureRect.add_child(tooltip)
 

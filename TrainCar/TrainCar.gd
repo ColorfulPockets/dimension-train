@@ -2,7 +2,7 @@ class_name TrainCar extends Node2D
 
 const CARGO_CAR_VAL = 3
 
-@onready var PLAYSPACE: Playspace = $"../.."
+@onready var PLAYSPACE: Playspace
 
 enum TYPE {ONESHOT, STARTLEVEL, STARTTURN, ENDTURN, ENDLEVEL, TRAINMOVEMENT, EMERGENCY, OTHER}
 enum RARITY {COMMON, UNCOMMON, RARE, BOSS, STARTER}
@@ -70,7 +70,7 @@ static func populateLists():
 				commons.append(carName)
 			elif CAR_INFO[carName][FIELDS.RARITY] == RARITY.UNCOMMON:
 				uncommons.append(carName)
-			else:
+			elif CAR_INFO[carName][FIELDS.RARITY] == RARITY.RARE:
 				rares.append(carName)
 		
 		carListsSorted = true
@@ -88,6 +88,10 @@ static func getRandomCar():
 	else: return rares.pick_random()
 
 var textureRect:TextureRect
+var mouseIn = false
+signal clicked
+# used in shop to make sure it can't be bought again while fading out
+var buyable = true
 
 func _init(carName):
 	self.carName = carName
@@ -96,8 +100,11 @@ func _init(carName):
 	add_child(textureRect)
 	textureRect.position -= textureRect.texture.get_size()/2
 	
+	textureRect.mouse_entered.connect(func(): mouseIn = true)
+	textureRect.mouse_exited.connect(func(): mouseIn = false)
+	
 	if carName in CAR_INFO:
-		var tooltip = Tooltip.new("[color=Green]"+carName+": [/color]"+CAR_INFO[carName][FIELDS.TOOLTIP], 3)
+		var tooltip = Tooltip.new("[color=Green]"+carName+": [/color]"+CAR_INFO[carName][FIELDS.TOOLTIP])
 		tooltip.visuals_res = load("res://tooltip.tscn")
 		textureRect.add_child(tooltip)
 	
@@ -133,6 +140,7 @@ func onEmergency() -> bool:
 	return false
 	
 func onMovement(currentLocation: Vector2i, nextLocation: Vector2i) -> void:
+	PLAYSPACE = $"../.."
 	match carName:
 		"Retrograde Car":
 			if nextLocation.x < currentLocation.x:
@@ -147,6 +155,10 @@ func animateBrakes():
 	await get_tree().create_timer(0.1).timeout
 	textureRect.texture = load("res://Assets/TrainCars/Brake Car_used.png")
 	
+	
+func _input(event):
+	if event is InputEventMouseButton and mouseIn:
+		clicked.emit()
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.

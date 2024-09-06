@@ -37,7 +37,7 @@ func _init(enemyName, cell:Vector2i):
 	
 	textureRect.position -= textureRect.texture.get_size()/2
 	if enemyName in TOOLTIP_TEXT:
-		var tooltip = Tooltip.new("[color=Red]"+enemyName+": [/color]"+TOOLTIP_TEXT[enemyName], 3)
+		var tooltip = Tooltip.new("[color=Red]"+enemyName+": [/color]"+TOOLTIP_TEXT[enemyName])
 		tooltip.visuals_res = load("res://tooltip.tscn")
 		textureRect.add_child(tooltip)
 		

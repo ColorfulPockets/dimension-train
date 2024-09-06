@@ -250,6 +250,7 @@ custom_minimum_size = Vector2(276, 276)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196078, 0.196078, 0.196078, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox1/BackgroundColor"]
 custom_minimum_size = Vector2(276, 276)
@@ -262,7 +263,7 @@ custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.372549, 0.360784, 0.345098, 1)
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox1"]
 layout_mode = 2
@@ -290,6 +291,7 @@ custom_minimum_size = Vector2(276, 276)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196078, 0.196078, 0.196078, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox2/BackgroundColor"]
 custom_minimum_size = Vector2(276, 276)
@@ -302,7 +304,7 @@ custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.372549, 0.360784, 0.345098, 1)
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox2"]
 layout_mode = 2
@@ -311,7 +313,7 @@ alignment = 1
 [node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox2/PriceBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 100
-text = "9"
+text = "6"
 
 [node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox2/PriceBox"]
 custom_minimum_size = Vector2(128, 128)
@@ -330,6 +332,7 @@ custom_minimum_size = Vector2(276, 276)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+color = Color(0.196078, 0.196078, 0.196078, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox3/BackgroundColor"]
 custom_minimum_size = Vector2(276, 276)
@@ -342,7 +345,7 @@ custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 1, 1, 1)
+color = Color(0.372549, 0.360784, 0.345098, 1)
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox3"]
 layout_mode = 2
@@ -351,7 +354,7 @@ alignment = 1
 [node name="Price" type="Label" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox3/PriceBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 100
-text = "12"
+text = "6"
 
 [node name="CoinIcon" type="TextureRect" parent="FullScreenContainer/VBoxContainer/TrainRow/TrainBox3/PriceBox"]
 custom_minimum_size = Vector2(128, 128)

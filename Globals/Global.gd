@@ -39,9 +39,17 @@ const POWER_POSITION = Vector2(3840/2, 2160/2)
 const VIEWPORT_SIZE = Vector2(3840, 2160)
 const CARD_SIZE = Vector2(325,525)
 
+
+##############################
+########### PRICES ###########
+##############################
 const RARE_PRICE = 6
 const UNCOMMON_PRICE = 4
 const COMMON_PRICE = 3
+
+const RARE_CAR_PRICE = 12
+const UNCOMMON_CAR_PRICE = 8
+const COMMON_CAR_PRICE = 6
 
 const highlight = Vector2i(2,4)
 const highlight_l  = Vector2i(2,0)
@@ -462,3 +470,29 @@ func chooseUncommon():
 	
 func chooseCommon():
 	return commons[randi_range(0,commons.size()-1)]
+
+#GPT
+func fadeOutNode(node, duration: float) -> void:
+	var elapsed_time: float = 0.0
+	var start_alpha: float = node.modulate.a
+	while elapsed_time < duration:
+		await get_tree().process_frame
+		elapsed_time += get_process_delta_time()
+		var alpha: float = lerp(start_alpha, 0.0, elapsed_time / duration)
+		var modulate: Color = node.modulate
+		modulate.a = alpha
+		node.modulate = modulate
+	node.modulate.a = 0.0  # Ensure it's fully transparent at the end
+
+#GPT
+func fadeInNode(node, duration: float) -> void:
+	var elapsed_time: float = 0.0
+	var start_alpha: float = node.modulate.a
+	while elapsed_time < duration:
+		await get_tree().process_frame
+		elapsed_time += get_process_delta_time()
+		var alpha: float = lerp(start_alpha, 1.0, elapsed_time / duration)
+		var modulate: Color = node.modulate
+		modulate.a = alpha
+		node.modulate = modulate
+	node.modulate.a = 1.0  # Ensure it's fully opaque at the end

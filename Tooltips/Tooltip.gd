@@ -42,16 +42,14 @@ var _timer: Timer
 @onready var extents: Vector2
 
 var text
-var fixedElementsLayersUp:int
 var textIsCallable:bool = false
 
 #####################################
 # OVERRIDE FUNCTIONS
 #####################################
-func _init(text, fixedElementsLayersUp:int, textIsCallable:bool = false) -> void:
+func _init(text, textIsCallable:bool = false) -> void:
 	self.textIsCallable = textIsCallable
 	self.text = text
-	self.fixedElementsLayersUp = fixedElementsLayersUp
 
 
 func _ready() -> void:
@@ -85,11 +83,6 @@ func _process(_delta: float) -> void:
 		var final_y = base_pos.y - extents.y - offset.y
 		if final_y < padding.y:
 			final_y = base_pos.y + offset.y
-		var layersUpString = ""
-		for i in range(fixedElementsLayersUp):
-			layersUpString += "../"
-		layersUpString += "FixedElements"
-		
 		
 		$"./CanvasLayer/Tooltip".position = Vector2(final_x, final_y)
 		$"./CanvasLayer/Tooltip".modulate.a = 1

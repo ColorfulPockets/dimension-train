@@ -26,7 +26,7 @@ func fadeInMap():
 	add_child(map)
 	map.setMap(mapName)
 	
-	fadeInScene(map)
+	Global.fadeInNode(map, LOAD_TIME)
 	
 	currentScene = map
 	Stats.setCameraControlled()
@@ -38,7 +38,7 @@ func moveToRewards():
 		return
 	loaderThread.start(loadRewardsBackground)
 	previousScene = currentScene
-	await fadeOutScene(previousScene)
+	await Global.fadeOutNode(previousScene, LOAD_TIME)
 	previousScene.queue_free()
 
 func loadRewardsBackground():
@@ -58,7 +58,7 @@ func fadeInRewards():
 	
 	add_child(currentScene)
 	
-	fadeInScene(rewards)
+	Global.fadeInNode(rewards, LOAD_TIME)
 
 func getNextMap():
 	return ["Corridor", "LostTrack", "SlugForest", "Diverging"].pick_random()
@@ -70,7 +70,7 @@ func card_selected():
 	
 	loaderThread.start(loadMapBackground)
 	
-	await fadeOutScene(previousScene)
+	await Global.fadeOutNode(previousScene, LOAD_TIME)
 	
 	previousScene.queue_free()
 
@@ -81,24 +81,9 @@ func mapSelected(mapName, newLocation:Vector2i):
 	
 	previousScene = currentScene
 	
-	await fadeOutScene(previousScene)
+	await Global.fadeOutNode(previousScene, LOAD_TIME)
 		
 	previousScene.queue_free()
-
-func fadeOutScene(scene):
-	scene.modulate.a = 1
-	for i in range(100*LOAD_TIME):
-		scene.modulate.a -= 0.01/LOAD_TIME
-		await get_tree().create_timer(0.01).timeout
-	scene.modulate.a = 0
-
-func fadeInScene(scene):
-	scene.modulate.a = 0
-	for i in range(100*LOAD_TIME):
-		scene.modulate.a += 0.01/LOAD_TIME
-		await get_tree().create_timer(0.01).timeout
-		
-	scene.modulate.a = 1
 
 func fadeInOverworld():
 	var overworld = loaderThread.wait_to_finish()
@@ -112,7 +97,7 @@ func fadeInOverworld():
 	
 	currentScene.drawMap(currentLocation)
 	
-	fadeInScene(overworld)
+	Global.fadeInNode(overworld, LOAD_TIME)
 	
 	
 func loadOverworldBackground():
@@ -127,7 +112,7 @@ func returnToOverworld():
 	
 	previousScene = currentScene
 	
-	await fadeOutScene(previousScene)
+	await Global.fadeOutNode(previousScene, LOAD_TIME)
 	
 	previousScene.queue_free()
 	

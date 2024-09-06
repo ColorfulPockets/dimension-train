@@ -12,7 +12,7 @@ func setText(text:String):
 	$"./Label".text = text
 	if tooltip_exists:
 		remove_child(tooltip)
-	tooltip = Tooltip.new("", 2)
+	tooltip = Tooltip.new("")
 	add_child(tooltip)
 	tooltip_exists = true
 	
