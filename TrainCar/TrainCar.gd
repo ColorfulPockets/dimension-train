@@ -1,16 +1,11 @@
-class_name TrainCar extends Sprite2D
+class_name TrainCar extends Node2D
 
 const CARGO_CAR_VAL = 3
 
-@onready var FIXED_ELEMENTS = $"../../FixedElements"
 @onready var PLAYSPACE: Playspace = $"../.."
 
 enum TYPE {ONESHOT, STARTLEVEL, STARTTURN, ENDTURN, ENDLEVEL, TRAINMOVEMENT, EMERGENCY, OTHER}
 enum RARITY {COMMON, UNCOMMON, RARE, BOSS, STARTER}
-
-var mouseIn:bool = false
-signal mouse_entered
-signal mouse_exited
 
 var carName: String
 var types: Array
@@ -92,13 +87,19 @@ static func getRandomCar():
 	if rarity < 85: return uncommons.pick_random()
 	else: return rares.pick_random()
 
+var textureRect:TextureRect
+
 func _init(carName):
 	self.carName = carName
-	texture = load("res://Assets/TrainCars/" + carName + ".png")
+	textureRect = TextureRect.new()
+	textureRect.texture = load("res://Assets/TrainCars/" + carName + ".png")
+	add_child(textureRect)
+	textureRect.position -= textureRect.texture.get_size()/2
+	
 	if carName in CAR_INFO:
 		var tooltip = Tooltip.new("[color=Green]"+carName+": [/color]"+CAR_INFO[carName][FIELDS.TOOLTIP], 3)
 		tooltip.visuals_res = load("res://tooltip.tscn")
-		add_child(tooltip)
+		textureRect.add_child(tooltip)
 	
 	types = CAR_INFO[carName][FIELDS.TYPES]
 	rarity = CAR_INFO[carName][FIELDS.RARITY]
@@ -138,13 +139,13 @@ func onMovement(currentLocation: Vector2i, nextLocation: Vector2i) -> void:
 				await PLAYSPACE.drawCardFromDeck()
 
 func animateBrakes():
-	texture = load("res://Assets/TrainCars/Brake Car_engaged.png")
+	textureRect.texture = load("res://Assets/TrainCars/Brake Car_engaged.png")
 	await get_tree().create_timer(0.1).timeout
-	texture = load("res://Assets/TrainCars/Brake Car_used.png")
+	textureRect.texture = load("res://Assets/TrainCars/Brake Car_used.png")
 	await get_tree().create_timer(0.2).timeout
-	texture = load("res://Assets/TrainCars/Brake Car_engaged.png")
+	textureRect.texture = load("res://Assets/TrainCars/Brake Car_engaged.png")
 	await get_tree().create_timer(0.1).timeout
-	texture = load("res://Assets/TrainCars/Brake Car_used.png")
+	textureRect.texture = load("res://Assets/TrainCars/Brake Car_used.png")
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -154,15 +155,4 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
-	
-func _input(event):
-	if event is InputEventMouseMotion:
-		if get_rect().has_point(to_local(event.position)):
-			if not mouseIn:
-				mouseIn = true
-				mouse_entered.emit()
-		else:
-			if mouseIn:
-				mouseIn = false
-				mouse_exited.emit()
-				
+

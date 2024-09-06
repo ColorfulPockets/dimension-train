@@ -74,20 +74,17 @@ func _ready():
 func setMap(mapName):
 	Stats.startLevel()
 	var trainFront = TrainCar.new("Front")
-	trainFront.centered = true
 	trainFront.scale *= 0.5
 	add_child(trainFront)
 	trainCars.append(trainFront)
 	
 	for carName in Stats.trainCars:
 		var trainCar = TrainCar.new(carName)
-		trainCar.centered = true
 		trainCar.scale *= 0.5
 		trainCars.append(trainCar)
 		add_child(trainCar)
 	
 	var trainBack = TrainCar.new("Caboose")
-	trainBack.centered = true
 	trainBack.scale *= 0.5
 	add_child(trainBack)
 	
@@ -153,7 +150,6 @@ func setUpMap():
 				elif cell_info[Tile.Type] == Tile.TYPES.Spawner:
 					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
 					var spawner = Spawner.new(cell_info[Tile.SpawnerName], cell_info[Tile.SpawnerCount], cellPosition)
-					spawner.centered = true
 					spawner.scale *= 0.5
 					spawner.position = mapPositionToScreenPosition(cellPosition) / scale
 					spawner.highlightedCells = radiusAroundCell(cellPosition, spawner.spawnerRadius)
@@ -169,6 +165,8 @@ func setUpMap():
 		set_cell(Global.base_layer, railEndpoint + Vector2i(-i,0), 0, Global.empty)
 		set_cell_directional(railEndpoint + Vector2i(-i,0), Global.DIRECTIONAL_TILES.RAIL, DIR.L, DIR.R)
 		trainCars[i].position = mapPositionToScreenPosition(railEndpoint + Vector2i(-i,0)) / scale
+		#trainCars[i].position -= trainCars[i].scale*trainCars[i].size/2
+		#trainCars[i].pivot_offset = trainCars[i].size/2
 		connectedCells.append(railEndpoint + Vector2i(-i,0))
 		trainLocations.append(railEndpoint + Vector2i(-i,0))
 
@@ -189,15 +187,14 @@ func startTurn():
 
 func spawnEnemy(enemyName:String, enemyLocation:Vector2i):
 	var enemy = Enemy.new(enemyName, enemyLocation)
-	enemy.centered = true
 	enemy.scale *= 0.5
-	#enemy.position = mapPositionToScreenPosition2(enemy.cell) / scale
 	enemy.position = map_to_local(enemy.cell)
 	enemies.append(enemy)
 	add_child(enemy)
 	enemy.initHealthCounter()
 	enemy.drawRangeHighlight.connect(drawEnemyRange)
 	enemy.clearRangeHighlight.connect(func():clearHighlights(2))
+	
 
 func drawEnemyRange(cell, range):
 	var range_cells:Array = radiusAroundCell(cell, range)
@@ -441,7 +438,7 @@ func getOccupiedCells():
 	return getEnemyAndSpawnerCells() + trainLocations
 
 #TODO: This definitely doesn't work right for non linear paths, so fix that
-func moveSpriteThroughCells(sprite:Sprite2D, cellPath, dirPath):
+func moveSpriteThroughCells(sprite:Node2D, cellPath, dirPath):
 	for i in range(1,len(cellPath)):
 		var pointsToMoveThrough = []
 		var cell = cellPath[i]

@@ -11,7 +11,7 @@ signal bought(card)
 @onready var current_playspace:Playspace = Stats.current_playspace
 @onready var OVERLAY_MANAGER = $"../../../../../FixedElements/DarkenedBackground"
 
-var CardName = "Chop"
+var CardName = "Harvest"
 
 @onready var CardInfo = Global.CardDb.DATA[CardName]
 

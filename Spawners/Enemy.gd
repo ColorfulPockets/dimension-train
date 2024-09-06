@@ -1,4 +1,4 @@
-class_name Enemy extends Sprite2D
+class_name Enemy extends Node2D
 
 @onready var FIXED_ELEMENTS = $"../../FixedElements"
 @onready var PLAYSPACE = $"../.."
@@ -9,10 +9,6 @@ var facing:Global.DIR
 var health:int
 var healthCounter:HealthCounter
 var range = 0
-
-var mouseIn:bool = false
-signal mouse_entered
-signal mouse_exited
 
 signal drawRangeHighlight(cell, range)
 signal clearRangeHighlight
@@ -26,15 +22,24 @@ static var TOOLTIP_TEXT = {
 	"Guard": "Moves 1 space towards the train, then shoots a projectile dealing 2 damage."
 }
 
+var textureRect:TextureRect
+
 func _init(enemyName, cell:Vector2i):
 	self.enemyName = enemyName
 	self.cell = cell
 	self.facing = Global.DIR.L
-	texture = load("res://Assets/Enemies/" + enemyName + ".png")
+	
+	textureRect = TextureRect.new()
+	
+	textureRect.texture = load("res://Assets/Enemies/" + enemyName + ".png")
+	
+	add_child(textureRect)
+	
+	textureRect.position -= textureRect.texture.get_size()/2
 	if enemyName in TOOLTIP_TEXT:
 		var tooltip = Tooltip.new("[color=Red]"+enemyName+": [/color]"+TOOLTIP_TEXT[enemyName], 3)
 		tooltip.visuals_res = load("res://tooltip.tscn")
-		add_child(tooltip)
+		textureRect.add_child(tooltip)
 		
 	match enemyName:
 		"Corrupt Slug":
@@ -170,23 +175,13 @@ func damage(amount:int):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	textureRect.mouse_entered.connect(func():
+		drawRangeHighlight.emit(cell, range))
+	textureRect.mouse_exited.connect(func():
+		clearRangeHighlight.emit())
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
-	
-func _input(event):
-	if event is InputEventMouseMotion:
-		if get_rect().has_point(to_local(event.position)):
-			if not mouseIn:
-				mouseIn = true
-				mouse_entered.emit()
-				drawRangeHighlight.emit(cell, range)
-		else:
-			if mouseIn:
-				mouseIn = false
-				mouse_exited.emit()
-				clearRangeHighlight.emit()
-				
+

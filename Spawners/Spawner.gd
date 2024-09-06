@@ -1,14 +1,10 @@
-class_name Spawner extends Sprite2D
+class_name Spawner extends Node2D
 
 @onready var FIXED_ELEMENTS = $"../../FixedElements"
 @onready var PLAYSPACE: Playspace = $"../.."
 @onready var TERRAIN: Terrain = $".."
 
 enum INTENT {Spawn, Debuff, Increase}
-
-var mouseIn:bool = false
-signal mouse_entered
-signal mouse_exited
 
 signal drawRangeHighlight(cell, range)
 signal clearRangeHighlight
@@ -31,11 +27,20 @@ var debuffShowing = false
 var increaseDisplay:Debuff
 var increaseShowing = false
 
+var textureRect:TextureRect
+
 func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 	self.spawnerName = spawnerName
 	self.numSpawned = numSpawned
 	self.cell = cell
-	texture = load("res://Assets/Spawners/" + spawnerName + ".png")
+	
+	textureRect = TextureRect.new()
+	
+	textureRect.texture = load("res://Assets/Spawners/" + spawnerName + ".png")
+	
+	add_child(textureRect)
+	
+	textureRect.position -= textureRect.texture.get_size()/2
 	
 	match spawnerName:
 		"Swamp":
@@ -60,7 +65,7 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 	
 	var tooltip = Tooltip.new(getTooltipText, 3, true)
 	tooltip.visuals_res = load("res://tooltip.tscn")
-	add_child(tooltip)
+	textureRect.add_child(tooltip)
 
 func initCounter():
 	counter = Label.new()
@@ -104,8 +109,9 @@ func endTurnAction():
 
 func spawnDebuff(name, number):
 	debuffDisplay = Debuff.new(name, number, true, 0.1)
-	debuffDisplay.position -= texture.get_size()/4
-	debuffDisplay.position -= Vector2(0, texture.get_size().y/4)
+	#debuffDisplay.position += size/2
+	debuffDisplay.position -= textureRect.texture.get_size()/4
+	debuffDisplay.position -= Vector2(0, textureRect.texture.get_size().y/4)
 	debuffShowing = true
 	add_child(debuffDisplay)
 
@@ -122,9 +128,9 @@ func clearDebuffDisplay():
 		
 func displayIncrease():
 	increaseDisplay = Debuff.new("Increase", 1, true, 0.125)
-	increaseDisplay.position -= texture.get_size()/2
+	increaseDisplay.position -= textureRect.texture.get_size()/2
 	increaseDisplay.position.x += 8
-	increaseDisplay.position -= Vector2(0, texture.get_size().y/4)
+	increaseDisplay.position -= Vector2(0, textureRect.texture.get_size().y/4)
 	increaseShowing = true
 	add_child(increaseDisplay)
 
@@ -172,23 +178,13 @@ func debuff():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	textureRect.mouse_entered.connect(func():
+		drawRangeHighlight.emit(cell, spawnerRadius))
+	textureRect.mouse_exited.connect(func():
+		clearRangeHighlight.emit())
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
-	
-func _input(event):
-	if event is InputEventMouseMotion:
-		if get_rect().has_point(to_local(event.position)):
-			if not mouseIn:
-				mouseIn = true
-				mouse_entered.emit()
-				drawRangeHighlight.emit(cell, spawnerRadius)
-		else:
-			if mouseIn:
-				mouseIn = false
-				mouse_exited.emit()
-				clearRangeHighlight.emit()
-				
+

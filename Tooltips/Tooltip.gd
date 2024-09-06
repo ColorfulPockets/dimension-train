@@ -28,7 +28,7 @@ extends Node
 #####################################
 # PRIVATE VARIABLES
 #####################################
-var _visuals: Control
+var _visuals: CanvasLayer
 var _timer: Timer
 
 
@@ -59,7 +59,7 @@ func _ready() -> void:
 	_visuals = visuals_res.instantiate()
 	add_child(_visuals)
 	# calculate the extents
-	extents = _visuals.size
+	extents = _visuals.get_child(0).size
 	# connect signals
 	owner_node.connect("mouse_entered", _mouse_entered)
 	owner_node.connect("mouse_exited", _mouse_exited)
@@ -72,14 +72,10 @@ func _ready() -> void:
 	_visuals.hide()
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if _visuals.visible:
-		if textIsCallable:
-			$"./Tooltip/Label".text = self.text.call()
-		else:
-			$"./Tooltip/Label".text = self.text
 		var border = Vector2(get_viewport().size) - padding
-		extents = $"./Tooltip".size
+		extents = $"./CanvasLayer/Tooltip".size
 		var base_pos = _get_screen_pos()
 		# test if need to display to the left
 		var final_x = base_pos.x + offset.x
@@ -95,13 +91,8 @@ func _process(delta: float) -> void:
 		layersUpString += "FixedElements"
 		
 		
-		$"./Tooltip".top_level = true
-		$"./Tooltip".global_position = Vector2(final_x, final_y)
-		# + get_node(layersUpString).position
-
-#####################################
-# API FUNCTIONS
-#####################################
+		$"./CanvasLayer/Tooltip".position = Vector2(final_x, final_y)
+		$"./CanvasLayer/Tooltip".modulate.a = 1
 
 #####################################
 # HELPER FUNCTIONS
@@ -120,7 +111,14 @@ func _mouse_exited() -> void:
 func _custom_show() -> void:
 	#print("SHOWING")
 	_timer.stop()
+	if textIsCallable:
+		$"./CanvasLayer/Tooltip/Label".text = self.text.call()
+	else:
+		$"./CanvasLayer/Tooltip/Label".text = self.text
+		
+	#await get_tree().create_timer(0.1).timeout
 	_visuals.show()
+	$"./CanvasLayer/Tooltip".modulate.a = 0
 
 
 func _get_screen_pos() -> Vector2:

@@ -11,6 +11,7 @@ anchors_preset = 0
 script = ExtResource("1_ntuld")
 
 [node name="FullScreenContainer" type="MarginContainer" parent="."]
+layout_mode = 0
 offset_right = 3840.0
 offset_bottom = 2160.0
 
