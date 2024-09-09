@@ -1,7 +1,5 @@
 extends Control
 
-const CardBase = preload("res://Cards/CardBase.tscn")
-
 const FADE_TIME = 0.15
 
 var cards_offered = []
@@ -10,6 +8,11 @@ var cars_offered = []
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Global.instantiateCardLists()
+	
+	##########################
+	# Connect Remove Button  #
+	##########################
+	$FullScreenContainer/VBoxContainer/CardRemove/BackgroundColor/MarginContainer/RemoveButton.pressed.connect(removeClicked)
 	
 	##################
 	# Generate Cards #
@@ -32,9 +35,8 @@ func _ready():
 	for i in range(cards_offered.size()):
 		var cardName = cards_offered[i]
 		var price:Label = get_node(NodePath("./FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/PriceBox/Price"))
-		var card = instantiateCard(cardName)
-		var cardPlaceholder = get_node(NodePath("FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/BackgroundColor/MarginContainer/CardPlaceholder"))
-		card.reparent(cardPlaceholder)
+		var marginContainer = get_node(NodePath("FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/BackgroundColor/MarginContainer"))
+		var card = instantiateCard(cardName, marginContainer)
 		card.position += card.size
 		
 		if cardName in Global.rares:
@@ -44,6 +46,10 @@ func _ready():
 		else:
 			price.text = str(Global.COMMON_PRICE)
 	
+	generateTrains()
+
+
+func generateTrains():
 	###################
 	# Generate Trains #
 	###################
@@ -87,15 +93,19 @@ func _ready():
 	uncommonPlaceholder.add_child(uncommonCar)
 	rarePlaceholder.add_child(rareCar)
 
-func instantiateCard(name):
-	var card_shown = CardBase.instantiate()
+func removeClicked():
+	var removeView = DeckView.new(Stats.deck)
+	add_child(removeView)
+
+func instantiateCard(name, parent):
+	var card_shown = Global.CardBase.instantiate()
 	card_shown.CardName = name
 	card_shown.bought.connect(func(card): cardBought(card))
-	add_child(card_shown)
-	card_shown.state = Global.CARD_STATES.InOverlay
-	card_shown.scale *= 2
+	parent.add_child(card_shown)
+	card_shown.state = Global.CARD_STATES.InOverlay 
 	card_shown.inShop = true
 	card_shown.fadeIn()
+	card_shown.call_deferred("setFontSize",2)
 	return card_shown
 
 func cardBought(card:CardBase):

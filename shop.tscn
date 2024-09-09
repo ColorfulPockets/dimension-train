@@ -1,9 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://dy3nw11tmpnlp"]
+[gd_scene load_steps=6 format=3 uid="uid://dy3nw11tmpnlp"]
 
 [ext_resource type="Script" path="res://shop.gd" id="1_ntuld"]
 [ext_resource type="Texture2D" uid="uid://xvyn13wydkkp" path="res://Assets/Icons/Coin.png" id="2_s1cau"]
 [ext_resource type="Texture2D" uid="uid://bd12uj76rt5i5" path="res://Assets/UI/Card Remove.png" id="3_m6q7g"]
 [ext_resource type="Texture2D" uid="uid://cto7rj2oex4ob" path="res://Assets/UI/Card Remove_hover.png" id="4_vuk3k"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_petdv"]
+bg_color = Color(0.376471, 0.360784, 0.345098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.0866292, 0.0866293, 0.0866292, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="Shop" type="Control"]
 layout_mode = 3
@@ -33,25 +45,20 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1"]
+[node name="BackgroundColor" type="PanelContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1"]
 custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0.196143, 0.196143, 0.196143, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_petdv")
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1/BackgroundColor"]
-custom_minimum_size = Vector2(520, 720)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(500, 700)
+custom_minimum_size = Vector2(510, 710)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-color = Color(0.371024, 0.362206, 0.343979, 1)
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox1"]
 layout_mode = 2
@@ -74,25 +81,20 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2"]
+[node name="BackgroundColor" type="PanelContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2"]
 custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0.196143, 0.196143, 0.196143, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_petdv")
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2/BackgroundColor"]
-custom_minimum_size = Vector2(520, 720)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(500, 700)
+custom_minimum_size = Vector2(510, 710)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-color = Color(0.371024, 0.362206, 0.343979, 1)
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox2"]
 layout_mode = 2
@@ -115,25 +117,20 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3"]
+[node name="BackgroundColor" type="PanelContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3"]
 custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0.196143, 0.196143, 0.196143, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_petdv")
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3/BackgroundColor"]
-custom_minimum_size = Vector2(520, 720)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(500, 700)
+custom_minimum_size = Vector2(510, 710)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-color = Color(0.371024, 0.362206, 0.343979, 1)
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox3"]
 layout_mode = 2
@@ -156,25 +153,20 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4"]
+[node name="BackgroundColor" type="PanelContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4"]
 custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0.196143, 0.196143, 0.196143, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_petdv")
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4/BackgroundColor"]
-custom_minimum_size = Vector2(520, 720)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(500, 700)
+custom_minimum_size = Vector2(510, 710)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-color = Color(0.371024, 0.362206, 0.343979, 1)
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox4"]
 layout_mode = 2
@@ -197,25 +189,20 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5"]
+[node name="BackgroundColor" type="PanelContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5"]
 custom_minimum_size = Vector2(520, 720)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0.196143, 0.196143, 0.196143, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_petdv")
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5/BackgroundColor"]
-custom_minimum_size = Vector2(520, 720)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="CardPlaceholder" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5/BackgroundColor/MarginContainer"]
-custom_minimum_size = Vector2(500, 700)
+custom_minimum_size = Vector2(510, 710)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-color = Color(0.371024, 0.362206, 0.343979, 1)
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
 [node name="PriceBox" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer/CardRow/CardBox5"]
 layout_mode = 2

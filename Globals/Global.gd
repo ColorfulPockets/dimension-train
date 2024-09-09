@@ -9,6 +9,9 @@ signal cardFunctionEnded
 signal overlayShowing
 signal overlayHidden
 
+# Preloaded scene to make loading cards faster or something
+const CardBase = preload("res://Cards/CardBase.tscn")
+
 # GLOBAL VARIABLES
 var topBarFontSize = 70
 

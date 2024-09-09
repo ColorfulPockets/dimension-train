@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://bkot4c3acwtvk"]
+
+[node name="DarkBackground" type="ColorRect"]
+custom_minimum_size = Vector2(3840, 2160)
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0, 0, 0, 0.803922)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(3840, 2160)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+alignment = 1
+
+[node name="CardContainer" type="GridContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 50
+theme_override_constants/v_separation = 50
+columns = 5

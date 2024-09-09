@@ -3,7 +3,6 @@ extends Node2D
 @onready var skipTexture = preload("res://Assets/UI/Skip Button.png")
 @onready var skipHoverTexture = preload("res://Assets/UI/Skip Hover.png")
 
-const CardBase = preload("res://Cards/CardBase.tscn")
 signal card_selected
 
 var cardsToOffer = []
@@ -36,7 +35,7 @@ func chooseCards():
 		cardsToOffer.append(cardChosen)
 	
 	for i in range(3):
-		var card_shown = CardBase.instantiate()
+		var card_shown = Global.CardBase.instantiate()
 		card_shown.CardName = cardsToOffer[i]
 		card_shown.rewardSelected.connect(cardSelected, 1)
 		add_child(card_shown)

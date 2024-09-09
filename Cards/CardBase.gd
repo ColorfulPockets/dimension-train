@@ -1,4 +1,4 @@
-class_name CardBase extends ColorRect
+class_name CardBase extends Control
 
 signal rewardSelected(card)
 signal bought(card)
@@ -60,6 +60,7 @@ var cardPileShowing = false
 var inReward = false
 var inShop = false
 var price = 3
+var inRemove = false
 
 var DRAWTIME = 0.3
 var REORGTIME = 0.15
@@ -73,13 +74,13 @@ var baseText:String
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Icon.texture = load(CardImg)
+	$MarginContainer/VBox/Image/VBoxContainer/Icon.texture = load(CardImg)
 	
 	baseText = CardInfo[fields.Text]
 	replaceText()
-	$VBox/Name/Name.text = CardInfo[fields.Name]
+	$MarginContainer/VBox/Name/HBoxContainer/Name.text = CardInfo[fields.Name]
 	
-	$VBox/Name/Name/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
+	$MarginContainer/VBox/Name/HBoxContainer/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
 		
 	
 	connect("mouse_entered",mouseEntered)
@@ -92,6 +93,29 @@ func _ready():
 		price = Global.RARE_PRICE
 	elif CardName in Global.uncommons:
 		price = Global.UNCOMMON_PRICE
+		
+	setFontSize()
+
+func setFontSize(numFramesToWait:int = 0):
+	for _i in range(numFramesToWait):
+		await get_tree().process_frame
+	var nameHeight = $MarginContainer/VBox/Name/HBoxContainer.size.y
+	var nameLabel = $MarginContainer/VBox/Name/HBoxContainer/Name
+	var energyCostLabel = $MarginContainer/VBox/Name/HBoxContainer/EnergyCost
+	
+	var bottomTextHeight = $MarginContainer/VBox/BottomText.size.y
+	var bottomTextLabel = $MarginContainer/VBox/BottomText/BottomText
+	
+	var fontSize = 1
+	while nameLabel.size.y < nameHeight * 0.67:
+		fontSize += 1
+		nameLabel.add_theme_font_size_override("font_size", fontSize)
+		energyCostLabel.add_theme_font_size_override("font_size", fontSize)
+		
+	var fontSize2 = 1
+	while bottomTextLabel.size.y < bottomTextHeight * 0.67 and fontSize2 <= fontSize:
+		bottomTextLabel.add_theme_font_size_override("font_size", fontSize2)
+		fontSize2 += 1
 
 #GPT
 func replaceText():
@@ -114,7 +138,7 @@ func replaceText():
 			var argReplacement = str(CardInfo[Global.CARD_FIELDS.Arguments][key])
 			newText = newText.replace("ARG" + key, argReplacement)
 			
-	$VBox/BottomText/BottomText.text = newText
+	$MarginContainer/VBox/BottomText/BottomText.text = newText
 
 # Since the cards are children of Stats, we need to reset some variables when adding them to the playspace
 func resetPlayspace():
@@ -127,8 +151,9 @@ func manualFocusRetrigger():
 		mouseEntered()
 
 func mouseEntered():
-	if inReward or inShop or (state == states.InSelection):
-		$HighlightBorder.visible = true
+	if inReward or inShop or inRemove or (state == states.InSelection):
+		print("here")
+		self_modulate.a = 1
 		mousedOver = true
 		return
 	if cardPileShowing:
@@ -137,15 +162,15 @@ func mouseEntered():
 		return
 	mousedOver = true
 	if not other_card_pressed and not card_pressed:
-		$HighlightBorder.visible = true
+		self_modulate.a = 1
 		out_of_place = true
 		resetCurrentPosition()
 		current_playspace.focusCard(index)
 		state = states.FocusInHand
 	
 func mouseExited(manuallyTriggered=false):
-	if inReward or inShop or (state == states.InSelection):
-		$HighlightBorder.visible = false
+	if inReward or inShop or inRemove or (state == states.InSelection):
+		self_modulate.a = 0
 		mousedOver = false
 		return
 	if cardPileShowing:
@@ -157,7 +182,7 @@ func mouseExited(manuallyTriggered=false):
 	if not card_pressed:
 		# unFocus returns false if the current card isn't already focused
 		if current_playspace.unFocus(index) or manuallyTriggered:
-			$HighlightBorder.visible = false
+			self_modulate.a = 0
 			out_of_place = true
 			resetCurrentPosition()
 			# Playspace.gd keeps a counter of how many focused cards there are.  If 0,
@@ -189,14 +214,14 @@ func reorganize():
 
 func discard():
 	resetCurrentPosition()
-	$HighlightBorder.visible = false
+	self_modulate.a = 0
 	out_of_place = true
 	moveTime = DRAWTIME
 	state = states.InDiscardPile
 
 func playAsPower():
 	resetCurrentPosition()
-	$HighlightBorder.visible = false
+	self_modulate.a = 0
 	out_of_place = true
 	moveTime = DRAWTIME
 	state = states.InPower
@@ -242,7 +267,7 @@ func moveToSelection():
 func removeFromSelection():
 	moveTime = REORGTIME
 	# The rest of the work of moving it to the hand is done by the draw() function in Playspace
-	$HighlightBorder.visible = false
+	self_modulate.a = 0
 
 func fadeIn():
 	modulate.a8 = 0
@@ -411,21 +436,21 @@ func _process(delta):
 
 
 func _input(event):
-	if mousedOver and inReward:
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if mousedOver and inReward:
 			if event.pressed:
 				rewardSelected.emit(self)
 				moveToDeck()
-	elif mousedOver and inShop:
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		elif mousedOver and inShop:
 			if event.pressed:
 				var canAfford = Stats.coinCount >= price
 				if canAfford:
 					bought.emit(self)
 					moveToDeck()
-	elif mousedOver and not card_pressed and not current_playspace.endingTurn and not cardPileShowing and not inReward:
-		# Draw arrow with click and drag from card
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		elif mousedOver and inRemove:
+			if event.pressed:
+				pass
+		elif mousedOver and not card_pressed and not current_playspace.endingTurn and not cardPileShowing and not inReward:
 			if event.pressed:
 				if current_playspace.selectingCards:
 					card_pressed = true
