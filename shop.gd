@@ -105,7 +105,6 @@ func instantiateCard(name, parent):
 	card_shown.state = Global.CARD_STATES.InOverlay 
 	card_shown.inShop = true
 	card_shown.fadeIn()
-	card_shown.call_deferred("setFontSize",2)
 	return card_shown
 
 func cardBought(card:CardBase):
@@ -119,7 +118,7 @@ func cardBought(card:CardBase):
 	var coin:TextureRect = get_node(NodePath("./FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/PriceBox/CoinIcon"))
 	var cardPlaceholder = get_node(NodePath("FullScreenContainer/VBoxContainer/CardRow/CardBox" + str(i+1) + "/BackgroundColor/MarginContainer/CardPlaceholder"))
 	
-	reparent_and_keep_position_ui(card, self)
+	card.reparent(self, true)
 	
 	Global.fadeOutNode(price, FADE_TIME)
 	Global.fadeOutNode(coin, FADE_TIME)
@@ -155,20 +154,6 @@ func carClicked(car:TrainCar):
 	await Global.fadeOutNode(car, FADE_TIME)
 	
 	car.queue_free()
-
-#GPT
-func reparent_and_keep_position_ui(node: Control, new_parent: Control) -> void:
-	# Store the global position of the control node
-	var old_global_position = node.global_position
-
-	# Remove the node from its current parent and add it to the new parent
-	node.get_parent().remove_child(node)
-	new_parent.add_child(node)
-
-	# Restore the global position to keep the node in the same position on screen
-	node.global_position = old_global_position + node.size/2
-
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

@@ -74,13 +74,13 @@ var baseText:String
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$MarginContainer/VBox/Image/VBoxContainer/Icon.texture = load(CardImg)
+	$HighlightBorder/MarginContainer/VBox/Image/VBoxContainer/Icon.texture = load(CardImg)
 	
 	baseText = CardInfo[fields.Text]
 	replaceText()
-	$MarginContainer/VBox/Name/HBoxContainer/Name.text = CardInfo[fields.Name]
+	$HighlightBorder/MarginContainer/VBox/Name/HBoxContainer/Name.text = CardInfo[fields.Name]
 	
-	$MarginContainer/VBox/Name/HBoxContainer/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
+	$HighlightBorder/MarginContainer/VBox/Name/HBoxContainer/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
 		
 	
 	connect("mouse_entered",mouseEntered)
@@ -94,17 +94,22 @@ func _ready():
 	elif CardName in Global.uncommons:
 		price = Global.UNCOMMON_PRICE
 		
-	setFontSize()
+	changeSize(null, 2)
 
-func setFontSize(numFramesToWait:int = 0):
+func changeSize(newSize=null, numFramesToWait:int = 0):	
+	if newSize != null:
+		size = newSize
+		
+	pivot_offset = size/2
+	
 	for _i in range(numFramesToWait):
 		await get_tree().process_frame
-	var nameHeight = $MarginContainer/VBox/Name/HBoxContainer.size.y
-	var nameLabel = $MarginContainer/VBox/Name/HBoxContainer/Name
-	var energyCostLabel = $MarginContainer/VBox/Name/HBoxContainer/EnergyCost
+	var nameHeight = $HighlightBorder/MarginContainer/VBox/Name/HBoxContainer.size.y
+	var nameLabel = $HighlightBorder/MarginContainer/VBox/Name/HBoxContainer/Name
+	var energyCostLabel = $HighlightBorder/MarginContainer/VBox/Name/HBoxContainer/EnergyCost
 	
-	var bottomTextHeight = $MarginContainer/VBox/BottomText.size.y
-	var bottomTextLabel = $MarginContainer/VBox/BottomText/BottomText
+	var bottomTextHeight = $HighlightBorder/MarginContainer/VBox/BottomText.size.y
+	var bottomTextLabel = $HighlightBorder/MarginContainer/VBox/BottomText/BottomText
 	
 	var fontSize = 1
 	while nameLabel.size.y < nameHeight * 0.67:
@@ -138,7 +143,7 @@ func replaceText():
 			var argReplacement = str(CardInfo[Global.CARD_FIELDS.Arguments][key])
 			newText = newText.replace("ARG" + key, argReplacement)
 			
-	$MarginContainer/VBox/BottomText/BottomText.text = newText
+	$HighlightBorder/MarginContainer/VBox/BottomText/BottomText.text = newText
 
 # Since the cards are children of Stats, we need to reset some variables when adding them to the playspace
 func resetPlayspace():
@@ -152,8 +157,7 @@ func manualFocusRetrigger():
 
 func mouseEntered():
 	if inReward or inShop or inRemove or (state == states.InSelection):
-		print("here")
-		self_modulate.a = 1
+		$HighlightBorder.self_modulate.a = 1
 		mousedOver = true
 		return
 	if cardPileShowing:
@@ -162,7 +166,7 @@ func mouseEntered():
 		return
 	mousedOver = true
 	if not other_card_pressed and not card_pressed:
-		self_modulate.a = 1
+		$HighlightBorder.self_modulate.a = 1
 		out_of_place = true
 		resetCurrentPosition()
 		current_playspace.focusCard(index)
@@ -170,7 +174,7 @@ func mouseEntered():
 	
 func mouseExited(manuallyTriggered=false):
 	if inReward or inShop or inRemove or (state == states.InSelection):
-		self_modulate.a = 0
+		$HighlightBorder.self_modulate.a = 0
 		mousedOver = false
 		return
 	if cardPileShowing:
@@ -182,7 +186,7 @@ func mouseExited(manuallyTriggered=false):
 	if not card_pressed:
 		# unFocus returns false if the current card isn't already focused
 		if current_playspace.unFocus(index) or manuallyTriggered:
-			self_modulate.a = 0
+			$HighlightBorder.self_modulate.a = 0
 			out_of_place = true
 			resetCurrentPosition()
 			# Playspace.gd keeps a counter of how many focused cards there are.  If 0,
@@ -214,14 +218,14 @@ func reorganize():
 
 func discard():
 	resetCurrentPosition()
-	self_modulate.a = 0
+	$HighlightBorder.self_modulate.a = 0
 	out_of_place = true
 	moveTime = DRAWTIME
 	state = states.InDiscardPile
 
 func playAsPower():
 	resetCurrentPosition()
-	self_modulate.a = 0
+	$HighlightBorder.self_modulate.a = 0
 	out_of_place = true
 	moveTime = DRAWTIME
 	state = states.InPower
@@ -267,7 +271,7 @@ func moveToSelection():
 func removeFromSelection():
 	moveTime = REORGTIME
 	# The rest of the work of moving it to the hand is done by the draw() function in Playspace
-	self_modulate.a = 0
+	$HighlightBorder.self_modulate.a = 0
 
 func fadeIn():
 	modulate.a8 = 0
@@ -380,7 +384,7 @@ func _process(delta):
 				var index_difference:float = index - focusIndex
 				var newAngle = ellipseAngle+(deg_to_rad(2.5)*(1.0/(index_difference)))
 				var focusOtherPos = current_playspace.posForAngle(newAngle)
-				var focusOtherRot = current_playspace.rotForAngle(newAngle)
+				var focusOtherRot = current_playspace.rotForAngle(newAngle) 
 				if t <= 1 and out_of_place:
 					position = startpos.lerp(focusOtherPos, t)
 					rotation = startrot + (focusOtherRot - startrot)*t
@@ -394,7 +398,7 @@ func _process(delta):
 					scale = inHandScale
 					t = 0
 		states.FocusInHand:
-			focuspos = Vector2(inHandPosition.x, get_viewport().size.y*0.97 - FOCUS_SCALE_AMOUNT*size.y)
+			focuspos = Vector2(inHandPosition.x, get_viewport().size.y - 0.8*FOCUS_SCALE_AMOUNT*size.y)
 			focusrot = 0
 			focusscale = FOCUS_SCALE_AMOUNT*inHandScale
 			z_index = 11

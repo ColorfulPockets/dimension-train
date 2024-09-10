@@ -40,7 +40,7 @@ const SPEED_CONTAINER_POSITION = Vector2(3615, 270)
 const POWER_POSITION = Vector2(3840/2, 2160/2)
 
 const VIEWPORT_SIZE = Vector2(3840, 2160)
-const CARD_SIZE = Vector2(325,525)
+const CARD_SIZE = Vector2(250*1.5,350*1.5)
 
 
 ##############################

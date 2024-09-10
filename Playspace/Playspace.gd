@@ -51,6 +51,7 @@ func _ready():
 	
 	for cardName in Stats.deck:
 		var card = CardBase.instantiate()
+		card.changeSize(Global.CARD_SIZE)
 		card.CardName = cardName
 		$FixedElements/Cards.add_child(card)
 		card.index = drawPileIndexCounter
@@ -397,8 +398,8 @@ func drawCard(fromPosition, fromScale, new_card:CardBase = null):
 		new_card.moveTime = new_card.DRAWTIME
 	
 	new_card.card_pressed = false
-	new_card.targetscale = Global.CARD_SIZE / new_card.size
-	new_card.inSelectionScale = Global.CARD_SIZE / new_card.size
+	new_card.targetscale = Vector2.ONE
+	new_card.inSelectionScale = Vector2.ONE
 	
 	new_card.scale = fromScale
 	
