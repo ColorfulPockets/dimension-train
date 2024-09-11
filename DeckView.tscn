@@ -1,20 +1,29 @@
-[gd_scene format=3 uid="uid://bkot4c3acwtvk"]
+[gd_scene load_steps=2 format=3 uid="uid://bkot4c3acwtvk"]
 
-[node name="DarkBackground" type="ColorRect"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k26th"]
+bg_color = Color(0, 0, 0, 0.886275)
+
+[node name="PanelContainer" type="PanelContainer"]
 custom_minimum_size = Vector2(3840, 2160)
 offset_right = 40.0
 offset_bottom = 40.0
-color = Color(0, 0, 0, 0.803922)
+theme_override_styles/panel = SubResource("StyleBoxFlat_k26th")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-custom_minimum_size = Vector2(3840, 2160)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-alignment = 1
-
-[node name="CardContainer" type="GridContainer" parent="HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
+theme_override_constants/margin_left = 400
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 400
+theme_override_constants/margin_bottom = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="CardContainer" type="GridContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/h_separation = 50
 theme_override_constants/v_separation = 50
 columns = 5

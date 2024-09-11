@@ -10,7 +10,7 @@ func _init(cardNames):
 
 func _ready():
 	add_child(scene)
-	var cardContainer = scene.get_child(0).get_child(0)
+	var cardContainer = scene.get_child(0).get_child(0).get_child(0)
 	
 	for cardName in cardNames:
 		var card = Global.CardBase.instantiate()
@@ -19,6 +19,7 @@ func _ready():
 		cardContainer.add_child(card)
 		card.state = Global.CARD_STATES.InOverlay
 		card.fadeIn()
+		card.custom_minimum_size = Vector2(500,700)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

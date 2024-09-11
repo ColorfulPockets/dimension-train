@@ -93,7 +93,6 @@ layout_mode = 2
 alignment = 1
 
 [node name="Icon" type="TextureRect" parent="HighlightBorder/MarginContainer/VBox/Image/VBoxContainer"]
-custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
