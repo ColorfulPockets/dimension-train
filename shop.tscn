@@ -360,13 +360,21 @@ custom_minimum_size = Vector2(148, 148)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-color = Color(0, 0, 0, 1)
+color = Color(0.196078, 0.196078, 0.196078, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="FullScreenContainer/VBoxContainer/CardRemove/BackgroundColor"]
 custom_minimum_size = Vector2(148, 148)
 layout_mode = 0
 offset_right = 128.0
 offset_bottom = 128.0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="BehindButtonColor" type="ColorRect" parent="FullScreenContainer/VBoxContainer/CardRemove/BackgroundColor/MarginContainer"]
+layout_mode = 2
+color = Color(0.376471, 0.360784, 0.345098, 1)
 
 [node name="RemoveButton" type="TextureButton" parent="FullScreenContainer/VBoxContainer/CardRemove/BackgroundColor/MarginContainer"]
 custom_minimum_size = Vector2(128, 128)

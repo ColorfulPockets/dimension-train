@@ -51,7 +51,7 @@ var DATA = {
 	"Factory":
 		{
 			fields.Name: "Factory",
-			fields.Rarity: "Starter",
+			fields.Rarity: "Common",
 			fields.EnergyCost: 2,
 			fields.Type: Global.CARD_TYPES.Logistics,
 			fields.Text: "Gather TARGETAREA, then Build ARGBuild",

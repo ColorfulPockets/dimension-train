@@ -12,7 +12,7 @@ var metalCount = 0
 var starterMetalCount = 100 if Global.devmode else 5
 var emergencyRailCount = 20
 var erc = 20
-var coinCount = 60
+var coinCount = 10
 var startingTrainSpeed = 100 if Global.devmode else 0
 var turnCounter = 0
 var trainSpeed = 0
@@ -45,7 +45,7 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Blast", "Blast", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"]
+var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Drill", "Levitate", "Gust", "AutoBuild", "Dynamite", "Turbo", "Skim", "Factory"]
 var deck = []
 var rareChance = 0.1
 

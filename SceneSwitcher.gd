@@ -13,6 +13,7 @@ func _ready():
 	$Background/Swirl.emitting = true
 	currentScene.map_selected.connect(mapSelected,2)
 	currentScene.drawMap(currentLocation)
+	#$EverywhereUI/AudioStreamPlayer.play()
 
 func loadMapBackground():
 	var map = load("res://Playspace/Playspace.tscn").instantiate()

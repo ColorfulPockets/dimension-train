@@ -2,6 +2,7 @@ class_name CardBase extends Control
 
 signal rewardSelected(card)
 signal bought(card)
+signal removeSelected(card)
 
 @onready var types = Global.CARD_TYPES
 @onready var fields = Global.CARD_FIELDS
@@ -445,6 +446,9 @@ func _input(event):
 			if event.pressed:
 				rewardSelected.emit(self)
 				moveToDeck()
+		elif mousedOver and inRemove:
+			if event.pressed:
+				removeSelected.emit(self)
 		elif mousedOver and inShop:
 			if event.pressed:
 				var canAfford = Stats.coinCount >= price

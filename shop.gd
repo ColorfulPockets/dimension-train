@@ -5,6 +5,8 @@ const FADE_TIME = 0.15
 var cards_offered = []
 var cars_offered = []
 
+var removeButtonContainer
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Global.instantiateCardLists()
@@ -12,7 +14,9 @@ func _ready():
 	##########################
 	# Connect Remove Button  #
 	##########################
+	removeButtonContainer = $FullScreenContainer/VBoxContainer/CardRemove
 	$FullScreenContainer/VBoxContainer/CardRemove/BackgroundColor/MarginContainer/RemoveButton.pressed.connect(removeClicked)
+	$FullScreenContainer/VBoxContainer/CardRemove/PriceBox/Price.text = str(Global.REMOVE_PRICE)
 	
 	##################
 	# Generate Cards #
@@ -47,7 +51,8 @@ func _ready():
 			price.text = str(Global.COMMON_PRICE)
 	
 	generateTrains()
-
+	
+	recolorPrices()
 
 func generateTrains():
 	###################
@@ -93,9 +98,39 @@ func generateTrains():
 	uncommonPlaceholder.add_child(uncommonCar)
 	rarePlaceholder.add_child(rareCar)
 
+func recolorPrices():
+	var cardBoxes = $FullScreenContainer/VBoxContainer/CardRow.get_children()
+	var trainBoxes = $FullScreenContainer/VBoxContainer/TrainRow.get_children()
+	var cardRemoveBox = $FullScreenContainer/VBoxContainer/CardRemove
+	
+	var allPriceBoxes = cardBoxes + trainBoxes
+	allPriceBoxes.append(cardRemoveBox)
+	
+	for priceBox in allPriceBoxes:
+		var price:int = priceBox.get_node("PriceBox/Price").text.to_int()
+		if price > Stats.coinCount:
+			priceBox.get_node("PriceBox/Price").self_modulate = Color(1,0,0)
+		else:
+			priceBox.get_node("PriceBox/Price").self_modulate = Color(1,1,1)
+
+var alreadyRemoved = false
 func removeClicked():
-	var removeView = DeckView.new(Stats.deck)
+	if Stats.coinCount < Global.REMOVE_PRICE:
+		return
+	if alreadyRemoved:
+		return
+	
+	var removeView = DeckView.new(Stats.deck, 1)
 	add_child(removeView)
+	removeView.backButtonPressed.connect(func(): removeView.queue_free())
+	removeView.confirmPressed.connect(func(cardSelected):
+		Stats.deck.remove_at(Stats.deck.find(cardSelected[0]))
+		Stats.coinCount -= Global.REMOVE_PRICE
+		removeView.queue_free()
+		removeButtonContainer.get_node("BackgroundColor/MarginContainer/RemoveButton").queue_free()
+		removeButtonContainer.get_node("PriceBox").modulate.a = 0
+		recolorPrices()
+		)
 
 func instantiateCard(name, parent):
 	var card_shown = Global.CardBase.instantiate()
@@ -122,6 +157,7 @@ func cardBought(card:CardBase):
 	
 	Global.fadeOutNode(price, FADE_TIME)
 	Global.fadeOutNode(coin, FADE_TIME)
+	recolorPrices()
 
 func getCarPrice(car:TrainCar):
 	match car.rarity:
@@ -151,6 +187,7 @@ func carClicked(car:TrainCar):
 	
 	Global.fadeOutNode(price, FADE_TIME)
 	Global.fadeOutNode(coin, FADE_TIME)
+	recolorPrices()
 	await Global.fadeOutNode(car, FADE_TIME)
 	
 	car.queue_free()

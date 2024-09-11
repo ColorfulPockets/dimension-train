@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://du2javvixcoh7"]
+[gd_scene load_steps=23 format=3 uid="uid://du2javvixcoh7"]
 
 [ext_resource type="Script" path="res://SceneSwitcher.gd" id="1_4s6fu"]
 [ext_resource type="PackedScene" uid="uid://bnur704ugkxqv" path="res://Overworld/overworld.tscn" id="2_eev2n"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bblsfuib0bw1k" path="res://Assets/Particles/Swirl.png" id="4_u18r4"]
 [ext_resource type="Texture2D" uid="uid://dhqckwrsa6bxf" path="res://Assets/UI/Dimension Wheel/Dimension Wheel.png" id="11_yg0n0"]
 [ext_resource type="Script" path="res://Dimension Wheel.gd" id="12_p7bkr"]
+[ext_resource type="AudioStream" uid="uid://dqi7nbtjrrhqy" path="res://Sounds/Music/Dimension Train Theme.mp3" id="13_n67nj"]
 [ext_resource type="Script" path="res://Playspace/TopBar HBox.gd" id="14_iv70a"]
 [ext_resource type="Texture2D" uid="uid://bqcfywvunh1s7" path="res://Assets/Icons/Wood.png" id="15_wbl1v"]
 [ext_resource type="Script" path="res://Playspace/WoodCount.gd" id="16_amdfs"]
@@ -122,6 +123,9 @@ offset_right = 3840.0
 offset_bottom = 256.0
 texture = ExtResource("11_yg0n0")
 script = ExtResource("12_p7bkr")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="EverywhereUI"]
+stream = ExtResource("13_n67nj")
 
 [node name="Overworld" parent="." instance=ExtResource("2_eev2n")]
 

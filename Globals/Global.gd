@@ -54,6 +54,9 @@ const RARE_CAR_PRICE = 12
 const UNCOMMON_CAR_PRICE = 8
 const COMMON_CAR_PRICE = 6
 
+const REMOVE_PRICE = 3
+
+
 const highlight = Vector2i(2,4)
 const highlight_l  = Vector2i(2,0)
 const highlight_u  = Vector2i(3,0)
