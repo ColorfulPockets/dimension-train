@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dy3nw11tmpnlp"]
 
-[ext_resource type="Script" path="res://shop.gd" id="1_ntuld"]
+[ext_resource type="Script" path="res://Card Reward/shop.gd" id="1_ntuld"]
 [ext_resource type="Texture2D" uid="uid://xvyn13wydkkp" path="res://Assets/Icons/Coin.png" id="2_s1cau"]
 [ext_resource type="Texture2D" uid="uid://bd12uj76rt5i5" path="res://Assets/UI/Card Remove.png" id="3_m6q7g"]
 [ext_resource type="Texture2D" uid="uid://cto7rj2oex4ob" path="res://Assets/UI/Card Remove_hover.png" id="4_vuk3k"]
@@ -31,6 +31,11 @@ offset_bottom = 2160.0
 layout_mode = 2
 theme_override_constants/separation = 50
 alignment = 1
+
+[node name="Spacer" type="Control" parent="FullScreenContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 6.0
 
 [node name="CardRow" type="HBoxContainer" parent="FullScreenContainer/VBoxContainer"]
 layout_mode = 2
@@ -416,3 +421,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 100
 text = "Continue"
+
+[node name="Spacer2" type="Control" parent="FullScreenContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3

@@ -16,10 +16,10 @@ func _init(cardNames, numToSelect=0):
 
 func _ready():
 	add_child(scene)
-	var cardContainer = scene.get_child(0).get_child(1).get_child(0)
-	
-	var backButton = scene.get_child(0).get_child(0).get_child(0).get_child(0)
-	confirmButton = scene.get_child(0).get_child(2).get_child(0).get_child(0)
+	var hBoxContainer = scene.get_node("MarginContainer/HBoxContainer")
+	var cardContainer = hBoxContainer.get_node("ScrollContainer/CardContainer")
+	var backButton = hBoxContainer.get_node("BackVBox/MarginContainer/BackButton")
+	confirmButton = hBoxContainer.get_node("ConfirmVBox/MarginContainer/ConfirmButton")
 	
 	confirmButton.self_modulate.a = 0
 	

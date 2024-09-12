@@ -7,11 +7,11 @@ var confirmCardClicks = true
 var levelCounter = 0
 
 var woodCount = 0
-var starterWoodCount = 100 if Global.devmode else 5
+var starterWoodCount = 5 if not Global.devmode else 100
 var metalCount = 0
-var starterMetalCount = 100 if Global.devmode else 5
-var emergencyRailCount = 20
-var erc = 20
+var starterMetalCount = 5 if not Global.devmode else 100
+var emergencyRailCount = 20 if not Global.devmode else 1000
+var erc = 20 if not Global.devmode else 1000
 var coinCount = 10
 var startingTrainSpeed = 100 if Global.devmode else 0
 var turnCounter = 0

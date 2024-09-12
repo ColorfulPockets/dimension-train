@@ -7,9 +7,13 @@ var cars_offered = []
 
 var removeButtonContainer
 
+signal continuePressed
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Global.instantiateCardLists()
+	
+	$FullScreenContainer/VBoxContainer/Continue/MarginContainer/ContinueButton.pressed.connect(func():continuePressed.emit())
 	
 	##########################
 	# Connect Remove Button  #

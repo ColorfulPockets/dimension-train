@@ -1,122 +1,81 @@
 extends Node
 
-@onready var currentScene = $Overworld
+var currentScene = null
 var previousScene = null
 var loaderThread = Thread.new()
 var mapName
 var currentLocation = Vector2i(0,0)
 const LOAD_TIME = 0.25
 
+##########
+# Scenes #
+##########
+var shopScene = preload("res://Card Reward/shop.tscn")
+var rewardsScene = preload("res://Card Reward/card_reward.tscn")
+var mapScene = preload("res://Playspace/Playspace.tscn")
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Stats.setCameraStationary()
 	$Background/Swirl.emitting = true
-	currentScene.map_selected.connect(mapSelected,2)
-	currentScene.drawMap(currentLocation)
+	currentScene = mapScene.instantiate()
+	goToNextMap()
 	#$EverywhereUI/AudioStreamPlayer.play()
 
-func loadMapBackground():
-	var map = load("res://Playspace/Playspace.tscn").instantiate()
-	
-	call_deferred("fadeInMap")
-	
-	return map
-
-func fadeInMap():
-	var map = loaderThread.wait_to_finish()
-	add_child(map)
-	map.setMap(mapName)
-	
-	Global.fadeInNode(map, LOAD_TIME)
-	
-	currentScene = map
-	Stats.setCameraControlled()
-	currentScene.levelComplete.connect(moveToRewards)
-	
-func moveToRewards():
-	if "Card" not in Global.selectedReward:
-		card_selected()
-		return
-	loaderThread.start(loadRewardsBackground)
-	previousScene = currentScene
+func switchScenes():
+	Global.fadeInNode(currentScene, LOAD_TIME)
 	await Global.fadeOutNode(previousScene, LOAD_TIME)
 	previousScene.queue_free()
 
-func loadRewardsBackground():
-	var rewards = load("res://Card Reward/card_reward.tscn").instantiate()
-	
-	call_deferred("fadeInRewards")
-	
-	return rewards
-	
-func fadeInRewards():
-	var rewards = loaderThread.wait_to_finish()
+func goToRewards():
+	if "Card" not in Global.selectedReward:
+		card_selected()
+		return
+		
+	var rewards = rewardsScene.instantiate()
+	rewards.card_selected.connect(card_selected)
 	
 	Stats.setCameraStationary()
+	previousScene = currentScene
 	currentScene = rewards
-	
-	currentScene.card_selected.connect(card_selected)
 	
 	add_child(currentScene)
 	
-	Global.fadeInNode(rewards, LOAD_TIME)
+	switchScenes()
 
 func getNextMap():
 	return ["Corridor", "LostTrack", "SlugForest", "Diverging"].pick_random()
 
 func card_selected():
-	self.mapName = getNextMap()
-	
-	previousScene = currentScene
-	
-	loaderThread.start(loadMapBackground)
-	
-	await Global.fadeOutNode(previousScene, LOAD_TIME)
-	
-	previousScene.queue_free()
-
-func mapSelected(mapName, newLocation:Vector2i):
-	self.mapName = mapName
-	self.currentLocation = newLocation
-	loaderThread.start(loadMapBackground)
-	
-	previousScene = currentScene
-	
-	await Global.fadeOutNode(previousScene, LOAD_TIME)
+	if "Shop" in Global.selectedReward:
+		var shop = shopScene.instantiate()
+		shop.continuePressed.connect(goToNextMap)
 		
-	previousScene.queue_free()
-
-func fadeInOverworld():
-	var overworld = loaderThread.wait_to_finish()
+		Stats.setCameraStationary()
+		
+		previousScene = currentScene
+		currentScene = shop
+		
+		add_child(currentScene)
+		
+		switchScenes()
+	else:
+		goToNextMap()
 	
-	Stats.setCameraStationary()
-	currentScene = overworld
+func goToNextMap():
+	self.mapName = getNextMap()
+	var map = mapScene.instantiate()
 	
-	currentScene.map_selected.connect(mapSelected,1)
-	
-	add_child(overworld)
-	
-	currentScene.drawMap(currentLocation)
-	
-	Global.fadeInNode(overworld, LOAD_TIME)
-	
-	
-func loadOverworldBackground():
-	var overworld = load("res://overworld.tscn").instantiate()
-	
-	call_deferred("fadeInOverworld")
-	
-	return overworld
-
-func returnToOverworld():
-	loaderThread.start(loadOverworldBackground)
+	add_child(map)
+	map.setMap(mapName)
 	
 	previousScene = currentScene
+	currentScene = map
+	map.levelComplete.connect(goToRewards)
 	
-	await Global.fadeOutNode(previousScene, LOAD_TIME)
+	Stats.setCameraControlled()
 	
-	previousScene.queue_free()
-	
+	switchScenes()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):

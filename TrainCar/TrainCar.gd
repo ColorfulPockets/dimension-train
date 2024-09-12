@@ -118,9 +118,12 @@ func onGain():
 		"Magnet Car":
 			Stats.startingPickupRange += 1
 		"Heavy Car":
-			Stats.starterRail -= 5
-			if Stats.starterRail < 0:
-				Stats.starterRail = 0
+			Stats.starterMetalCount -= 5
+			Stats.starterWoodCount -= 5
+			if Stats.starterMetalCount < 0:
+				Stats.starterMetalCount = 0
+			if Stats.starterWoodCount < 0:
+				Stats.starterWoodCount = 0
 			Stats.startingTrainSpeed -= 1
 			if Stats.startingTrainSpeed < 0:
 				Stats.startingTrainSpeed = 0

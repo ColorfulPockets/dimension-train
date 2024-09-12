@@ -784,6 +784,8 @@ func drawHighlights(cells, enemyColor:int = 0):
 
 func buildRail(numRail, buildOver:Array):
 	self.buildOver = buildOver
+	if Global.devmode:
+		self.buildOver = Global.harvestable + Global.gatherable + Global.empty_tiles + [Global.water]
 	emit_signal("building_rail")
 	originalRailEndpoint = railEndpoint
 	originalRevealedTiles = revealedTiles
