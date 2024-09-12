@@ -2,7 +2,7 @@ class_name Debuff extends TextureRect
 
 const DEBUFF_TOOLTIP = {
 	"Slimed": "For the next VALUE turn(s), each resource you Gather has a 50% chance to not be gathered.",
-	"Increase": "This spawner will incrase the number of enemies it spawns by 1."
+	"Increase": "This spawner will increase the number of enemies it spawns by 1."
 }
 
 var value = 1
@@ -18,9 +18,7 @@ func _init(debuffName:String, value, isPreview:bool = false, scale:float = 1):
 	custom_minimum_size = Vector2(128,128)
 	texture = load("res://Assets/Debuffs/" + debuffName + ".png")
 	
-	
-	
-	var tooltip = Tooltip.new(process_tooltip(), 4)
+	var tooltip = Tooltip.new(process_tooltip())
 	tooltip.visuals_res = load("res://tooltip.tscn")
 	add_child(tooltip)
 	if not isPreview:
@@ -33,7 +31,7 @@ func _init(debuffName:String, value, isPreview:bool = false, scale:float = 1):
 func process_tooltip():
 	# VALUE replacement in Tooltip
 	var pattern = RegEx.new()
-	var tooltipText:String
+	var tooltipText:String = DEBUFF_TOOLTIP[debuffName]
 	pattern.compile(r'VALUE')
 	var matches = pattern.search_all(DEBUFF_TOOLTIP[debuffName])
 	for match in matches:

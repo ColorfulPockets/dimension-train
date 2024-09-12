@@ -63,8 +63,6 @@ var locked_highlights:Array[Vector2i] = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
-	
 	for i in range(Global.max_layer):
 		add_layer(i)
 		set_layer_enabled(i, true)

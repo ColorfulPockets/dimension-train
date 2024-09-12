@@ -22,9 +22,15 @@ func _ready():
 	goToNextMap()
 	#$EverywhereUI/AudioStreamPlayer.play()
 
-func switchScenes():
-	Global.fadeInNode(currentScene, LOAD_TIME)
+func switchScenes(setCameraStationary:bool = false):
 	await Global.fadeOutNode(previousScene, LOAD_TIME)
+	if setCameraStationary:
+		Stats.setCameraStationary()
+	else:
+		Stats.setCameraControlled()
+	currentScene.modulate.a = 0
+	add_child(currentScene)	
+	Global.fadeInNode(currentScene, LOAD_TIME)
 	previousScene.queue_free()
 
 func goToRewards():
@@ -35,13 +41,10 @@ func goToRewards():
 	var rewards = rewardsScene.instantiate()
 	rewards.card_selected.connect(card_selected)
 	
-	Stats.setCameraStationary()
 	previousScene = currentScene
 	currentScene = rewards
 	
-	add_child(currentScene)
-	
-	switchScenes()
+	switchScenes(true)
 
 func getNextMap():
 	return ["Corridor", "LostTrack", "SlugForest", "Diverging"].pick_random()
@@ -51,14 +54,10 @@ func card_selected():
 		var shop = shopScene.instantiate()
 		shop.continuePressed.connect(goToNextMap)
 		
-		Stats.setCameraStationary()
-		
 		previousScene = currentScene
 		currentScene = shop
 		
-		add_child(currentScene)
-		
-		switchScenes()
+		switchScenes(true)
 	else:
 		goToNextMap()
 	
@@ -66,16 +65,13 @@ func goToNextMap():
 	self.mapName = getNextMap()
 	var map = mapScene.instantiate()
 	
-	add_child(map)
 	map.setMap(mapName)
 	
 	previousScene = currentScene
 	currentScene = map
 	map.levelComplete.connect(goToRewards)
 	
-	Stats.setCameraControlled()
-	
-	switchScenes()
+	switchScenes(false)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):

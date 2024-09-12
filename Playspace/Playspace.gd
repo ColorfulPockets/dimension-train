@@ -38,6 +38,9 @@ signal handDrawn
 signal cardFunctionHappening(happening)
 signal levelComplete()
 
+
+var mapName = "Corridor"
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Passing the current node as the current playspace for Stats.
@@ -60,6 +63,8 @@ func _ready():
 		
 	drawPile.shuffle()
 	
+	terrain.setMap(mapName)
+	
 	terrain.building_rail.connect(func(): building_rail = true)
 	terrain.rail_built.connect(func(_x): building_rail = false, 1)
 	
@@ -67,7 +72,7 @@ func _ready():
 	
 
 func setMap(mapName):
-	terrain.setMap(mapName)
+	self.mapName = mapName
 
 func drawCardFromDeck():
 	await drawCard(drawPileNode.position, Vector2.ZERO)
