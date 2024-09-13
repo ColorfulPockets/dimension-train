@@ -165,6 +165,8 @@ func mouseEntered():
 		return
 	if card_pressed or current_playspace.endingTurn:
 		return
+	if state == states.InDiscardPile or state == states.InDrawPile:
+		return
 	mousedOver = true
 	if not other_card_pressed and not card_pressed:
 		$HighlightBorder.self_modulate.a = 1
