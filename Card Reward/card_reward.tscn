@@ -8,17 +8,51 @@
 [ext_resource type="Texture2D" uid="uid://elwlnemftrna" path="res://Assets/UI/Dimension Wheel/Fire Icon.png" id="5_fw0pm"]
 [ext_resource type="Texture2D" uid="uid://cfftu0xsbxhgg" path="res://Assets/UI/Dimension Wheel/Ice Icon.png" id="7_wdw6a"]
 
-[node name="CardReward" type="Node2D"]
+[node name="CardReward" type="VBoxContainer"]
+custom_minimum_size = Vector2(3840, 2160)
+alignment = 1
 script = ExtResource("1_a366b")
 
-[node name="WaterBox" type="TextureRect" parent="."]
-offset_left = 1242.0
-offset_top = 420.0
-offset_right = 1498.0
-offset_bottom = 676.0
-texture = ExtResource("2_duaab")
+[node name="Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+size_flags_vertical = 3
 
-[node name="WaterIcon" type="TextureRect" parent="WaterBox"]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_constants/separation = 150
+alignment = 1
+
+[node name="Spacer" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 7.0
+
+[node name="CardRow" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 200
+alignment = 1
+
+[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/CardRow"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="WaterBox" type="TextureRect" parent="HBoxContainer/CardRow/CardBox1"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture = ExtResource("2_duaab")
+expand_mode = 5
+stretch_mode = 4
+
+[node name="WaterIcon" type="TextureRect" parent="HBoxContainer/CardRow/CardBox1/WaterBox"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -33,14 +67,31 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_xssan")
 
-[node name="FireBox" type="TextureRect" parent="."]
-offset_left = 1792.0
-offset_top = 420.0
-offset_right = 2048.0
-offset_bottom = 676.0
-texture = ExtResource("3_lc6lq")
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/CardRow/CardBox1"]
+custom_minimum_size = Vector2(510, 710)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
-[node name="FireIcon" type="TextureRect" parent="FireBox"]
+[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/CardRow"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="FireBox" type="TextureRect" parent="HBoxContainer/CardRow/CardBox2"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture = ExtResource("3_lc6lq")
+expand_mode = 5
+stretch_mode = 4
+
+[node name="FireIcon" type="TextureRect" parent="HBoxContainer/CardRow/CardBox2/FireBox"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -55,14 +106,31 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("5_fw0pm")
 
-[node name="IceBox" type="TextureRect" parent="."]
-offset_left = 2342.0
-offset_top = 420.0
-offset_right = 2598.0
-offset_bottom = 676.0
-texture = ExtResource("4_f4kw7")
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/CardRow/CardBox2"]
+custom_minimum_size = Vector2(510, 710)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
-[node name="IceIcon" type="TextureRect" parent="IceBox"]
+[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/CardRow"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="IceBox" type="TextureRect" parent="HBoxContainer/CardRow/CardBox3"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture = ExtResource("4_f4kw7")
+expand_mode = 5
+stretch_mode = 4
+
+[node name="IceIcon" type="TextureRect" parent="HBoxContainer/CardRow/CardBox3/IceBox"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -76,3 +144,20 @@ offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("7_wdw6a")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/CardRow/CardBox3"]
+custom_minimum_size = Vector2(510, 710)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Spacer2" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 7.0
+
+[node name="Spacer2" type="Control" parent="."]
+layout_mode = 2
+size_flags_vertical = 3

@@ -1,4 +1,4 @@
-extends Node2D
+extends VBoxContainer
 
 @onready var skipTexture = preload("res://Assets/UI/Skip Button.png")
 @onready var skipHoverTexture = preload("res://Assets/UI/Skip Hover.png")
@@ -38,13 +38,13 @@ func chooseCards():
 		var card_shown = Global.CardBase.instantiate()
 		card_shown.CardName = cardsToOffer[i]
 		card_shown.rewardSelected.connect(cardSelected, 1)
-		add_child(card_shown)
+		var cardMarginContainer = get_node("HBoxContainer/CardRow/CardBox" + str(i+1) + "/MarginContainer")
+		cardMarginContainer.add_child(card_shown)
 		card_shown.state = Global.CARD_STATES.InOverlay
-		card_shown.scale *= 2 
 		card_shown.inReward = true
 		card_shown.position = (get_viewport_rect().size / 2 + (i-1)*Vector2(card_shown.size.x*card_shown.scale.x + HORIZONTAL_SPACING,0)) - card_shown.size/2
 		card_shown.fadeIn()
-	
+		
 	# Add Skip button
 	var skipButton:TextureButton = TextureButton.new()
 	skipButton.texture_normal = skipTexture
@@ -52,6 +52,7 @@ func chooseCards():
 	skipButton.scale *= 0.5
 	skipButton.position = get_viewport_rect().size / 2 - skipButton.scale*skipButton.texture_normal.get_size()/2 + Vector2(0,600)
 	skipButton.pressed.connect(func(): cardSelected(null))
+	skipButton.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	
 	var skipBox:TextureRect = TextureRect.new()
 	var types = ["Water", "Ice", "Fire"]
@@ -60,14 +61,27 @@ func chooseCards():
 	skipBox.texture = load("res://Assets/UI/Dimension Wheel/" + skipType + " Box.png")
 	var skipBoxIcon:TextureRect = TextureRect.new()
 	skipBoxIcon.texture = load("res://Assets/UI/Dimension Wheel/" + skipType + " Icon.png")
-	
-	skipBox.size = Vector2(256,256)
-	skipBox.position = Vector2(1920-skipBox.size.x/2, 1800)
-	skipBoxIcon.size = Vector2(128,128)
-	skipBoxIcon.position = skipBox.size/2 - skipBoxIcon.size/2
+	skipBox.custom_minimum_size = Vector2(256,256)
+	skipBox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var centeringBox = HBoxContainer.new()
+	centeringBox.alignment = BoxContainer.ALIGNMENT_CENTER
+	centeringBox.custom_minimum_size = Vector2(256,256)
+	skipBox.add_child(centeringBox)
+	skipBoxIcon.custom_minimum_size = Vector2(128,128)
+	skipBoxIcon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	skipBoxIcon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	add_child(skipBox)
-	skipBox.add_child(skipBoxIcon)
+	centeringBox.add_child(skipBoxIcon)
+	
+	var spacer1 = Control.new()
+	spacer1.custom_minimum_size = Vector2(0,30)
+	add_child(spacer1)
+	
 	add_child(skipButton)
+	
+	var spacer2 = Control.new()
+	spacer2.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	add_child(spacer2)
 	
 
 func cardSelected(card):
@@ -81,6 +95,7 @@ func cardSelected(card):
 				dimension = "Fire"
 			2:
 				dimension = "Ice"
+		
 	else:
 		dimension = skipType
 	

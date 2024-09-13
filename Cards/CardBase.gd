@@ -242,6 +242,9 @@ func moveToDrawPile():
 	state = states.InDrawPile
 
 func moveToDeck():
+	var global_pos = global_position
+	top_level = true
+	position = global_pos
 	resetCurrentPosition()
 	visible = true
 	out_of_place = true

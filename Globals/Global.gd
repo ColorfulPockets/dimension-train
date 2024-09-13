@@ -1,6 +1,6 @@
 extends Node
 
-var devmode = true
+var devmode = false
 
 # GLOBAL SIGNALS
 signal cardFunctionStarted
@@ -348,7 +348,7 @@ var DIRECTIONAL_TILE_INOUT = {
 
 
 var rewards = {}
-var selectedReward
+var selectedReward = ["Card"]
 
 func clearRewards():
 	rewards = {}

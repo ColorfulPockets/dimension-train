@@ -48,7 +48,7 @@ func _init(enemyName, cell:Vector2i):
 		"Guard":
 			self.facing = Global.DIR.R
 			self.health  = 1
-			self.range = 2
+			self.range = 1
 	
 	match self.facing:
 		Global.DIR.L:

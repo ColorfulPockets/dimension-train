@@ -20,6 +20,7 @@ func _ready():
 	$Background/Swirl.emitting = true
 	currentScene = mapScene.instantiate()
 	goToNextMap()
+	#goToRewards()
 	#$EverywhereUI/AudioStreamPlayer.play()
 
 func switchScenes(setCameraStationary:bool = false):
