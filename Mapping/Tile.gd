@@ -11,13 +11,157 @@ const X = -6
 const S = -7
 enum TYPES {Goal, Rail, Spawner}
 enum {Directions, Type, Rewards, SpawnerName, SpawnerCount}
+enum {Cells, CellInfo}
+enum REWARDS {Easy, Hard, WaterCheck}
+
 static var DIR = Global.DIR
 
-var cells:Array[Array]
-
-var cell_info: Dictionary
+static var mapDb = {
+	"Corridor": {
+		Cells: Global.rotate_array([
+			[T, T, T, 0, E, M, M, M, M, M, E, 1, T, T, T],
+			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
+			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
+			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
+			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
+			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
+			[T, T, T, E, W, W, M, M, M, W, W, E, T, T, T],
+			[T, T, W, E, E, W, M, M, M, W, E, E, W, T, T],
+			[T, T, W, W, E, M, M, M, M, M, E, W, W, T, T],
+			[T, T, W, E, E, W, M, 2, M, W, E, E, W, T, T],
+			[T, T, T, E, W, W, M, M, M, W, W, E, T, T, T],
+			[T, T, T, E, E, W, M, M, M, W, E, E, T, T, T],
+			[E, E, E, E, W, E, E, E, E, E, W, E, E, E, E],
+			[E, E, E, E, E, E, E, E, E, E, E, E, E, E, E],
+			[E, E, E, E, E, E, E, L, E, E, E, E, E, E, E]]),
 	
-func getNumExits():
+		CellInfo: {
+			0: goalWithRewards(REWARDS.Easy),
+			1: goalWithRewards(REWARDS.Easy),
+			2: spawnerWithName("Guard Factory", 1)
+		}
+	},
+	"Diverging": {
+		Cells: [
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, 0], #15
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[X, 7, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[E, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
+			[E, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
+			[L, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
+			[E, E, W, W, W, W, W, W, W, W, W, W, W, W, 1], #20
+			[E, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
+			[E, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
+			[E, E, W, W, W, W, W, W, W, W, W, W, W, W, W],
+			[E, E, T, T, T, T, T, T, T, T, T, T, T, T, T], 
+			[E, E, E, E, E, 4, 5, 6, E, E, E, E, E, E, 2], #6
+			[E, E, M, M, M, M, M, M, M, M, M, M, M, M, M]],
+
+		CellInfo: {
+			0: goalWithRewards(REWARDS.Hard),
+			1: goalWithRewards(REWARDS.WaterCheck),
+			2: goalWithRewards(REWARDS.Easy),
+			
+			4: railWithDirections([DIR.L, DIR.R]),
+			5: railWithDirections([DIR.L, DIR.R]),
+			6: railWithDirections([DIR.L, DIR.R]),
+			
+			7: spawnerWithName("Guard Factory", 1)
+		}
+	},
+	"LostTrack": {
+		Cells: [
+			[X, X, X, X, X, 3, 4, X, X, X, X, X, X, X, X],
+			[X, X, X, X, 5, 6, X, X, X, X, X, X, X, X, X],
+			[X, X, X, 7, 8, X, X, X, X, X, X, X, X, X, X],
+			[X, X, X, X, X, X, X, 15, X, X, X, X, X, X, X],
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[E, X, X, X, X, X, X, X, X, X, W, X, X, X, 0], # 14
+			[E, E, X, X, X, X, X, X, W, W, W, W, W, W, E],
+			[L, E, E, E, E, E, W, W, W, W, W, W, W, W, W],
+			[E, E, X, X, X, X, X, X, W, W, W, W, W, W, E],
+			[E, X, X, X, X, X, 9, 10, X, X, W, X, X, X, X],
+			[X, X, X, 11, 12, X, X, X, X, X, X, X, X, X, X],
+			[X, X, X, 16, X, X, X, X, X, X, X, X, X, X, X],
+			[X, X, X, X, 13, 14, X, X, X, X, X, X, X, X, X],
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, 1], # 12
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X]],
+		
+		CellInfo: {
+			0: goalWithRewards(REWARDS.Easy),
+			1: goalWithRewards(REWARDS.Easy),
+			
+			3: railWithDirections([DIR.D, DIR.R]),
+			4: railWithDirections([DIR.L, DIR.R]),
+			5: railWithDirections([DIR.D, DIR.R]),
+			6: railWithDirections([DIR.L, DIR.U]),
+			7: railWithDirections([DIR.L, DIR.R]),
+			8: railWithDirections([DIR.L, DIR.U]),
+			
+			9: railWithDirections([DIR.L, DIR.R]),
+			10: railWithDirections([DIR.L, DIR.R]),
+			11: railWithDirections([DIR.L, DIR.R]),
+			12: railWithDirections([DIR.L, DIR.R]),
+			13: railWithDirections([DIR.L, DIR.R]),
+			14: railWithDirections([DIR.L, DIR.R]),
+
+			15: spawnerWithName("Guard Factory", 1),
+			16: spawnerWithName("Guard Factory", 1),
+		}
+	},
+	"SlugForest": {
+		Cells: [
+			[M, M, M, M, M, M, M, M, M, M, M, M, M, M, M],
+			[X, M, M, M, M, M, M, M, M, M, M, M, M, M, X],
+			[X, X, M, M, M, M, M, M, M, M, M, M, M, X, 0], # 17
+			[X, X, X, M, M, M, M, M, M, M, M, M, X, X, X],
+			[X, X, X, X, M, M, M, W, M, M, M, X, X, X, X],
+			[X, X, X, X, X, X, W, W, W, X, X, X, X, 3, X],
+			[X, X, X, X, X, W, W, T, W, W, E, E, E, 4, E],
+			[L, E, E, E, W, W, T, 13, T, W, W, E, E, 5, E],
+			[E, E, E, E, E, W, W, T, W, W, E, E, E, 6, E],
+			[E, E, E, X, X, X, W, W, W, X, X, E, E, 7, E],
+			[E, E, X, X, X, X, X, W, X, X, X, X, X, X, X],
+			[X, X, T, X, X, X, T, T, X, X, X, X, X, X, X],
+			[X, T, T, T, 8, 9, 10, T, X, X, X, X, X, X, X],
+			[T, T, T, T, T, T, 11, 12, T, X, X, X, X, X, X],
+			[T, T, T, T, T, T, T, T, X, X, X, X, X, X, 1]], # 13
+
+		CellInfo:  {
+			0: goalWithRewards(REWARDS.Hard),
+			1: goalWithRewards(REWARDS.Easy),
+			
+			3: railWithDirections([DIR.U, DIR.D]),
+			4: railWithDirections([DIR.U, DIR.D]),
+			5: railWithDirections([DIR.U, DIR.D]),
+			6: railWithDirections([DIR.U, DIR.D]),
+			7: railWithDirections([DIR.U, DIR.D]),
+			
+			8: railWithDirections([DIR.L, DIR.R]),
+			9: railWithDirections([DIR.L, DIR.R]),
+			10: railWithDirections([DIR.L, DIR.D]),
+			11: railWithDirections([DIR.U, DIR.R]),
+			12: railWithDirections([DIR.L, DIR.R]),
+			
+			13: spawnerWithName("Swamp", 2)
+		}
+	},
+}
+
+static func getMapInfo(mapName):
+	var mapInfo = []
+	var numExits = getNumExits(mapName)
+	if randi_range(0,1) == 1:
+		mapInfo = mirrorMap(mapName)
+	else:
+		mapInfo = [mapDb[mapName][Cells], mapDb[mapName][CellInfo]]
+		
+	return mapInfo
+
+static func getNumExits(mapName):
+	var cell_info = mapDb[mapName][CellInfo]
 	var count = 0
 	for key in cell_info.keys():
 		if cell_info[key][Type] == TYPES.Goal:
@@ -25,8 +169,9 @@ func getNumExits():
 	
 	return count
 		
-
-func mirrorMap():
+static func mirrorMap(mapName):
+	var cells = mapDb[mapName][Cells]
+	var cell_info = mapDb[mapName][CellInfo]
 	cells.reverse()
 	for key in cell_info.keys():
 		if Directions in cell_info[key]:
@@ -35,9 +180,11 @@ func mirrorMap():
 				new_dirs.append(invert_if_ud(dir))
 			
 			cell_info[key][Directions] = new_dirs
+	
+	return [cells, cell_info]
 
 # Takes a direction and returns its inverse, but only if its U or D
-func invert_if_ud(dir:Global.DIR):
+static func invert_if_ud(dir:Global.DIR):
 	if dir == Global.DIR.U:
 		return Global.DIR.D
 	elif dir == Global.DIR.D:
@@ -45,7 +192,7 @@ func invert_if_ud(dir:Global.DIR):
 	else:
 		return dir
 	
-static func goalWithRewards(val:int) :
+static func goalWithRewards(val:REWARDS) :
 	return {
 			Type: TYPES.Goal,
 			Directions: [DIR.L, DIR.R],

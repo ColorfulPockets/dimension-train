@@ -87,6 +87,10 @@ static func getRandomCar():
 	if rarity < 85: return uncommons.pick_random()
 	else: return rares.pick_random()
 
+static func getRandomRare():
+	populateLists()
+	return rares.pick_random()
+
 var textureRect:TextureRect
 var mouseIn = false
 signal clicked
