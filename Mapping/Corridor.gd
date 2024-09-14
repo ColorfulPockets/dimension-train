@@ -1,7 +1,5 @@
 class_name Corridor extends Tile
 
-
-
 func _init():
 	cells = Global.rotate_array([
 		[T, T, T, 1, E, M, M, M, M, M, E, 2, T, T, T],
