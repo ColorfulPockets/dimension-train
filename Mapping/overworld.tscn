@@ -1,6 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://bnur704ugkxqv"]
+[gd_scene load_steps=3 format=3 uid="uid://bnur704ugkxqv"]
 
 [ext_resource type="Script" path="res://Mapping/Overworld.gd" id="1_ekwc0"]
 
-[node name="Overworld" type="Node2D"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nnhf6"]
+bg_color = Color(0, 0, 0, 1)
+
+[node name="Overworld" type="PanelContainer"]
+custom_minimum_size = Vector2(3840, 2160)
+theme_override_styles/panel = SubResource("StyleBoxFlat_nnhf6")
 script = ExtResource("1_ekwc0")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 50

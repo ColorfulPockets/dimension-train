@@ -18,22 +18,22 @@ static var DIR = Global.DIR
 
 static var mapDb = {
 	"Corridor": {
-		Cells: Global.rotate_array([
-			[T, T, T, 0, E, M, M, M, M, M, E, 1, T, T, T],
-			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
-			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
-			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
-			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
-			[T, T, T, E, E, M, M, M, M, M, E, E, T, T, T],
-			[T, T, T, E, W, W, M, M, M, W, W, E, T, T, T],
-			[T, T, W, E, E, W, M, M, M, W, E, E, W, T, T],
-			[T, T, W, W, E, M, M, M, M, M, E, W, W, T, T],
-			[T, T, W, E, E, W, M, 2, M, W, E, E, W, T, T],
-			[T, T, T, E, W, W, M, M, M, W, W, E, T, T, T],
-			[T, T, T, E, E, W, M, M, M, W, E, E, T, T, T],
-			[E, E, E, E, W, E, E, E, E, E, W, E, E, E, E],
-			[E, E, E, E, E, E, E, E, E, E, E, E, E, E, E],
-			[E, E, E, E, E, E, E, L, E, E, E, E, E, E, E]]),
+		Cells: [
+			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T],
+			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T],
+			[E, E, E, T, T, W, W, W, T, T, T, T, T, T, T],
+			[E, E, E, E, E, E, W, E, E, E, E, E, E, E, 0],
+			[E, E, W, E, W, E, E, E, W, E, E, E, E, E, E],
+			[E, E, E, W, W, W, M, W, W, M, M, M, M, M, M],
+			[E, E, E, M, M, M, M, M, M, M, M, M, M, M, M],
+			[E, E, E, M, M, 2, M, M, M, M, M, M, M, M, M],
+			[E, E, E, M, M, M, M, M, M, M, M, M, M, M, M],
+			[E, E, E, W, W, W, M, W, W, M, M, M, M, M, M],
+			[E, E, W, E, W, E, E, E, W, E, E, E, E, E, E],
+			[E, E, E, E, E, E, W, E, E, E, E, E, E, E, 1],
+			[E, E, E, T, T, W, W, W, T, T, T, T, T, T, T],
+			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T],
+			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T]],
 	
 		CellInfo: {
 			0: goalWithRewards(REWARDS.Easy),
@@ -148,6 +148,13 @@ static var mapDb = {
 			13: spawnerWithName("Swamp", 2)
 		}
 	},
+	"Moon Witch": {
+		Cells: [],
+		CellInfo: {
+			0: goalWithRewards(REWARDS.Hard),
+			1: goalWithRewards(REWARDS.Hard),
+		}
+	},
 }
 
 static func getMapInfo(mapName):
@@ -156,7 +163,7 @@ static func getMapInfo(mapName):
 	if randi_range(0,1) == 1:
 		mapInfo = mirrorMap(mapName)
 	else:
-		mapInfo = [mapDb[mapName][Cells], mapDb[mapName][CellInfo]]
+		mapInfo = [mapName, false, mapDb[mapName][Cells], mapDb[mapName][CellInfo]]
 		
 	return mapInfo
 
@@ -181,7 +188,7 @@ static func mirrorMap(mapName):
 			
 			cell_info[key][Directions] = new_dirs
 	
-	return [cells, cell_info]
+	return [mapName, true, cells, cell_info]
 
 # Takes a direction and returns its inverse, but only if its U or D
 static func invert_if_ud(dir:Global.DIR):
