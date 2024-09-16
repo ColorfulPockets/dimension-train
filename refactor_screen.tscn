@@ -1,0 +1,396 @@
+[gd_scene load_steps=6 format=3 uid="uid://j8wqkrav83v4"]
+
+[ext_resource type="Texture2D" uid="uid://dvqnyhnlb7cmt" path="res://Assets/Icons/Arrow.png" id="1_blrk3"]
+[ext_resource type="Script" path="res://refactor_screen.gd" id="1_x8pv5"]
+[ext_resource type="Script" path="res://RefactorOptions.gd" id="2_yv8hv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_obonl"]
+bg_color = Color(0.376471, 0.360784, 0.345098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.0866292, 0.0866293, 0.0866292, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l3muq"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+
+[node name="RefactorScreen" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+script = ExtResource("1_x8pv5")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="RefactorCards" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/RefactorCards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/RefactorCards/CardBox1"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/RefactorCards/CardBox1/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/RefactorCards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/RefactorCards/CardBox2"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/RefactorCards/CardBox2/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/RefactorCards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/RefactorCards/CardBox3"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/RefactorCards/CardBox3/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="ArrowMargins" type="MarginContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 800
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 800
+
+[node name="Arrow" type="TextureRect" parent="HBoxContainer/ArrowMargins"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_stretch_ratio = 0.2
+texture = ExtResource("1_blrk3")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="OptionsContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+alignment = 1
+
+[node name="Option1" type="MarginContainer" parent="HBoxContainer/OptionsContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="Cards" type="HBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox1"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox1/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox2"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox2/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox3"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox3/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Panel" type="Panel" parent="HBoxContainer/OptionsContainer/Option1"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l3muq")
+script = ExtResource("2_yv8hv")
+
+[node name="Option2" type="MarginContainer" parent="HBoxContainer/OptionsContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="Cards" type="HBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox1"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox1/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox2"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox2/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox3"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox3/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Panel" type="Panel" parent="HBoxContainer/OptionsContainer/Option2"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l3muq")
+script = ExtResource("2_yv8hv")
+
+[node name="Option3" type="MarginContainer" parent="HBoxContainer/OptionsContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="Cards" type="HBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox1"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox1/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox2"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox2/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox3"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox3/BackgroundColor"]
+custom_minimum_size = Vector2(375, 525)
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Panel" type="Panel" parent="HBoxContainer/OptionsContainer/Option3"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l3muq")
+script = ExtResource("2_yv8hv")
