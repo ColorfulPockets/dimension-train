@@ -1,5 +1,7 @@
 extends VBoxContainer
 
+func populateCards(cardsToRefactor):
+	pass
 
 func optionSelected(selectedOptionPanelNode):
 	for i in range(1,4):

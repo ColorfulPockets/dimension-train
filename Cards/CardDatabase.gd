@@ -2,6 +2,17 @@ extends Node
 
 var fields = Global.CARD_FIELDS
 
+func typeToString(type:Global.CARD_TYPES):
+	match type:
+		Global.CARD_TYPES.Harvesting:
+			return "Harvesting"
+		Global.CARD_TYPES.Logistics:
+			return "Logistics"
+		Global.CARD_TYPES.Technology:
+			return "Technology"
+		Global.CARD_TYPES.Weapons:
+			return "Weapons"
+
 var DATA = {
 	"Harvest":
 		{

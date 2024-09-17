@@ -73,6 +73,10 @@ var selectingACard = false
 
 var baseText:String
 
+var commonTexture = preload("res://Assets/Cards/CardBase_Common.png")
+var uncommonTexture = preload("res://Assets/Cards/CardBase_Uncommon.png")
+var rareTexture = preload("res://Assets/Cards/CardBase_Rare.png")
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$HighlightBorder/MarginContainer/VBox/Image/VBoxContainer/Icon.texture = load(CardImg)
@@ -83,6 +87,14 @@ func _ready():
 	
 	$HighlightBorder/MarginContainer/VBox/Name/HBoxContainer/EnergyCost.text = str(CardInfo[Global.CARD_FIELDS.EnergyCost])
 		
+	$HighlightBorder/MarginContainer/TypeContainer/TypeContainer/Type.text = Global.CardDb.typeToString(CardInfo[Global.CARD_FIELDS.Type])
+	
+	if CardInfo[fields.Rarity] == "Common":
+		$HighlightBorder/MarginContainer/CardBase.texture = commonTexture
+	elif CardInfo[fields.Rarity] == "Uncommon":
+		$HighlightBorder/MarginContainer/CardBase.texture = uncommonTexture
+	elif CardInfo[fields.Rarity] == "Rare":
+		$HighlightBorder/MarginContainer/CardBase.texture = rareTexture
 	
 	connect("mouse_entered",mouseEntered)
 	connect("mouse_exited", mouseExited)
@@ -112,6 +124,9 @@ func changeSize(newSize=null, numFramesToWait:int = 0):
 	var bottomTextHeight = $HighlightBorder/MarginContainer/VBox/BottomText.size.y
 	var bottomTextLabel = $HighlightBorder/MarginContainer/VBox/BottomText/BottomText
 	
+	var typeHeight = $HighlightBorder/MarginContainer/TypeContainer/TypeContainer.size.y
+	var typeLabel = $HighlightBorder/MarginContainer/TypeContainer/TypeContainer/Type
+	
 	var fontSize = 1
 	while nameLabel.size.y < nameHeight * 0.67:
 		fontSize += 1
@@ -122,6 +137,11 @@ func changeSize(newSize=null, numFramesToWait:int = 0):
 	while bottomTextLabel.size.y < bottomTextHeight * 0.67 and fontSize2 <= fontSize:
 		bottomTextLabel.add_theme_font_size_override("font_size", fontSize2)
 		fontSize2 += 1
+		
+	var fontSize3 = 1
+	while typeLabel.size.y < typeHeight * 0.9:
+		typeLabel.add_theme_font_size_override("font_size", fontSize3)
+		fontSize3 += 1
 
 #GPT
 func replaceText():
