@@ -449,7 +449,7 @@ func rotate_array(arr) -> Array[Array]:
 		new_arr.append(row)
 	return new_arr
 
-
+static var starters = []
 static var commons = []
 static var uncommons = []
 static var rares = []
@@ -460,6 +460,8 @@ func instantiateCardLists():
 	if not cardListsInstantiated:
 		for cardName in CardDb.DATA.keys():
 			match CardDb.DATA[cardName][Global.CARD_FIELDS.Rarity]:
+				"Starter":
+					starters.append(cardName)
 				"Common":
 					commons.append(cardName)
 				"Uncommon":
@@ -468,14 +470,28 @@ func instantiateCardLists():
 					rares.append(cardName)
 		cardListsInstantiated = true
 
+func chooseStarter():
+	instantiateCardLists()
+	return starters[randi_range(0,starters.size()-1)]
+
 func chooseRare():
+	instantiateCardLists()
 	return rares[randi_range(0,rares.size()-1)]
 	
 func chooseUncommon():
+	instantiateCardLists()
 	return uncommons[randi_range(0,uncommons.size()-1)]
 	
 func chooseCommon():
+	instantiateCardLists()
 	return commons[randi_range(0,commons.size()-1)]
+
+func chooseForRarity(rarity:String):
+	match rarity:
+		"Starter": return chooseStarter()
+		"Common": return chooseCommon()
+		"Uncommon": return chooseUncommon()
+		"Rare": return chooseRare()
 
 #GPT
 func fadeOutNode(node, duration: float) -> void:

@@ -181,6 +181,8 @@ func mouseEntered():
 		$HighlightBorder.self_modulate.a = 1
 		mousedOver = true
 		return
+	if state == states.InOverlay:
+		return
 	if cardPileShowing:
 		return
 	if card_pressed or current_playspace.endingTurn:
@@ -199,6 +201,8 @@ func mouseExited(manuallyTriggered=false):
 	if inReward or inShop or inRemove or (state == states.InSelection):
 		$HighlightBorder.self_modulate.a = 0
 		mousedOver = false
+		return
+	if state == states.InOverlay:
 		return
 	if cardPileShowing:
 		return

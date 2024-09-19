@@ -23,39 +23,45 @@ border_width_top = 10
 border_width_right = 10
 border_width_bottom = 10
 
-[node name="RefactorScreen" type="VBoxContainer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
+[node name="RefactorScreen" type="MarginContainer"]
+custom_minimum_size = Vector2(3840, 2160)
+offset_right = 3840.0
+offset_bottom = 2160.0
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 190
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
 script = ExtResource("1_x8pv5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+alignment = 1
 
-[node name="RefactorCards" type="HBoxContainer" parent="HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RefactorCards" type="HBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
 alignment = 1
 
-[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/RefactorCards"]
+[node name="CardBox1" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/RefactorCards"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/RefactorCards/CardBox1"]
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/RefactorCards/CardBox1"]
 custom_minimum_size = Vector2(375, 525)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/RefactorCards/CardBox1/BackgroundColor"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/RefactorCards/CardBox1/BackgroundColor"]
 custom_minimum_size = Vector2(375, 525)
 layout_mode = 2
 theme_override_constants/margin_left = 5
@@ -63,20 +69,20 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/RefactorCards"]
+[node name="CardBox2" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/RefactorCards"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/RefactorCards/CardBox2"]
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/RefactorCards/CardBox2"]
 custom_minimum_size = Vector2(375, 525)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/RefactorCards/CardBox2/BackgroundColor"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/RefactorCards/CardBox2/BackgroundColor"]
 custom_minimum_size = Vector2(375, 525)
 layout_mode = 2
 theme_override_constants/margin_left = 5
@@ -84,20 +90,20 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/RefactorCards"]
+[node name="CardBox3" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/RefactorCards"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/RefactorCards/CardBox3"]
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/RefactorCards/CardBox3"]
 custom_minimum_size = Vector2(375, 525)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/RefactorCards/CardBox3/BackgroundColor"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/RefactorCards/CardBox3/BackgroundColor"]
 custom_minimum_size = Vector2(375, 525)
 layout_mode = 2
 theme_override_constants/margin_left = 5
@@ -105,14 +111,14 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="ArrowMargins" type="MarginContainer" parent="HBoxContainer"]
+[node name="ArrowMargins" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 50
 theme_override_constants/margin_top = 800
 theme_override_constants/margin_right = 50
 theme_override_constants/margin_bottom = 800
 
-[node name="Arrow" type="TextureRect" parent="HBoxContainer/ArrowMargins"]
+[node name="Arrow" type="TextureRect" parent="VBoxContainer/HBoxContainer/ArrowMargins"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_stretch_ratio = 0.2
@@ -120,277 +126,261 @@ texture = ExtResource("1_blrk3")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="OptionsContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="OptionsContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
+size_flags_horizontal = 3
 alignment = 1
 
-[node name="Option1" type="MarginContainer" parent="HBoxContainer/OptionsContainer"]
+[node name="Option1" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.125
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1"]
 layout_mode = 2
 theme_override_constants/margin_left = 50
 theme_override_constants/margin_top = 50
 theme_override_constants/margin_right = 50
 theme_override_constants/margin_bottom = 50
 
-[node name="Cards" type="HBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer"]
+[node name="Cards" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 50
+theme_override_constants/separation = 0
 alignment = 1
 
-[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
+[node name="CardBox1" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox1"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox1"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox1/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox1/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
+[node name="CardBox2" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox2"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox2"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox2/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox2/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
+[node name="CardBox3" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox3"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox3"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox3/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1/MarginContainer/Cards/CardBox3/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="Panel" type="Panel" parent="HBoxContainer/OptionsContainer/Option1"]
+[node name="Panel" type="Panel" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option1"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_l3muq")
 script = ExtResource("2_yv8hv")
 
-[node name="Option2" type="MarginContainer" parent="HBoxContainer/OptionsContainer"]
+[node name="Option2" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.125
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2"]
 layout_mode = 2
 theme_override_constants/margin_left = 50
 theme_override_constants/margin_top = 50
 theme_override_constants/margin_right = 50
 theme_override_constants/margin_bottom = 50
 
-[node name="Cards" type="HBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer"]
+[node name="Cards" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 50
+theme_override_constants/separation = 0
 alignment = 1
 
-[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
+[node name="CardBox1" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox1"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox1"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox1/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox1/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
+[node name="CardBox2" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox2"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox2"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox2/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox2/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
+[node name="CardBox3" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox3"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox3"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox3/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2/MarginContainer/Cards/CardBox3/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="Panel" type="Panel" parent="HBoxContainer/OptionsContainer/Option2"]
+[node name="Panel" type="Panel" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option2"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_l3muq")
 script = ExtResource("2_yv8hv")
 
-[node name="Option3" type="MarginContainer" parent="HBoxContainer/OptionsContainer"]
+[node name="Option3" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.125
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3"]
 layout_mode = 2
 theme_override_constants/margin_left = 50
 theme_override_constants/margin_top = 50
 theme_override_constants/margin_right = 50
 theme_override_constants/margin_bottom = 50
 
-[node name="Cards" type="HBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer"]
+[node name="Cards" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 50
+theme_override_constants/separation = 0
 alignment = 1
 
-[node name="CardBox1" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
+[node name="CardBox1" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox1"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox1"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox1/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox1/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox2" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
+[node name="CardBox2" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox2"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox2"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox2/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox2/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="CardBox3" type="VBoxContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
+[node name="CardBox3" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+size_flags_horizontal = 3
+ratio = 0.7143
 
-[node name="BackgroundColor" type="PanelContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox3"]
-custom_minimum_size = Vector2(375, 525)
+[node name="BackgroundColor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox3"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_obonl")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox3/BackgroundColor"]
-custom_minimum_size = Vector2(375, 525)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3/MarginContainer/Cards/CardBox3/BackgroundColor"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="Panel" type="Panel" parent="HBoxContainer/OptionsContainer/Option3"]
+[node name="Panel" type="Panel" parent="VBoxContainer/HBoxContainer/OptionsContainer/Option3"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_l3muq")
 script = ExtResource("2_yv8hv")
+
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_stretch_ratio = 0.05
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+ratio = 2.3929
+
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer/AspectRatioContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Confirm"

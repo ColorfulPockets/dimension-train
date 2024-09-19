@@ -82,14 +82,14 @@ func cardClicked(card:CardBase):
 		selectedCards.remove_at(selectedCards.find(card))
 		var cardSelectionBackground = card.get_node("HighlightBorder/SelectionHighlight")
 		cardSelectionBackground.visible = false
-		if selectedCards.size() == 0:
+		if selectedCards.size() < numToSelect:
 			confirmButton.self_modulate.a = 0
 	else:
 		if selectedCards.size() < numToSelect:
 			selectedCards.append(card)
 			var cardSelectionBackground = card.get_node("HighlightBorder/SelectionHighlight")
 			cardSelectionBackground.visible = true
-			if selectedCards.size() > 0:
+			if selectedCards.size() >= numToSelect:
 				confirmButton.self_modulate.a = 1
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
