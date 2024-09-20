@@ -22,7 +22,7 @@ func _ready():
 				for reward in prevNode.rewardsArray:
 					var nextNode = getNextNode(prevNode)
 					currentLayer.append(nextNode)
-					graph.add_node(nextNode, [prevNode])
+					graph.add_node(nextNode, [[prevNode, reward]])
 			else:
 				for i in range(prevNode.rewardsArray.size()):
 					if i == 0:
@@ -36,15 +36,15 @@ func _ready():
 							connectionValid = false
 						
 						if connectionValid:
-							graph.add_connection(prevNode, connectionNode)
+							graph.add_connection(prevNode, connectionNode, prevNode.rewardsArray[i])
 						else:
 							var nextNode = getNextNode(prevNode)
 							currentLayer.append(nextNode)
-							graph.add_node(nextNode, [prevNode])
+							graph.add_node(nextNode, [[prevNode, prevNode.rewardsArray[i]]])
 					else:
 						var nextNode = getNextNode(prevNode)
 						currentLayer.append(nextNode)
-						graph.add_node(nextNode, [prevNode])
+						graph.add_node(nextNode, [[prevNode, prevNode.rewardsArray[i]]])
 		prevLayerIndex += 1
 		currentLayerIndex += 1
 		layers.append([])
@@ -100,12 +100,12 @@ func getRewardArray(mapName, mirrored=false):
 		
 		if rewardType == Tile.REWARDS.Hard:
 			if randi_range(0,1) == 1:
-				rewards.append([null, TrainCar.getRandomCar()])
+				rewards = [null, TrainCar.getRandomCar()]
 			else:
-				rewards.append([null, "MoneyBag"])
+				rewards = [null, "MoneyBag"]
 		
 		elif rewardType == Tile.REWARDS.WaterCheck:
-			rewards.append(["WaterCheck", TrainCar.getRandomRare()])
+			rewards = ["WaterCheck", TrainCar.getRandomRare()]
 		
 		rewardsArray.append(rewards)
 	
