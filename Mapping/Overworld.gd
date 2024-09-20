@@ -1,6 +1,6 @@
-extends PanelContainer
+class_name Overworld extends PanelContainer
 
-var graph:DirectedGraph
+static var graph:DirectedGraph
 
 const BASIC_AREAS = ["Corridor", "Diverging", "LostTrack", "SlugForest"]
 const MINIBOSSES = ["Moon Witch"]
@@ -49,27 +49,8 @@ func _ready():
 		currentLayerIndex += 1
 		layers.append([])
 	
-	for layer in layers:
-		var vBoxContainer = VBoxContainer.new()
-		vBoxContainer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		vBoxContainer.alignment = BoxContainer.ALIGNMENT_CENTER
-		vBoxContainer.add_theme_constant_override("separation", 100)
-		for node:MapRewards in layer:
-			vBoxContainer.add_child(node)
-		
-		$HBoxContainer.add_child(vBoxContainer)
-	
-	await get_tree().create_timer(0.1).timeout
-	for layer in layers:
-		for node in layer:
-			for next_node in graph.get_connections_for_node(node):
-				var line = Line2D.new()
-				line.add_point(node.global_position + node.size/2)
-				line.add_point(next_node.global_position + node.size/2)
-				add_child(line)
+	$ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer.drawMap(layers)
 			
-	
-	
 
 func getNextNode(prevNode:MapRewards) -> MapRewards:
 	var retry = true
@@ -99,29 +80,6 @@ func getMiniBoss() -> MapRewards:
 func getBasicMap() -> MapRewards:
 	var mapName = BASIC_AREAS.pick_random()
 	return  getMapWithRewards(mapName)
-	
-class MapRewards extends TextureRect:
-	var mapName
-	var isMirrored
-	var rewardsArray
-	
-	func _init(name, isMirrored, rewardsArray):
-		self.mapName = name
-		self.isMirrored = isMirrored
-		self.rewardsArray = rewardsArray
-		
-		var iconName
-		if mapName in BASIC_AREAS:
-			iconName = "Plains"
-		elif mapName in MINIBOSSES:
-			iconName = "Forest"
-		else:
-			iconName = mapName
-		
-		self.texture = load("res://Assets/Icons/" + iconName + ".png")
-		self.expand_mode = TextureRect.EXPAND_KEEP_SIZE
-		self.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		self.custom_minimum_size = Vector2(50,50)
 	
 # Returns: [mapName, isMirrored:bool, cells, cell_info, rewardArray]
 func getMapWithRewards(mapName) -> MapRewards:

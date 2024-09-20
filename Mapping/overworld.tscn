@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bnur704ugkxqv"]
+[gd_scene load_steps=4 format=3 uid="uid://bnur704ugkxqv"]
 
 [ext_resource type="Script" path="res://Mapping/Overworld.gd" id="1_ekwc0"]
+[ext_resource type="Script" path="res://Mapping/MapWithLines.gd" id="2_wcfw7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nnhf6"]
 bg_color = Color(0, 0, 0, 1)
@@ -10,6 +11,22 @@ custom_minimum_size = Vector2(3840, 2160)
 theme_override_styles/panel = SubResource("StyleBoxFlat_nnhf6")
 script = ExtResource("1_ekwc0")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 300
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 300
+alignment = 1
+script = ExtResource("2_wcfw7")
