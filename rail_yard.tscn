@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://dytul8p430xfp"]
+[gd_scene load_steps=6 format=3 uid="uid://dytul8p430xfp"]
 
 [ext_resource type="Script" path="res://RailYard.gd" id="1_aoxrr"]
+[ext_resource type="Texture2D" uid="uid://crqvnjac4mrgf" path="res://Assets/Icons/Resupply.png" id="2_i86rv"]
+[ext_resource type="Texture2D" uid="uid://kesvnj5jxigx" path="res://Assets/Icons/Resupply_hover.png" id="3_1ghmm"]
+[ext_resource type="Texture2D" uid="uid://bp84u07gwkakk" path="res://Assets/Icons/Research.png" id="4_ybxrs"]
+[ext_resource type="Texture2D" uid="uid://do1mgm821gqxj" path="res://Assets/Icons/Research_hover.png" id="5_a5lo7"]
 
 [node name="RailYard" type="Control"]
 layout_mode = 3
@@ -10,3 +14,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_aoxrr")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(3840, 2160)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_top = 190
+theme_override_constants/margin_bottom = 190
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 200
+alignment = 1
+
+[node name="Resupply" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Resupply Button" type="TextureButton" parent="MarginContainer/HBoxContainer/Resupply"]
+layout_mode = 2
+texture_normal = ExtResource("2_i86rv")
+texture_hover = ExtResource("3_1ghmm")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/Resupply"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Resupply
+(+5 Emergency Rail)"
+horizontal_alignment = 1
+
+[node name="Research" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Research Button" type="TextureButton" parent="MarginContainer/HBoxContainer/Research"]
+layout_mode = 2
+texture_normal = ExtResource("4_ybxrs")
+texture_hover = ExtResource("5_a5lo7")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/Research"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Research
+(Refactor 3 Cards)"
+horizontal_alignment = 1
