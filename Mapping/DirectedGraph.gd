@@ -33,3 +33,9 @@ func get_connections_for_node(node):
 		return connections[node]
 	
 	return []
+
+func get_out_degree(node):
+	if node in connections.keys():
+		return connections[node].size()
+	else:
+		return 0

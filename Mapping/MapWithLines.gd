@@ -7,11 +7,49 @@ var waterCheckTexture = preload("res://Assets/Icons/Water Check.png")
 var moneyBagTexture = preload("res://Assets/Icons/MoneyBag.png")
 
 func drawMap(layers):
+	var separation_damping = 0.5
+	var outDegree_damping = 0.5
+	var vBoxes = []
+	var maxLayerSize = 0
+	var prevOutDegreeScore = 0
+	for layer:Array in layers:
+		if layer == layers[-1]:
+			if prevOutDegreeScore > 1:
+				for i in range(floor(prevOutDegreeScore)):
+					layer.push_back(MapRewards.new("Spacer", false, []))
+			else:
+				for i in range(floor(abs(prevOutDegreeScore))):
+					layer.push_front(MapRewards.new("Spacer", false, []))
+			maxLayerSize = max(layer.size(), maxLayerSize)
+			continue
+		
+		var middleNode = float(layer.size()) / 2
+		var outDegreeScore = 0
+		for i in range(layer.size()):
+			var node = layer[i]
+			outDegreeScore += outDegree_damping*(i-middleNode) * Overworld.graph.get_out_degree(node)
+		
+		prevOutDegreeScore = outDegreeScore
+		
+		if outDegreeScore > 1:
+			for i in range(floor(outDegreeScore)):
+				layer.push_back(MapRewards.new("Spacer", false, []))
+		else:
+			for i in range(floor(abs(outDegreeScore))):
+				layer.push_front(MapRewards.new("Spacer", false, []))
+		
+		maxLayerSize = max(layer.size(), maxLayerSize)
+	
+	var nodeHeight = layers[0][0].custom_minimum_size.y
+	var maxHeight = maxLayerSize * nodeHeight + (maxLayerSize-1)*100
+	
 	for layer in layers:
+		var layerHeight = layer.size() * nodeHeight + (layer.size()-1)*100
+		var separation = 100 + separation_damping*(maxHeight - layerHeight)/(layer.size())
 		var vBoxContainer = VBoxContainer.new()
 		vBoxContainer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		vBoxContainer.alignment = BoxContainer.ALIGNMENT_CENTER
-		vBoxContainer.add_theme_constant_override("separation", 100)
+		vBoxContainer.add_theme_constant_override("separation", separation)
 		for node:MapRewards in layer:
 			vBoxContainer.add_child(node)
 		

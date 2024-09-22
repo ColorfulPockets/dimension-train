@@ -6,8 +6,8 @@ var isMirrored
 #The first value in the sub-arrays tells if there's any special info to render, the second is rewards to add
 var rewardsArray
 
-func _init(name, isMirrored, rewardsArray):
-	self.mapName = name
+func _init(mapName, isMirrored, rewardsArray):
+	self.mapName = mapName
 	self.isMirrored = isMirrored
 	self.rewardsArray = rewardsArray
 	
