@@ -99,7 +99,7 @@ func getRewardArray(mapName, mirrored=false):
 		var rewardType = cell_info[i][Tile.Rewards]
 		
 		if rewardType == Tile.REWARDS.Hard:
-			if randi_range(0,1) == 1:
+			if randi_range(0,2) != 0:
 				rewards = [null, TrainCar.getRandomCar()]
 			else:
 				rewards = [null, "MoneyBag"]

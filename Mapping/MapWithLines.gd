@@ -4,6 +4,7 @@ var lines:Array[PackedVector2Array] = []
 var lineRewards = []
 
 var waterCheckTexture = preload("res://Assets/Icons/Water Check.png")
+var moneyBagTexture = preload("res://Assets/Icons/MoneyBag.png")
 
 func drawMap(layers):
 	for layer in layers:
@@ -55,3 +56,28 @@ func _draw():
 				var tooltip = Tooltip.new("Crossing water is necessary to take this path.")
 				tooltip.visuals_res = load("res://tooltip.tscn")
 				waterCheckIcon.add_child(tooltip)
+			if reward[1] in TrainCar.allCars:
+				var percentageAlongLine = 0.65
+				var trainCarReward = TrainCar.new(reward[1], "Path reward:\n")
+				trainCarReward.position = line[0] + percentageAlongLine * (line[1] - line[0])
+				trainCarReward.position += self.position
+				trainCarReward.scale *= 3.5
+				get_parent().add_child(trainCarReward)
+			elif reward[1] == "MoneyBag":
+				var moneyBagContainer = Node2D.new()
+				var moneyBagIcon = TextureRect.new()
+				var textureSize = Vector2(50,50)
+				var percentageAlongLine = 0.65
+				moneyBagIcon.texture = moneyBagTexture
+				moneyBagIcon.custom_minimum_size = textureSize
+				moneyBagIcon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+				moneyBagIcon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				moneyBagContainer.position = line[0] + percentageAlongLine * (line[1] - line[0])
+				moneyBagContainer.position -= textureSize/2
+				moneyBagContainer.position += self.position
+				get_parent().add_child(moneyBagContainer)
+				moneyBagContainer.add_child(moneyBagIcon)
+				
+				var tooltip = Tooltip.new("Path reward:\nExtra money and emergency rail.")
+				tooltip.visuals_res = load("res://tooltip.tscn")
+				moneyBagIcon.add_child(tooltip)

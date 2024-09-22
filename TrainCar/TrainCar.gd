@@ -79,13 +79,22 @@ static func getAllCars():
 	populateLists()
 	return allCars
 
+
+static var numCardsChosenRandomly = 0
 static func getRandomCar():
+	numCardsChosenRandomly += 1
 	populateLists()
 	
 	var rarity = randi_range(0,100)
-	if rarity < 50: return commons.pick_random()
-	if rarity < 85: return uncommons.pick_random()
-	else: return rares.pick_random()
+	if rarity < 50: 
+		var chosen = commons.pick_random()
+		return chosen
+	elif rarity < 85: 
+		var chosen = uncommons.pick_random()
+		return chosen
+	else: 
+		var chosen = rares.pick_random()
+		return chosen
 
 static func getRandomRare():
 	populateLists()
@@ -97,7 +106,7 @@ signal clicked
 # used in shop to make sure it can't be bought again while fading out
 var buyable = true
 
-func _init(carName):
+func _init(carName, tooltipPrefix = ""):
 	self.carName = carName
 	textureRect = TextureRect.new()
 	textureRect.texture = load("res://Assets/TrainCars/" + carName + ".png")
@@ -108,7 +117,7 @@ func _init(carName):
 	textureRect.mouse_exited.connect(func(): mouseIn = false)
 	
 	if carName in CAR_INFO:
-		var tooltip = Tooltip.new("[color=Green]"+carName+": [/color]"+CAR_INFO[carName][FIELDS.TOOLTIP])
+		var tooltip = Tooltip.new(tooltipPrefix + "[color=Green]"+carName+": [/color]"+CAR_INFO[carName][FIELDS.TOOLTIP])
 		tooltip.visuals_res = load("res://tooltip.tscn")
 		textureRect.add_child(tooltip)
 	
