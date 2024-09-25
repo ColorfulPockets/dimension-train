@@ -20,7 +20,7 @@ func _ready():
 		for prevNode in prevLayer:
 			if currentLayer.size() == 0:
 				for reward in prevNode.rewardsArray:
-					var nextNode = getNextNode(prevNode)
+					var nextNode = getNextNode(prevNode, currentLayerIndex)
 					currentLayer.append(nextNode)
 					graph.add_node(nextNode, [[prevNode, reward]])
 			else:
@@ -38,11 +38,11 @@ func _ready():
 						if connectionValid:
 							graph.add_connection(prevNode, connectionNode, prevNode.rewardsArray[i])
 						else:
-							var nextNode = getNextNode(prevNode)
+							var nextNode = getNextNode(prevNode, currentLayerIndex)
 							currentLayer.append(nextNode)
 							graph.add_node(nextNode, [[prevNode, prevNode.rewardsArray[i]]])
 					else:
-						var nextNode = getNextNode(prevNode)
+						var nextNode = getNextNode(prevNode, currentLayerIndex)
 						currentLayer.append(nextNode)
 						graph.add_node(nextNode, [[prevNode, prevNode.rewardsArray[i]]])
 		prevLayerIndex += 1
@@ -52,9 +52,12 @@ func _ready():
 	$ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer.drawMap(layers)
 			
 
-func getNextNode(prevNode:MapRewards) -> MapRewards:
+func getNextNode(prevNode:MapRewards, currentLayerIndex:int) -> MapRewards:
 	var retry = true
 	var newMap = getBasicMap()
+	# First layer is always basic maps to let you spread out for more options
+	if currentLayerIndex == 1:
+		return newMap
 	while retry:
 		retry = false
 		newMap = getBasicMap()

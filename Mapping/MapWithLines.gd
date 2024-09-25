@@ -50,6 +50,7 @@ func drawMap(layers):
 		vBoxContainer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		vBoxContainer.alignment = BoxContainer.ALIGNMENT_CENTER
 		vBoxContainer.add_theme_constant_override("separation", separation)
+		
 		for node:MapRewards in layer:
 			vBoxContainer.add_child(node)
 		
@@ -62,8 +63,8 @@ func drawMap(layers):
 				var next_node = next_connection[0]
 				var connection_reward = next_connection[1]
 				var line:PackedVector2Array = []
-				line.append(node.global_position + Vector2(node.size.x*1, node.size.y/2) - global_position)
-				line.append(next_node.global_position + Vector2(next_node.size.x*0, next_node.size.y/2) - global_position)
+				line.append(node.global_position + Vector2(node.size.x, node.size.y/2) - global_position)
+				line.append(next_node.global_position + Vector2(0, next_node.size.y/2) - global_position)
 				
 				lines.append(line)
 				lineRewards.append(connection_reward)
@@ -99,7 +100,7 @@ func _draw():
 				var trainCarReward = TrainCar.new(reward[1], "Path reward:\n")
 				trainCarReward.position = line[0] + percentageAlongLine * (line[1] - line[0])
 				trainCarReward.position += self.position
-				trainCarReward.scale *= 3.5
+				trainCarReward.scale *= 3
 				get_parent().add_child(trainCarReward)
 			elif reward[1] == "MoneyBag":
 				var moneyBagContainer = Node2D.new()
