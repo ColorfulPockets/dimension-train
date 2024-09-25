@@ -2,8 +2,10 @@ class_name MapRewards extends TextureRect
 
 var mapName
 var isMirrored
-
-#The first value in the sub-arrays tells if there's any special info to render, the second is rewards to add
+  
+# The first value in the sub-arrays tells if there's any special info to render, 
+# the second is rewards to add,
+# the third is an index so we can tell which path is taken
 var rewardsArray
 
 func _init(mapName, isMirrored, rewardsArray):

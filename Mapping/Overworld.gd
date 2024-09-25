@@ -1,15 +1,22 @@
 class_name Overworld extends PanelContainer
 
+var TRAIN_MOVE_TIME = 1.0
+
 static var graph:DirectedGraph
 
 const BASIC_AREAS = ["Corridor", "Diverging", "LostTrack", "SlugForest"]
 const MINIBOSSES = ["Moon Witch"]
 
+var root
+var currentNode: MapRewards
+var trainAvatar:TrainCar
+
 func _ready():
 	graph = DirectedGraph.new()
 	
-	var root = getBasicMap()
+	root = getBasicMap()
 	graph.add_node(root)
+	currentNode = root
 	
 	var prevLayerIndex = 0
 	var currentLayerIndex = 1
@@ -49,9 +56,16 @@ func _ready():
 		currentLayerIndex += 1
 		layers.append([])
 	
-	$ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer.drawMap(layers)
+	await $ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer.drawMap(layers)
+	
+	trainAvatar = TrainCar.new("Front")
+	trainAvatar.scale *= 4
+	trainAvatar.global_position = currentNode.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
+	add_child(trainAvatar)
+	
+	await get_tree().create_timer(1.0).timeout
+	advanceTrain(1)
 			
-
 func getNextNode(prevNode:MapRewards, currentLayerIndex:int) -> MapRewards:
 	var retry = true
 	var newMap = getBasicMap()
@@ -92,7 +106,10 @@ func getMapWithRewards(mapName) -> MapRewards:
 	var mapRewards:MapRewards = MapRewards.new(mapInfo[0], mapInfo[1], mapInfo[4])
 	return mapRewards
 
-# Returns an array of arrays.  The first value in the sub-arrays tells if there's any special info to render, the second is rewards to add
+# Returns an array of arrays.  
+# The first value in the sub-arrays tells if there's any special info to render, 
+# the second is rewards to add,
+# the third is an index so we can tell which path is taken
 func getRewardArray(mapName, mirrored=false):
 	var numExits = Tile.getNumExits(mapName)
 	var cell_info = Tile.mapDb[mapName][Tile.CellInfo]
@@ -115,7 +132,35 @@ func getRewardArray(mapName, mirrored=false):
 	if mirrored:
 		rewardsArray.reverse()
 	
+	for i in range(rewardsArray.size()):
+		var rewards = rewardsArray[i]
+		rewards.push_front(i)
+	
 	return rewardsArray
+
+func advanceTrain(pathIndex):
+	var nextNode
+	for connection in graph.get_connections_for_node(currentNode):
+		#connection is [node, value], where value is the rewards array
+		if connection[1][0] == pathIndex:
+			nextNode = connection[0]
+	
+	moveTrainBetweenNodes(currentNode, nextNode)
+
+func moveTrainBetweenNodes(currentNode:MapRewards, nextNode:MapRewards):
+	var start_point = currentNode.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
+	var end_point = nextNode.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
+	
+	# GPT
+	var time_passed = 0.0
+	
+	while time_passed < TRAIN_MOVE_TIME:
+		time_passed += get_process_delta_time()
+		var t = time_passed / TRAIN_MOVE_TIME # normalized time (0 to 1)
+		trainAvatar.global_position = start_point.lerp(end_point, t) # interpolate position
+		await get_tree().process_frame # wait for next frame
+	
+	currentNode = nextNode
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

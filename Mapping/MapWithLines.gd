@@ -76,8 +76,10 @@ func _draw():
 		var line = lines[i]
 		var reward = lineRewards[i]
 		draw_polyline(line, Color.WHITE, 5)
-		if reward.size() > 0:
-			if reward[0] == "WaterCheck":
+		# reward always has an element, which is the index
+		# if it has more than that, it has special rewards
+		if reward.size() > 1:
+			if reward[1] == "WaterCheck":
 				var waterCheckIconContainer = Node2D.new()
 				var waterCheckIcon = TextureRect.new()
 				var textureSize = Vector2(50,50)
@@ -95,14 +97,14 @@ func _draw():
 				var tooltip = Tooltip.new("Crossing water is necessary to take this path.")
 				tooltip.visuals_res = load("res://tooltip.tscn")
 				waterCheckIcon.add_child(tooltip)
-			if reward[1] in TrainCar.allCars:
+			if reward[2] in TrainCar.allCars:
 				var percentageAlongLine = 0.65
-				var trainCarReward = TrainCar.new(reward[1], "Path reward:\n")
+				var trainCarReward = TrainCar.new(reward[2], "Path reward:\n")
 				trainCarReward.position = line[0] + percentageAlongLine * (line[1] - line[0])
 				trainCarReward.position += self.position
 				trainCarReward.scale *= 3
 				get_parent().add_child(trainCarReward)
-			elif reward[1] == "MoneyBag":
+			elif reward[2] == "MoneyBag":
 				var moneyBagContainer = Node2D.new()
 				var moneyBagIcon = TextureRect.new()
 				var textureSize = Vector2(50,50)
