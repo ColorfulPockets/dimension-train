@@ -63,16 +63,10 @@ func _ready():
 		
 	drawPile.shuffle()
 	
-	terrain.setMap(mapName)
-	
 	terrain.building_rail.connect(func(): building_rail = true)
 	terrain.rail_built.connect(func(_x): building_rail = false, 1)
 	
 	drawHand()
-	
-
-func setMap(mapName):
-	self.mapName = mapName
 
 func drawCardFromDeck():
 	await drawCard(drawPileNode.position, Vector2.ZERO)

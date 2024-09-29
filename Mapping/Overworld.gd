@@ -7,21 +7,23 @@ static var graph:DirectedGraph
 const BASIC_AREAS = ["Corridor", "Diverging", "LostTrack", "SlugForest"]
 const MINIBOSSES = ["Moon Witch"]
 
-var root
 var currentNode: MapRewards
 var trainAvatar:TrainCar
 
 func _ready():
 	graph = DirectedGraph.new()
 	
-	root = getBasicMap()
-	graph.add_node(root)
-	currentNode = root
+	var preRoot = MapRewards.new("Empty", false, [])
 	
-	var prevLayerIndex = 0
-	var currentLayerIndex = 1
-	var layers = [[root], []]
-	for layer in range(9):
+	var root = getBasicMap()
+	graph.add_node(preRoot)
+	graph.add_node(root, [[preRoot, [0]]])
+	currentNode = preRoot
+	
+	var prevLayerIndex = 1
+	var currentLayerIndex = 2
+	var layers = [[preRoot],[root], []]
+	for layer in range(1,10):
 		var prevLayer = layers[prevLayerIndex]
 		var currentLayer = layers[currentLayerIndex]
 		for prevNode in prevLayer:
@@ -60,12 +62,9 @@ func _ready():
 	
 	trainAvatar = TrainCar.new("Front")
 	trainAvatar.scale *= 4
+	$ScrollContainer/VBoxContainer/MarginContainer.add_child(trainAvatar)
 	trainAvatar.global_position = currentNode.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
-	add_child(trainAvatar)
-	
-	await get_tree().create_timer(1.0).timeout
-	advanceTrain(1)
-			
+
 func getNextNode(prevNode:MapRewards, currentLayerIndex:int) -> MapRewards:
 	var retry = true
 	var newMap = getBasicMap()
@@ -77,14 +76,14 @@ func getNextNode(prevNode:MapRewards, currentLayerIndex:int) -> MapRewards:
 		newMap = getBasicMap()
 		match randi_range(0,5):
 			0: 
-				newMap = MapRewards.new("Shop", null, [[]])
+				newMap = MapRewards.new("Shop", false, [[]])
 			1: 
 				if prevNode.mapName in MINIBOSSES:
 					retry = true
 				else:
 					newMap = getMiniBoss()
 			2:
-				newMap = MapRewards.new("Rail Yard", null, [[]])
+				newMap = MapRewards.new("Railyard", false, [[]])
 		if newMap.mapName == prevNode.mapName:
 			retry = true
 			
@@ -145,7 +144,7 @@ func advanceTrain(pathIndex):
 		if connection[1][0] == pathIndex:
 			nextNode = connection[0]
 	
-	moveTrainBetweenNodes(currentNode, nextNode)
+	await moveTrainBetweenNodes(currentNode, nextNode)
 
 func moveTrainBetweenNodes(currentNode:MapRewards, nextNode:MapRewards):
 	var start_point = currentNode.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
@@ -160,7 +159,7 @@ func moveTrainBetweenNodes(currentNode:MapRewards, nextNode:MapRewards):
 		trainAvatar.global_position = start_point.lerp(end_point, t) # interpolate position
 		await get_tree().process_frame # wait for next frame
 	
-	currentNode = nextNode
+	self.currentNode = nextNode
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

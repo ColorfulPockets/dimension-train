@@ -33,7 +33,6 @@ var legalToPlaceRail = false
 var mapShape:Vector2i = Vector2i(0,0)
 var revealedTiles:Array[Vector2i] = []
 var originalRevealedTiles
-var map:Tile
 
 var trainLocations:Array[Vector2i]
 var railEndpoint:Vector2i
@@ -67,9 +66,7 @@ func _ready():
 		add_layer(i)
 		set_layer_enabled(i, true)
 		set_layer_z_index(i,0)
-			
-
-func setMap(mapName):
+	
 	Stats.startLevel()
 	var trainFront = TrainCar.new("Front")
 	trainFront.scale *= 0.5
@@ -88,8 +85,6 @@ func setMap(mapName):
 	
 	trainCars.append(trainBack)
 	
-	map = load("res://Mapping/" + mapName + ".gd").new()
-	
 	setUpMap()
 	
 	camera.position = map_to_local(Vector2(railEndpoint)*scale) - (Global.VIEWPORT_SIZE /2)
@@ -99,8 +94,11 @@ func setMap(mapName):
 	startTurn()
 
 func setUpMap():
-	Global.clearRewards()
-	mapShape = Vector2i(map.cells.size(), map.cells[0].size())
+	var map:MapRewards = $"../../EverywhereUI/Overworld".currentNode
+	var mapName = map.mapName
+	var cells = Tile.mapDb[mapName][Tile.Cells]
+	var cellInfo = Tile.mapDb[mapName][Tile.CellInfo]
+	mapShape = Vector2i(cells.size(), cells[0].size())
 	for i in range(mapShape.x + trainCars.size()):
 		outgoingMap.append([])
 		incomingMap.append([])
@@ -113,7 +111,7 @@ func setUpMap():
 	for x in range(mapShape.x):
 		for y in range(mapShape.y):
 			# The indexing is backwards because it's row, column (which is y, x)
-			var cellEnum = map.cells[y][x]
+			var cellEnum = cells[y][x]
 			var cellPosition = Vector2i(x, y)
 			# Add the grid overlay to everything
 			set_cell(Global.grid_layer, cellPosition, 0, Global.grid_outline)
@@ -134,17 +132,13 @@ func setUpMap():
 				lastRailPlaced = cellPosition
 			#TODO: figure out how to handle existing rail as bidirectional
 			else:
-				var cell_info = map.cell_info[cellEnum]
+				var cell_info = cellInfo[cellEnum]
 				if cell_info[Tile.Type] == Tile.TYPES.Rail:
 					set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL, cell_info[Tile.Directions][0], cell_info[Tile.Directions][1], Global.rail_layer)
 					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
 				elif cell_info[Tile.Type] == Tile.TYPES.Goal:
 					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
 					set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cell_info[Tile.Directions][0], cell_info[Tile.Directions][1], Global.rail_layer)
-					Global.addReward(cellPosition, cell_info[Tile.Rewards])
-					var rewardPosition = mapPositionToScreenPosition(Global.stepInDirection(cellPosition, outgoingMap[cellPosition.x][cellPosition.y]))
-					rewardPosition -= Vector2(tile_set.tile_size)*scale/2
-					PLAYSPACE.spawnRewardBox(cellPosition, rewardPosition)
 				elif cell_info[Tile.Type] == Tile.TYPES.Spawner:
 					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
 					var spawner = Spawner.new(cell_info[Tile.SpawnerName], cell_info[Tile.SpawnerCount], cellPosition)
