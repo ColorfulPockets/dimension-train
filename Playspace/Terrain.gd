@@ -93,11 +93,28 @@ func _ready():
 	
 	startTurn()
 
+var pathIndices:Dictionary
 func setUpMap():
+	var cells
+	var cellInfo
 	var map:MapRewards = $"../../EverywhereUI/Overworld".currentNode
 	var mapName = map.mapName
-	var cells = Tile.mapDb[mapName][Tile.Cells]
-	var cellInfo = Tile.mapDb[mapName][Tile.CellInfo]
+	if map.isMirrored:
+		var mirroredInfo = Tile.mirrorMap(mapName)
+		cells = mirroredInfo[0]
+		cellInfo = mirroredInfo[1]
+	else:
+		cells = Tile.mapDb[mapName][Tile.Cells]
+		cellInfo = Tile.mapDb[mapName][Tile.CellInfo]
+	var index = 0
+	for i in range(cells.size()):
+		var row = cells[i]
+		# Positive indices have special values in cellInfo
+		if row[-1] < 0:
+			continue
+		if cellInfo[row[-1]][Tile.Type] == Tile.TYPES.Goal:
+			pathIndices[i] = index
+			index += 1
 	mapShape = Vector2i(cells.size(), cells[0].size())
 	for i in range(mapShape.x + trainCars.size()):
 		outgoingMap.append([])
@@ -275,24 +292,8 @@ func advanceTrain():
 			
 			if get_cell_atlas_coords(Global.rail_layer, nextLocation) == Global.rail_endpoint:
 				Stats.levelCounter += 1
-				Global.selectedReward = Global.rewards[nextLocation]
-				for reward in Global.selectedReward:
-					if reward == "Gold":
-						Stats.coinCount += 1
-					elif reward == "ER":
-						Stats.addEmergencyRail(1)
-					elif " Car" in reward:
-						Stats.trainCars.append(reward)
-						var trainCar = TrainCar.new(reward)
-						if TrainCar.TYPE.ONESHOT in trainCar.types:
-							trainCar.onGain()
-					elif reward == "MinusSpeed":
-						Stats.startingTrainSpeed -= 1
-						if Stats.startingTrainSpeed < 0: Stats.startingTrainSpeed = 0
-					elif reward == "PlusSpeed":
-						Stats.startingTrainSpeed += 1
 
-				PLAYSPACE.levelComplete.emit()
+				PLAYSPACE.levelComplete.emit(pathIndices[nextLocation.y])
 				trainSucceeded = true
 				stepNumber = INF
 				break

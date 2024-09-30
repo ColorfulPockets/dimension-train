@@ -50,8 +50,6 @@ func goToNextNode(pathIndex:int):
 	
 	var nodeName = overworld.currentNode.mapName
 	
-	print(nodeName)
-	
 	if nodeName == "Shop":
 		goToShop()
 	elif nodeName == "Railyard":
@@ -64,7 +62,7 @@ func goToMap():
 	
 	previousScene = currentScene
 	currentScene = map
-	map.levelComplete.connect(goToRewards)
+	map.levelComplete.connect(func(x): goToRewards(x))
 	
 	switchScenes(false)
 

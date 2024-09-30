@@ -26,7 +26,7 @@ static var mapDb = {
 			[E, E, W, E, W, E, E, E, W, E, E, E, E, E, E],
 			[E, E, E, W, W, W, M, W, W, M, M, M, M, M, M],
 			[E, E, E, M, M, M, M, M, M, M, M, M, M, M, M],
-			[E, E, E, M, M, 2, M, M, M, M, M, M, M, M, M],
+			[L, E, E, M, M, 2, M, M, M, M, M, M, M, M, M],
 			[E, E, E, M, M, M, M, M, M, M, M, M, M, M, M],
 			[E, E, E, W, W, W, M, W, W, M, M, M, M, M, M],
 			[E, E, W, E, W, E, E, E, W, E, E, E, E, E, E],
@@ -157,16 +157,6 @@ static var mapDb = {
 	},
 }
 
-static func getMapInfo(mapName):
-	var mapInfo = []
-	var numExits = getNumExits(mapName)
-	if randi_range(0,1) == 1:
-		mapInfo = mirrorMap(mapName)
-	else:
-		mapInfo = [mapName, false, mapDb[mapName][Cells], mapDb[mapName][CellInfo]]
-		
-	return mapInfo
-
 static func getNumExits(mapName):
 	var cell_info = mapDb[mapName][CellInfo]
 	var count = 0
@@ -188,7 +178,7 @@ static func mirrorMap(mapName):
 			
 			cell_info[key][Directions] = new_dirs
 	
-	return [mapName, true, cells, cell_info]
+	return [cells, cell_info]
 
 # Takes a direction and returns its inverse, but only if its U or D
 static func invert_if_ud(dir:Global.DIR):

@@ -76,14 +76,14 @@ func getNextNode(prevNode:MapRewards, currentLayerIndex:int) -> MapRewards:
 		newMap = getBasicMap()
 		match randi_range(0,5):
 			0: 
-				newMap = MapRewards.new("Shop", false, [[]])
+				newMap = MapRewards.new("Shop", false, [[0]])
 			1: 
 				if prevNode.mapName in MINIBOSSES:
 					retry = true
 				else:
 					newMap = getMiniBoss()
 			2:
-				newMap = MapRewards.new("Railyard", false, [[]])
+				newMap = MapRewards.new("Railyard", false, [[0]])
 		if newMap.mapName == prevNode.mapName:
 			retry = true
 			
@@ -99,10 +99,14 @@ func getBasicMap() -> MapRewards:
 	
 # Returns: [mapName, isMirrored:bool, cells, cell_info, rewardArray]
 func getMapWithRewards(mapName) -> MapRewards:
-	var mapInfo = Tile.getMapInfo(mapName)
-	mapInfo.append(getRewardArray(mapName, mapInfo[1]))
+	var mapInfo = [mapName]
+	if randi_range(0,1) == 1:
+		mapInfo.push_back(true)
+	else:
+		mapInfo.push_back(false)
+	mapInfo.push_back(getRewardArray(mapName, mapInfo[1]))
 	
-	var mapRewards:MapRewards = MapRewards.new(mapInfo[0], mapInfo[1], mapInfo[4])
+	var mapRewards:MapRewards = MapRewards.new(mapInfo[0], mapInfo[1], mapInfo[2])
 	return mapRewards
 
 # Returns an array of arrays.  
