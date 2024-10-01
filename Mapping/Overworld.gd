@@ -1,6 +1,6 @@
 class_name Overworld extends PanelContainer
 
-var TRAIN_MOVE_TIME = 1.0
+const TRAIN_MOVE_TIME = 1.0
 
 static var graph:DirectedGraph
 
@@ -142,17 +142,19 @@ func getRewardArray(mapName, mirrored=false):
 	return rewardsArray
 
 func advanceTrain(pathIndex):
-	var nextNode
+	var prevNode = currentNode
 	for connection in graph.get_connections_for_node(currentNode):
 		#connection is [node, value], where value is the rewards array
 		if connection[1][0] == pathIndex:
-			nextNode = connection[0]
+			currentNode = connection[0]
 	
-	await moveTrainBetweenNodes(currentNode, nextNode)
+	moveTrainBetweenNodes(prevNode, currentNode)
 
-func moveTrainBetweenNodes(currentNode:MapRewards, nextNode:MapRewards):
-	var start_point = currentNode.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
-	var end_point = nextNode.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
+signal train_finished_moving
+
+func moveTrainBetweenNodes(node1:MapRewards, node2:MapRewards):
+	var start_point = node1.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
+	var end_point = node2.global_position + trainAvatar.scale*trainAvatar.textureRect.size/2
 	
 	# GPT
 	var time_passed = 0.0
@@ -163,7 +165,7 @@ func moveTrainBetweenNodes(currentNode:MapRewards, nextNode:MapRewards):
 		trainAvatar.global_position = start_point.lerp(end_point, t) # interpolate position
 		await get_tree().process_frame # wait for next frame
 	
-	self.currentNode = nextNode
+	train_finished_moving.emit()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

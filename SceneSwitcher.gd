@@ -5,6 +5,9 @@ var previousScene = null
 var loaderThread = Thread.new()
 var currentLocation = Vector2i(0,0)
 const LOAD_TIME = 0.25
+const MAP_FADE_TIME = 0.25
+
+@onready var overworld:Overworld
 
 ##########
 # Scenes #
@@ -18,6 +21,8 @@ var mapScene = preload("res://Playspace/Playspace.tscn")
 func _ready():
 	Stats.setCameraStationary()
 	$Background/Swirl.emitting = true
+	overworld = $EverywhereUI/Overworld
+	overworld.train_finished_moving.connect(trainFinishedMoving)
 	currentScene = mapScene.instantiate()
 	goToNextNode(0)
 	#$EverywhereUI/AudioStreamPlayer.play()
@@ -34,19 +39,12 @@ func switchScenes(setCameraStationary:bool = false):
 	previousScene.queue_free()
 
 func goToNextNode(pathIndex:int):
-	var overworld:Overworld = $EverywhereUI/Overworld
 	overworld.visible = true
 	overworld.modulate.a = 0
 	$"EverywhereUI/Top Bar/TopBar HBox".ignorePresses = true
-	var MAP_FADE_TIME = 0.25
 	await Global.fadeInNode(overworld, MAP_FADE_TIME)
 	
-	await overworld.advanceTrain(pathIndex)
-	
-	await Global.fadeOutNode(overworld, MAP_FADE_TIME)
-	overworld.modulate.a = 1
-	overworld.visible = false
-	$"EverywhereUI/Top Bar/TopBar HBox".ignorePresses = false
+	overworld.advanceTrain(pathIndex)
 	
 	var nodeName = overworld.currentNode.mapName
 	
@@ -56,6 +54,12 @@ func goToNextNode(pathIndex:int):
 		goToRailyard()
 	else:
 		goToMap()
+		
+func trainFinishedMoving():
+	await Global.fadeOutNode(overworld, MAP_FADE_TIME)
+	overworld.modulate.a = 1
+	overworld.visible = false
+	$"EverywhereUI/Top Bar/TopBar HBox".ignorePresses = false
 
 func goToMap():
 	var map = mapScene.instantiate()

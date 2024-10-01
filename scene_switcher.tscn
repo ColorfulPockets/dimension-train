@@ -57,6 +57,7 @@ alpha_curve = SubResource("CurveTexture_50jpj")
 script = ExtResource("1_4s6fu")
 
 [node name="EverywhereUI" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="Top Bar" type="ColorRect" parent="EverywhereUI"]
 offset_right = 3840.0
