@@ -6,6 +6,7 @@ const M = -3
 const W = -4
 const L = -5
 const X = -6
+const S = -7
 
 #const TrainCar = preload("res://TrainCar.gd")
 
@@ -147,6 +148,8 @@ func setUpMap():
 				railEndpoint = cellPosition
 				railStartpoint = cellPosition
 				lastRailPlaced = cellPosition
+			elif cellEnum == S:
+				set_cell(Global.grid_layer, cellPosition, 0, Global.delete)
 			#TODO: figure out how to handle existing rail as bidirectional
 			else:
 				var cell_info = cellInfo[cellEnum]

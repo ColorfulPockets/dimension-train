@@ -147,6 +147,12 @@ func advanceTrain(pathIndex):
 		#connection is [node, value], where value is the rewards array
 		if connection[1][0] == pathIndex:
 			currentNode = connection[0]
+			if connection[1].size() > 2:
+				if connection[1][2] == "MoneyBag":
+					Stats.coinCount += randi_range(6,9)
+				else:
+					Stats.trainCars.append(connection[1][2])
+					
 	
 	moveTrainBetweenNodes(prevNode, currentNode)
 

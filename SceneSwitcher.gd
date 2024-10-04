@@ -72,7 +72,9 @@ func goToMap():
 
 func goToRewards(pathIndex:int):
 	var rewards = rewardsScene.instantiate()
-	rewards.card_selected.connect(func(): goToNextNode(pathIndex))
+	rewards.card_selected.connect(func(): 
+		Stats.coinCount += randi_range(0,2)
+		goToNextNode(pathIndex))
 	
 	previousScene = currentScene
 	currentScene = rewards

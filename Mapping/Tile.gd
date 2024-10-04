@@ -19,9 +19,9 @@ static var DIR = Global.DIR
 static var mapDb = {
 	"Corridor": {
 		Cells: [
-			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T],
-			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T],
-			[E, E, E, T, T, W, W, W, T, T, T, T, T, T, T],
+			[S, S, S, T, T, T, T, T, T, T, T, T, S, S, S],
+			[S, S, E, T, T, T, T, T, T, T, T, T, T, S, S],
+			[S, E, E, T, T, W, W, W, T, T, T, T, T, T, S],
 			[E, E, E, E, E, E, W, E, E, E, E, E, E, E, 0],
 			[E, E, W, E, W, E, E, E, W, E, E, E, E, E, E],
 			[E, E, E, W, W, W, M, W, W, M, M, M, M, M, M],
@@ -31,9 +31,9 @@ static var mapDb = {
 			[E, E, E, W, W, W, M, W, W, M, M, M, M, M, M],
 			[E, E, W, E, W, E, E, E, W, E, E, E, E, E, E],
 			[E, E, E, E, E, E, W, E, E, E, E, E, E, E, 1],
-			[E, E, E, T, T, W, W, W, T, T, T, T, T, T, T],
-			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T],
-			[E, E, E, T, T, T, T, T, T, T, T, T, T, T, T]],
+			[S, E, E, T, T, W, W, W, T, T, T, T, T, T, S],
+			[S, S, E, T, T, T, T, T, T, T, T, T, T, S, S],
+			[S, S, S, T, T, T, T, T, T, T, T, T, S, S, S]],
 	
 		CellInfo: {
 			0: goalWithRewards(REWARDS.Easy),
