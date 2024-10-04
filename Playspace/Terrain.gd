@@ -122,7 +122,7 @@ func setUpMap():
 		if cellInfo[row[-1]][Tile.Type] == Tile.TYPES.Goal:
 			pathIndices[i] = index
 			index += 1
-	mapShape = Vector2i(cells.size(), cells[0].size())
+	mapShape = Vector2i(cells[0].size(), cells.size())
 	for i in range(mapShape.x + trainCars.size()):
 		outgoingMap.append([])
 		incomingMap.append([])
@@ -278,6 +278,9 @@ func moveSpriteAlongPoints(sprite, points:Array, speed):
 			sprite.rotation = direction.angle()
 			await get_tree().create_timer(0.01).timeout
 
+# If the chicane car reports a chicane, we reduce next turn's speed by 1
+var chicane_car_slow = 0
+
 func advanceTrain():
 	if trainCrashed or trainSucceeded: return
 	
@@ -346,7 +349,7 @@ func advanceTrain():
 				return
 			
 			if TrainCar.TYPE.TRAINMOVEMENT in trainCars[i].types:
-				await trainCars[i].onMovement(trainLocation, nextLocation)
+				await trainCars[i].onMovement(trainLocation, self)
 			
 			destroyEnemiesInCells([nextLocation])
 			
@@ -406,7 +409,9 @@ func advanceTrain():
 			stepNumber += 1
 	
 	Stats.turnCounter += 1
-	Stats.trainSpeed = speedRampFunction.call(Stats.turnCounter)
+	Stats.trainSpeed = speedRampFunction.call(Stats.turnCounter) - chicane_car_slow
+	
+	chicane_car_slow = 0
 
 var enemiesMoved = 0
 

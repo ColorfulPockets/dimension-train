@@ -54,6 +54,11 @@ static var CAR_INFO = {
 		FIELDS.TYPES: [TYPE.TRAINMOVEMENT],
 		FIELDS.RARITY: RARITY.RARE,
 		},
+	"Chicane Car": {
+		FIELDS.TOOLTIP: "Each turn, if this car has exited a chicane, reduce next turn's speed by 1.  A chicane is where the track changes direction for 1 cell, then changes back to continue in the first direction.",
+		FIELDS.TYPES: [TYPE.TRAINMOVEMENT],
+		FIELDS.RARITY: RARITY.RARE,
+		},
 }
 
 static var commons = []
@@ -154,13 +159,27 @@ func onEmergency() -> bool:
 				return true
 	
 	return false
-	
-func onMovement(currentLocation: Vector2i, nextLocation: Vector2i) -> void:
+
+# Called prior to movement, notably
+func onMovement(currentLocation: Vector2i, terrain: Terrain) -> void:
 	PLAYSPACE = $"../.."
 	match carName:
 		"Retrograde Car":
+			var trainOutgoing = terrain.outgoingMap[currentLocation.x][currentLocation.y]
+			var nextLocation = Global.stepInDirection(currentLocation, trainOutgoing)
 			if nextLocation.x < currentLocation.x:
 				await PLAYSPACE.drawCardFromDeck()
+		"Chicane Car":
+			var trainOutgoing = terrain.outgoingMap[currentLocation.x][currentLocation.y]
+			var nextLocation = Global.stepInDirection(currentLocation, trainOutgoing)
+			var nextIncoming = terrain.incomingMap[nextLocation.x][nextLocation.y]
+			var trainIncoming = terrain.incomingMap[currentLocation.x][currentLocation.y]
+			var prevLocation = Global.stepInDirection(currentLocation, trainIncoming)
+			# First, check that we end up diagonal from where we were 2 steps ago
+			if (prevLocation.x != nextLocation.x) and (prevLocation.y != nextLocation.y):
+				var prevIncoming = terrain.incomingMap[prevLocation.x][prevLocation.y]
+				if prevIncoming == nextIncoming:
+					terrain.chicane_car_slow = 1
 
 func animateBrakes():
 	textureRect.texture = load("res://Assets/TrainCars/Brake Car_engaged.png")

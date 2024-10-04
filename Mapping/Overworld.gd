@@ -5,7 +5,7 @@ const TRAIN_MOVE_TIME = 1.0
 static var graph:DirectedGraph
 
 const BASIC_AREAS = ["Corridor", "Diverging", "LostTrack", "SlugForest"]
-const MINIBOSSES = ["Moon Witch"]
+const MINIBOSSES = ["Desert Highway"]
 
 var currentNode: MapRewards
 var trainAvatar:TrainCar

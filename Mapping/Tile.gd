@@ -20,6 +20,7 @@ static var DIR = Global.DIR
 static var equalsTurn:Callable = func(turnNumber): return turnNumber
 static var slowBuild:Callable = func(turnNumber): return turnNumber - (turnNumber % 2)
 static var turnPlusOne:Callable = func(turnNumber): return turnNumber + 1
+static var rampToFour:Callable = func(turnNumber): return min(turnNumber, 4)
 
 static var mapDb = {
 	"Corridor": {
@@ -168,6 +169,22 @@ static var mapDb = {
 			1: goalWithRewards(REWARDS.Hard),
 		}
 	},
+	"Desert Highway": {
+		Cells: [
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, 0],
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[L, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, 1],
+		],
+	
+		CellInfo: {
+			0: goalWithRewards(REWARDS.Hard),
+			1: goalWithRewards(REWARDS.Hard),
+		},
+		
+		SpeedRamp: rampToFour
+	}
 }
 
 static func getNumExits(mapName):
