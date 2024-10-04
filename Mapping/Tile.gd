@@ -11,10 +11,15 @@ const X = -6
 const S = -7
 enum TYPES {Goal, Rail, Spawner}
 enum {Directions, Type, Rewards, SpawnerName, SpawnerCount}
-enum {Cells, CellInfo}
+enum {Cells, CellInfo, SpeedRamp}
 enum REWARDS {Easy, Hard, WaterCheck}
 
 static var DIR = Global.DIR
+
+##### Speed Ramp Functions #####
+static var equalsTurn:Callable = func(turnNumber): return turnNumber
+static var slowBuild:Callable = func(turnNumber): return turnNumber - (turnNumber % 2)
+static var turnPlusOne:Callable = func(turnNumber): return turnNumber + 1
 
 static var mapDb = {
 	"Corridor": {
@@ -39,7 +44,9 @@ static var mapDb = {
 			0: goalWithRewards(REWARDS.Easy),
 			1: goalWithRewards(REWARDS.Easy),
 			2: spawnerWithName("Guard Factory", 1)
-		}
+		},
+		
+		SpeedRamp: equalsTurn
 	},
 	"Diverging": {
 		Cells: [
@@ -69,7 +76,9 @@ static var mapDb = {
 			6: railWithDirections([DIR.L, DIR.R]),
 			
 			7: spawnerWithName("Guard Factory", 1)
-		}
+		},
+		SpeedRamp: turnPlusOne
+			
 	},
 	"LostTrack": {
 		Cells: [
@@ -109,7 +118,9 @@ static var mapDb = {
 
 			15: spawnerWithName("Guard Factory", 1),
 			16: spawnerWithName("Guard Factory", 1),
-		}
+		},
+		
+		SpeedRamp: slowBuild
 	},
 	"SlugForest": {
 		Cells: [
@@ -146,7 +157,9 @@ static var mapDb = {
 			12: railWithDirections([DIR.L, DIR.R]),
 			
 			13: spawnerWithName("Swamp", 2)
-		}
+		},
+		
+		SpeedRamp: slowBuild
 	},
 	"Moon Witch": {
 		Cells: [],

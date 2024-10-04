@@ -95,11 +95,17 @@ func _ready():
 	startTurn()
 
 var pathIndices:Dictionary
+var speedRampFunction:Callable
 func setUpMap():
 	var cells
 	var cellInfo
 	var map:MapRewards = $"../../EverywhereUI/Overworld".currentNode
 	var mapName = map.mapName
+	speedRampFunction = Tile.mapDb[mapName][Tile.SpeedRamp]
+	if Global.devmode:
+		speedRampFunction = func(x): return 100
+	Stats.turnCounter = 0
+	Stats.trainSpeed = speedRampFunction.call(Stats.turnCounter)
 	if map.isMirrored:
 		var mirroredInfo = Tile.mirrorMap(mapName)
 		cells = mirroredInfo[0]
@@ -400,7 +406,7 @@ func advanceTrain():
 			stepNumber += 1
 	
 	Stats.turnCounter += 1
-	Stats.resetTrainSpeed()
+	Stats.trainSpeed = speedRampFunction.call(Stats.turnCounter)
 
 var enemiesMoved = 0
 

@@ -36,9 +36,6 @@ func removeEmergencyRail(num:int):
 	else:
 		emergencyRailCount -= num
 
-func resetTrainSpeed():
-	trainSpeed = startingTrainSpeed + turnCounter
-
 var currentEnergy = 3
 var maxEnergy = 3
 
@@ -68,7 +65,6 @@ func startLevel():
 	currentEnergy = maxEnergy
 	powersInPlay = []
 	pickupRange = startingPickupRange
-	resetTrainSpeed()
 
 func _ready():
 	for cardName in startingDeckNames:
