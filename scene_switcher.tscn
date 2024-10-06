@@ -1,9 +1,10 @@
-[gd_scene load_steps=27 format=3 uid="uid://du2javvixcoh7"]
+[gd_scene load_steps=28 format=3 uid="uid://du2javvixcoh7"]
 
 [ext_resource type="Script" path="res://SceneSwitcher.gd" id="1_4s6fu"]
 [ext_resource type="Texture2D" uid="uid://bh54wr3rpcfi8" path="res://Assets/WhitePx.png" id="3_iq88p"]
 [ext_resource type="Texture2D" uid="uid://bblsfuib0bw1k" path="res://Assets/Particles/Swirl.png" id="4_u18r4"]
 [ext_resource type="Texture2D" uid="uid://cejphvf2f2mjk" path="res://Assets/Icons/Overworld.png" id="11_7k6gc"]
+[ext_resource type="Script" path="res://Speedometer.gd" id="11_xeb0e"]
 [ext_resource type="Texture2D" uid="uid://dhqckwrsa6bxf" path="res://Assets/UI/Dimension Wheel/Dimension Wheel.png" id="11_yg0n0"]
 [ext_resource type="Script" path="res://Dimension Wheel.gd" id="12_p7bkr"]
 [ext_resource type="Texture2D" uid="uid://6mc4dxub5d4a" path="res://Assets/Icons/Overworld_hover.png" id="12_wf326"]
@@ -67,8 +68,9 @@ color = Color(0.49419, 0.000172693, 0.494187, 1)
 [node name="TopBar HBox" type="HBoxContainer" parent="EverywhereUI/Top Bar"]
 custom_minimum_size = Vector2(3484, 130)
 layout_mode = 0
-offset_right = 829.0
-offset_bottom = 23.0
+offset_top = 10.0
+offset_right = 3484.0
+offset_bottom = 140.0
 size_flags_vertical = 3
 theme_override_constants/separation = 100
 script = ExtResource("14_iv70a")
@@ -86,6 +88,7 @@ expand_mode = 3
 
 [node name="WoodCount" type="Label" parent="EverywhereUI/Top Bar/TopBar HBox/Wood Hbox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 70
 text = "5"
 script = ExtResource("16_amdfs")
 
@@ -99,6 +102,7 @@ expand_mode = 3
 
 [node name="MetalCount" type="Label" parent="EverywhereUI/Top Bar/TopBar HBox/Metal Hbox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 70
 text = "5"
 script = ExtResource("18_c0g8u")
 
@@ -113,6 +117,7 @@ expand_mode = 3
 
 [node name="EmergencyRailCount" type="Label" parent="EverywhereUI/Top Bar/TopBar HBox/ER Hbox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 70
 text = "20"
 script = ExtResource("20_30kth")
 
@@ -126,6 +131,7 @@ expand_mode = 3
 
 [node name="CoinCount" type="Label" parent="EverywhereUI/Top Bar/TopBar HBox/Coin Hbox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 70
 text = "1"
 script = ExtResource("22_kmgqo")
 
@@ -134,9 +140,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 20.0
 
+[node name="Speedometer" type="Panel" parent="EverywhereUI/Top Bar/TopBar HBox"]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 2
+script = ExtResource("11_xeb0e")
+
 [node name="OverworldViewButton" type="TextureButton" parent="EverywhereUI/Top Bar/TopBar HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.2
 shortcut = SubResource("Shortcut_gge07")
 texture_normal = ExtResource("11_7k6gc")
 texture_hover = ExtResource("12_wf326")

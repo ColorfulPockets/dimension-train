@@ -166,7 +166,7 @@ func setUpMap():
 					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
 					set_cell_directional(cellPosition, Global.DIRECTIONAL_TILES.RAIL_END, cell_info[Tile.Directions][0], cell_info[Tile.Directions][1], Global.rail_layer)
 				elif cell_info[Tile.Type] == Tile.TYPES.Spawner:
-					set_cell(Global.base_layer, cellPosition, 0, Global.empty)
+					set_cell(Global.base_layer, cellPosition, 0, Global.delete)
 					var spawner = Spawner.new(cell_info[Tile.SpawnerName], cell_info[Tile.SpawnerCount], cellPosition)
 					spawner.scale *= 0.5
 					spawner.position = mapPositionToScreenPosition(cellPosition) / scale
