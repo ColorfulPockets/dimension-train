@@ -66,13 +66,16 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 	var tooltip = Tooltip.new(getTooltipText, true)
 	tooltip.visuals_res = load("res://tooltip.tscn")
 	textureRect.add_child(tooltip)
-
-func initCounter():
+	
+func initCounter():	
 	counter = Label.new()
 	counter.text = str(numSpawned)
-	counter.add_theme_font_size_override("font_size", 50)
-	counter.position = TERRAIN.mapPositionToScreenPosition(cell)
-	PLAYSPACE.add_child(counter)
+	counter.add_theme_font_size_override("font_size", 100)
+	counter.add_theme_constant_override("outline_size", 50)
+	counter.add_theme_color_override("font_outline_color", Color.BLACK)
+	counter.scale *= 0.1
+	counter.position -= counter.size/2
+	add_child(counter)
 
 #Called at the start of the turn to add enemies
 func spawnIfSpawning():
