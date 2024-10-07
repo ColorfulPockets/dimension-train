@@ -518,3 +518,26 @@ func fadeInNode(node, duration: float) -> void:
 		modulate.a = alpha
 		node.modulate = modulate
 	node.modulate.a = 1.0  # Ensure it's fully opaque at the end
+	
+# Move a node between two positions
+func moveNodeLocalFrame(node:Node, toPos: Vector2, duration:float) -> void:
+	var elapsed_time: float = 0.0
+	var start_pos: Vector2 = node.position
+	while elapsed_time < duration:
+		await get_tree().process_frame
+		elapsed_time += get_process_delta_time()
+		var newPos: Vector2 = lerp(start_pos, toPos, elapsed_time / duration)
+		node.position = newPos
+	node.position = toPos  # Ensure it's fully at position at the end
+	
+# Scale a node to a new scale
+func scaleNode(node:Node, toScale: Vector2, duration:float) -> void:
+	var elapsed_time: float = 0.0
+	var start_scale: Vector2 = node.scale
+	while elapsed_time < duration:
+		await get_tree().process_frame
+		elapsed_time += get_process_delta_time()
+		var newScale: Vector2 = lerp(start_scale, toScale, elapsed_time / duration)
+		node.scale = newScale
+	node.scale = toScale  # Ensure it's fully at scale at the end
+	
