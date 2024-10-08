@@ -54,6 +54,7 @@ var trainSucceeded = false
 @onready var camera = $"../../Camera"
 @onready var cardFunctions = $"../CardFunctions"
 @onready var PLAYSPACE:Playspace = $".."
+@onready var speedometer:Speedometer = $"../../EverywhereUI/Top Bar/TopBar HBox/Speedometer"
 
 var highlighted_cells:Array[Vector2i] = []
 var enemyHighlights:Array = []
@@ -95,17 +96,17 @@ func _ready():
 	startTurn()
 
 var pathIndices:Dictionary
-var speedRampFunction:Callable
 func setUpMap():
 	var cells
 	var cellInfo
 	var map:MapRewards = $"../../EverywhereUI/Overworld".currentNode
 	var mapName = map.mapName
-	speedRampFunction = Tile.mapDb[mapName][Tile.SpeedRamp]
+	Stats.speedRampFunction = Tile.mapDb[mapName][Tile.SpeedRamp]
 	if Global.devmode:
-		speedRampFunction = func(x): return 100
+		Stats.speedRampFunction = func(x): return 100
 	Stats.turnCounter = 0
-	Stats.trainSpeed = speedRampFunction.call(Stats.turnCounter)
+	Stats.trainSpeed = Stats.speedRampFunction.call(Stats.turnCounter)
+	speedometer.populateSpeedometer()
 	if map.isMirrored:
 		var mirroredInfo = Tile.mirrorMap(mapName)
 		cells = mirroredInfo[0]
@@ -306,6 +307,7 @@ func advanceTrain():
 				Stats.levelCounter += 1
 
 				PLAYSPACE.levelComplete.emit(pathIndices[nextLocation.y])
+				speedometer.removeSpeedometer()
 				trainSucceeded = true
 				stepNumber = INF
 				break
@@ -408,8 +410,10 @@ func advanceTrain():
 			await moveTrainCarsAlongPoints(pointsToMoveThrough, 1.0)
 			stepNumber += 1
 	
-	Stats.turnCounter += 1
-	Stats.trainSpeed = speedRampFunction.call(Stats.turnCounter) - chicane_car_slow
+	if Stats.speedAdjustments.size() < 1:
+		Stats.speedAdjustments.append(0)
+	Stats.speedAdjustments[0] += chicane_car_slow
+	speedometer.progressTurn()
 	
 	chicane_car_slow = 0
 

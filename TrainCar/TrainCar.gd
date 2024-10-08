@@ -179,7 +179,7 @@ func onMovement(currentLocation: Vector2i, terrain: Terrain) -> void:
 			if (prevLocation.x != nextLocation.x) and (prevLocation.y != nextLocation.y):
 				var prevIncoming = terrain.incomingMap[prevLocation.x][prevLocation.y]
 				if prevIncoming == nextIncoming:
-					terrain.chicane_car_slow = 1
+					terrain.chicane_car_slow = -1
 
 func animateBrakes():
 	textureRect.texture = load("res://Assets/TrainCars/Brake Car_engaged.png")

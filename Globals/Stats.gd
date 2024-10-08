@@ -16,6 +16,9 @@ var coinCount = 3
 var startingTrainSpeed = 100 if Global.devmode else 0
 var turnCounter = 0
 var trainSpeed = 0
+var speedRampFunction = func(x): return x
+# Array of speed adjustments for upcoming turns.
+var speedAdjustments = []
 
 signal camera_controlled(controlled:bool)
 func setCameraStationary():
@@ -65,6 +68,22 @@ func startLevel():
 	currentEnergy = maxEnergy
 	powersInPlay = []
 	pickupRange = startingPickupRange
+
+func progressTurn():
+	turnCounter += 1
+	var adjustment = 0
+	if speedAdjustments.size() > 0:
+		adjustment = speedAdjustments.pop_front()
+	trainSpeed = speedRampFunction.call(turnCounter) + adjustment
+	
+# n is number of turns in the future
+func getSpeedForTurn(n:int) -> int:
+	if n == 0:
+		return trainSpeed
+	if speedAdjustments.size() >= n:
+		return speedRampFunction.call(turnCounter + n) + speedAdjustments[n-1]
+	else:
+		return speedRampFunction.call(turnCounter + n)
 
 func _ready():
 	for cardName in startingDeckNames:
