@@ -31,7 +31,7 @@ func _init(enemyName, cell:Vector2i):
 	
 	textureRect = TextureRect.new()
 	
-	textureRect.texture = load("res://Assets/Enemies/" + enemyName + ".png")
+	textureRect.texture = load("res://Assets/Enemies/" + enemyName + " Idle.tres")
 	
 	add_child(textureRect)
 	

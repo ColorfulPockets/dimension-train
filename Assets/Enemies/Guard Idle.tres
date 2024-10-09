@@ -1,0 +1,6 @@
+[gd_resource type="AnimatedTexture" load_steps=2 format=3 uid="uid://c5x24snvbr62b"]
+
+[ext_resource type="Texture2D" uid="uid://3rhaorr7m7v5" path="res://Assets/Enemies/Guard.png" id="1_4ruk0"]
+
+[resource]
+frame_0/texture = ExtResource("1_4ruk0")
