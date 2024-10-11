@@ -278,6 +278,13 @@ func moveSpriteAlongPoints(sprite, points:Array, speed):
 			sprite.position += direction * speed
 			sprite.rotation = direction.angle()
 			await get_tree().create_timer(0.01).timeout
+			
+func moveSpriteAlongPointsNoRot(sprite, points:Array, speed):
+	for point in points:
+		while sprite.position.distance_to(point) > 1:
+			var direction = (point - sprite.position).normalized()
+			sprite.position += direction * speed
+			await get_tree().create_timer(0.01).timeout
 
 # If the chicane car reports a chicane, we reduce next turn's speed by 1
 var chicane_car_slow = 0
@@ -449,7 +456,7 @@ func getOccupiedCells():
 	return getEnemyAndSpawnerCells() + trainLocations
 
 #TODO: This definitely doesn't work right for non linear paths, so fix that
-func moveSpriteThroughCells(sprite:Node2D, cellPath, dirPath):
+func moveSpriteThroughCellsNoRot(sprite:Node2D, cellPath, dirPath):
 	for i in range(1,len(cellPath)):
 		var pointsToMoveThrough = []
 		var cell = cellPath[i]
@@ -482,7 +489,7 @@ func moveSpriteThroughCells(sprite:Node2D, cellPath, dirPath):
 		#for _i in range(NUM_ANIMATION_POINTS / 2):
 			#pointsToMoveThrough.append(secondCurve[_i])
 		
-		await moveSpriteAlongPoints(sprite, pointsToMoveThrough, 1.0)
+		await moveSpriteAlongPointsNoRot(sprite, pointsToMoveThrough, 1.0)
 		
 	enemiesMoved += 1
 		
@@ -494,7 +501,8 @@ func enemyTurn():
 	enemies.shuffle()
 	for enemy in enemies:
 		var enemyReturn = await enemy.takeActions()
-		await moveSpriteThroughCells(enemy, enemyReturn[0], enemyReturn[1])
+		enemy.startMoving()
+		await moveSpriteThroughCellsNoRot(enemy, enemyReturn[0], enemyReturn[1])
 		enemy.afterMoveActions()
 		
 	while enemiesMoved < len(enemies):

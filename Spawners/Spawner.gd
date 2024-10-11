@@ -48,7 +48,7 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 			spawnerRadius = 2
 			debuffName = "Slimed"
 		"Guard Factory":
-			enemySpawned = "Guard"
+			enemySpawned = "Fire Giant"
 			spawnerRadius = 2
 	
 	var getTooltipText = func():

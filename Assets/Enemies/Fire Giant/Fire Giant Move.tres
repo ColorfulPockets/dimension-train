@@ -1,0 +1,17 @@
+[gd_resource type="AnimatedTexture" load_steps=5 format=3 uid="uid://bpawqnuunh4u4"]
+
+[ext_resource type="Texture2D" uid="uid://dmb3uvwg73fft" path="res://Assets/Enemies/Fire Giant/Fire Giant_move_1.png" id="1_bsy5d"]
+[ext_resource type="Texture2D" uid="uid://dffj6xshf37wa" path="res://Assets/Enemies/Fire Giant/Fire Giant_move_2.png" id="2_by0xy"]
+[ext_resource type="Texture2D" uid="uid://cbmyws00wu6n" path="res://Assets/Enemies/Fire Giant/Fire Giant_move_3.png" id="3_wgv53"]
+[ext_resource type="Texture2D" uid="uid://cs3snph3pnm25" path="res://Assets/Enemies/Fire Giant/Fire Giant_move_4.png" id="4_ntbmt"]
+
+[resource]
+frames = 4
+frame_0/texture = ExtResource("1_bsy5d")
+frame_0/duration = 0.25
+frame_1/texture = ExtResource("2_by0xy")
+frame_1/duration = 0.25
+frame_2/texture = ExtResource("3_wgv53")
+frame_2/duration = 0.25
+frame_3/texture = ExtResource("4_ntbmt")
+frame_3/duration = 0.25

@@ -1,6 +1,0 @@
-[gd_resource type="AnimatedTexture" load_steps=2 format=3 uid="uid://b5if08vcl43io"]
-
-[ext_resource type="Texture2D" uid="uid://bv6iysdi4rmbu" path="res://Assets/Enemies/Corrupt Slug.png" id="1_puvx6"]
-
-[resource]
-frame_0/texture = ExtResource("1_puvx6")

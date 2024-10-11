@@ -22,44 +22,58 @@ static var TOOLTIP_TEXT = {
 	"Guard": "Moves 1 space towards the train, then shoots a projectile dealing 2 damage."
 }
 
-var textureRect:TextureRect
+var idleTexture:TextureRect
+var moveTexture:TextureRect
 
 func _init(enemyName, cell:Vector2i):
 	self.enemyName = enemyName
 	self.cell = cell
 	self.facing = Global.DIR.L
 	
-	textureRect = TextureRect.new()
+	idleTexture = TextureRect.new()
+	moveTexture = TextureRect.new()
 	
-	textureRect.texture = load("res://Assets/Enemies/" + enemyName + " Idle.tres")
+	idleTexture.texture = load("res://Assets/Enemies/" + enemyName + "/" + enemyName + " Idle.tres")
+	moveTexture.texture = load("res://Assets/Enemies/" + enemyName + "/" + enemyName + " Move.tres")
 	
-	add_child(textureRect)
+	add_child(idleTexture)
+	add_child(moveTexture)
+	moveTexture.visible = false
 	
-	textureRect.position -= textureRect.texture.get_size()/2
+	idleTexture.position -= idleTexture.texture.get_size()/2
+	moveTexture.position -= moveTexture.texture.get_size()/2
 	if enemyName in TOOLTIP_TEXT:
 		var tooltip = Tooltip.new("[color=Red]"+enemyName+": [/color]"+TOOLTIP_TEXT[enemyName])
 		tooltip.visuals_res = load("res://tooltip.tscn")
-		textureRect.add_child(tooltip)
+		idleTexture.add_child(tooltip)
 		
 	match enemyName:
 		"Corrupt Slug":
 			self.facing = randi_range(1,4)
 			self.health = 1
 		"Guard":
-			self.facing = Global.DIR.R
+			self.facing = Global.DIR.L
 			self.health  = 1
 			self.range = 1
+		"Fire Giant":
+			self.facing = [Global.DIR.L, Global.DIR.R].pick_random()
+			self.health = 3
 	
+	updateFacing()
+
+func updateFacing():
 	match self.facing:
 		Global.DIR.L:
-			rotation += PI
+			idleTexture.flip_h = false
+			moveTexture.flip_h = false
 		Global.DIR.U:
-			rotation -= PI/2
-		Global.DIR.R:
 			pass
+		Global.DIR.R:
+			idleTexture.flip_h = true
+			moveTexture.flip_h = true
+			#healthCounter.position.x -= idleTexture.size.x*HEALTH_COUNTER_CORNER_X
 		Global.DIR.D:
-			rotation += PI/2
-	
+			pass
 
 func initHealthCounter():
 	healthCounter = HealthCounter.new()
@@ -67,9 +81,11 @@ func initHealthCounter():
 	healthCounter.add_theme_font_size_override("font_size", 100)
 	healthCounter.add_theme_constant_override("outline_size", 50)
 	healthCounter.add_theme_color_override("font_outline_color", Color.BLACK)
-	healthCounter.scale *= 0.1
-	healthCounter.position -= healthCounter.size/2
+	healthCounter.scale = Vector2(0.1, 0.1)
 	add_child(healthCounter)
+	healthCounter.position = -healthCounter.scale*healthCounter.size/2
+	healthCounter.position += idleTexture.size * 0.25
+	healthCounter.position.x += idleTexture.size.x * 0.05
 
 # Currently returns array of pairs: [starting cell, new cell] [starting facing, new facing]
 func takeActions() -> Array[Array]:
@@ -94,6 +110,7 @@ func takeActions() -> Array[Array]:
 				# Bounce off edge
 				if new_cell.x < 0 or new_cell.y < 0 or new_cell.x >= TERRAIN.mapShape.x or new_cell.y >= TERRAIN.mapShape.y:
 					facing = Global.oppositeDir(facing)
+					updateFacing()
 				cell = Global.stepInDirection(cell, facing)
 			
 			
@@ -136,9 +153,22 @@ func takeActions() -> Array[Array]:
 			
 			return [[oldCell, cell], [facing, facing]]
 			
+		"Fire Giant":
+			var old_cell = cell
+			var old_facing = facing
+			while cell in occupied_cells:
+				var new_cell = Global.stepInDirection(cell, facing)
+				# Bounce off edge
+				if new_cell.x < 0 or new_cell.y < 0 or new_cell.x >= TERRAIN.mapShape.x or new_cell.y >= TERRAIN.mapShape.y:
+					facing = Global.oppositeDir(facing)
+					updateFacing()
+				cell = Global.stepInDirection(cell, facing)
+			return [[old_cell, cell], [old_facing, facing]]
 	return [[]]
 
 func afterMoveActions():
+	idleTexture.visible = true
+	moveTexture.visible = false
 	match enemyName:
 		"Guard":
 			#######################
@@ -151,6 +181,11 @@ func afterMoveActions():
 					await TERRAIN.shootProjectile(cell, train_cell)
 					Stats.removeEmergencyRail(2)
 					break
+
+func startMoving():
+	moveTexture.visible = true
+	idleTexture.visible = false
+	
 
 # Called when the train runs over the enemy
 # Collision is true if the train collided with the enemy to kill it
@@ -175,9 +210,9 @@ func damage(amount:int):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	textureRect.mouse_entered.connect(func():
+	idleTexture.mouse_entered.connect(func():
 		drawRangeHighlight.emit(cell, range))
-	textureRect.mouse_exited.connect(func():
+	idleTexture.mouse_exited.connect(func():
 		clearRangeHighlight.emit())
 
 
