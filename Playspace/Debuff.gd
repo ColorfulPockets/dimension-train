@@ -2,7 +2,8 @@ class_name Debuff extends TextureRect
 
 const DEBUFF_TOOLTIP = {
 	"Slimed": "For the next VALUE turn(s), each resource you Gather has a 50% chance to not be gathered.",
-	"Increase": "This spawner will increase the number of enemies it spawns by 1."
+	"Increase": "This spawner will increase the number of enemies it spawns by 1.",
+	"Explosion": "After they move, all Fire Giants will deal 5 damage within 2 cells.",
 }
 
 var value = 1

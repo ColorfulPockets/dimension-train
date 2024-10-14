@@ -16,17 +16,16 @@ const CardBase = preload("res://Cards/CardBase.tscn")
 var topBarFontSize = 70
 
 const base_layer = 0
-const resource_counts_layer = 1
-const animation_layer = 2
-const rail_layer = 3
-const temporary_rail_layer = 4
-const fog_layer = 5
-const grid_layer = 6
-const spawner_highlight_layer = 7
-const range_highlight_layer = 8
-const highlight_layer = 9
-const enemy_layer = 10
-const max_layer = 11
+const animation_layer = 1
+const rail_layer = 2
+const temporary_rail_layer = 3
+const fog_layer = 4
+const grid_layer = 5
+const spawner_highlight_layer = 6
+const range_highlight_layer = 7
+const highlight_layer = 8
+const enemy_layer = 9
+const max_layer = 10
 
 const TRAIN_MOVEMENT_TIME = 0.5
 const FADE_TIME = 0.2
@@ -98,10 +97,10 @@ const empty = Vector2i(0,0)
 const bridge = Vector2i(5,6)
 const grid_outline = Vector2i(1,4)
 const wood = Vector2i(4,4)
-const metal = Vector2i(10,4)
+const metal = Vector2i(8,4)
 const gatherable = [wood, metal]
-const metal_shine1 = Vector2i(8,4)
-const metal_shine2 = Vector2i(9,4)
+var flammable = [wood, bridge] + trees
+const fire = Vector2i(0,5)
 const rail_straight = Vector2i(6,4)
 const rail_curve = Vector2i(7,4)
 const rail_endpoint = Vector2i(6,3)
@@ -170,6 +169,8 @@ var in_left_out_right = flipH | transpose
 var in_up_out_down = flipH | flipV
 
 enum DIR {NONE, L, R, U, D}
+
+const ALL_DIRS = [DIR.L, DIR.R, DIR.U, DIR.D]
 
 func oppositeDir(dir):
 	if dir == DIR.L:

@@ -4,9 +4,9 @@ class_name Spawner extends Node2D
 @onready var PLAYSPACE: Playspace = $"../.."
 @onready var TERRAIN: Terrain = $".."
 
-enum INTENT {Spawn, Debuff, Increase}
+enum INTENT {Spawn, Debuff, Increase, Nothing}
 
-signal drawRangeHighlight(cell, range)
+signal drawRangeHighlight(cell, offset, range)
 signal clearRangeHighlight
 
 var previousActions:Array[INTENT] = []
@@ -16,6 +16,9 @@ var debuffName:String
 var highlightedCells:Array
 var enemySpawned
 var numSpawned
+# Number of cells to move up or down from the spawner's position, to determine radius
+var verticalOffset
+var horizontalOffset
 var counter
 # Position on map
 var cell
@@ -28,6 +31,10 @@ var increaseDisplay:Debuff
 var increaseShowing = false
 
 var textureRect:TextureRect
+
+# Generic counter used in different ways per enemy
+var genericCounter = 0
+
 
 func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 	self.spawnerName = spawnerName
@@ -42,14 +49,21 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 	
 	textureRect.position -= textureRect.texture.get_size()/2
 	
+	verticalOffset = 0
+	horizontalOffset = 0
 	match spawnerName:
 		"Swamp":
 			enemySpawned = "Corrupt Slug"
 			spawnerRadius = 2
 			debuffName = "Slimed"
 		"Guard Factory":
-			enemySpawned = "Fire Giant"
+			enemySpawned = "Guard"
 			spawnerRadius = 2
+		"Cave":
+			enemySpawned = "Fire Giant"
+			spawnerRadius = 1
+			verticalOffset = 2
+			genericCounter = 1
 	
 	var getTooltipText = func():
 		var text = "[color=Red]"+spawnerName+": [/color] Spawns [color=Red]" + enemySpawned + "[/color]"
@@ -60,6 +74,8 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 			text += "\n\nIncreasing number of enemies spawned by 1."
 		if previousActions[-1] == INTENT.Spawn:
 			text += "\n\nNot taking an action this turn (spawned at start of turn)."
+		if previousActions[-1] == INTENT.Nothing:
+			text += "\n\nNot taking an action this turn."
 		
 		return text
 	
@@ -109,10 +125,12 @@ func endTurnAction():
 					Stats.debuffs["Slimed"] += 2
 				else:
 					Stats.debuffs["Slimed"] = 2
+			"Cave":
+				#TODO: All Fire Giants explode with radius 2
+				pass
 
 func spawnDebuff(name, number):
 	debuffDisplay = Debuff.new(name, number, true, 0.1)
-	#debuffDisplay.position += size/2
 	debuffDisplay.position -= textureRect.texture.get_size()/4
 	debuffDisplay.position -= Vector2(0, textureRect.texture.get_size().y/4)
 	debuffShowing = true
@@ -123,6 +141,8 @@ func displayDebuff():
 	match spawnerName:
 		"Swamp":
 			spawnDebuff("Slimed", 2)
+		"Cave":
+			spawnDebuff("Explosion", 0)
 
 func clearDebuffDisplay():
 	if debuffShowing:
@@ -142,6 +162,7 @@ func clearIncreaseDisplay():
 	if increaseShowing:
 		increaseDisplay.queue_free()
 		increaseShowing = false
+
 
 #Logic for spawner patterns
 func chooseAction():
@@ -164,6 +185,16 @@ func chooseAction():
 				intent = INTENT.Increase
 			else:
 				intent = INTENT.Spawn
+		"Cave":
+			if TERRAIN.enemies.size() == 0:
+				if genericCounter > 0:
+					intent = INTENT.Spawn
+					genericCounter = 0
+				else:
+					intent = INTENT.Nothing
+					genericCounter += 1
+			else:
+				intent = INTENT.Debuff
 	
 	if intent == INTENT.Debuff:
 		displayDebuff()
@@ -182,7 +213,7 @@ func debuff():
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	textureRect.mouse_entered.connect(func():
-		drawRangeHighlight.emit(cell, spawnerRadius))
+		drawRangeHighlight.emit(cell, Vector2i(horizontalOffset, verticalOffset), spawnerRadius))
 	textureRect.mouse_exited.connect(func():
 		clearRangeHighlight.emit())
 

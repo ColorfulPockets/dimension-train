@@ -47,6 +47,7 @@ var useEmergencyRail = false
 var trainCars:Array[TrainCar] = []
 var enemies:Array[Enemy] = []
 var spawners:Array[Spawner] = []
+var fireCells:Array[Vector2i] = []
 
 var trainCrashed = false
 var trainSucceeded = false
@@ -91,15 +92,14 @@ func _ready():
 	
 	camera.position = map_to_local(Vector2(railEndpoint)*scale) - (Global.VIEWPORT_SIZE /2)
 	
-	makeMetalShine()
-	
 	startTurn()
 
 var pathIndices:Dictionary
+var map:MapRewards
 func setUpMap():
 	var cells
 	var cellInfo
-	var map:MapRewards = $"../../EverywhereUI/Overworld".currentNode
+	map= $"../../EverywhereUI/Overworld".currentNode
 	var mapName = map.mapName
 	Stats.speedRampFunction = Tile.mapDb[mapName][Tile.SpeedRamp]
 	if Global.devmode:
@@ -171,7 +171,10 @@ func setUpMap():
 					var spawner = Spawner.new(cell_info[Tile.SpawnerName], cell_info[Tile.SpawnerCount], cellPosition)
 					spawner.scale *= 0.5
 					spawner.position = mapPositionToScreenPosition(cellPosition) / scale
-					spawner.highlightedCells = radiusAroundCell(cellPosition, spawner.spawnerRadius)
+					if not map.isMirrored:
+						spawner.highlightedCells = radiusAroundCell(cellPosition + Vector2i(spawner.horizontalOffset, spawner.verticalOffset), spawner.spawnerRadius)
+					else:
+						spawner.highlightedCells = radiusAroundCell(cellPosition + Vector2i(spawner.horizontalOffset, -spawner.verticalOffset), spawner.spawnerRadius)
 					spawners.append(spawner)
 					add_child(spawner)
 					spawner.initCounter()
@@ -221,8 +224,10 @@ func drawEnemyRange(cell, range):
 	# 2 is the code for range color
 	drawHighlights(range_cells, 2)
 
-func drawSpawnerRange(cell, range):
-	var range_cells:Array = radiusAroundCell(cell, range)
+func drawSpawnerRange(cell, offset, range):
+	if map.isMirrored: offset *= Vector2i(1, -1)
+	var center_cell = cell + offset
+	var range_cells:Array = radiusAroundCell(center_cell, range)
 	spawnerHighlights += range_cells
 	# 2 is the code for range color
 	drawHighlights(range_cells, 1)
@@ -1026,6 +1031,31 @@ func addRailLineToMap(startLoc, endLoc, layer):
 		
 	return (directionMap[endLoc.x][endLoc.y])[1]
 
+func lightOnFire(cell):
+	if get_cell_atlas_coords(Global. base_layer, cell) in Global.flammable:
+		set_cell(Global.base_layer, cell, 0, Global.fire)
+		fireCells.append(cell)
+
+func propogateFire():
+	var newFireCells:Array[Vector2i] = []
+	fireCells.shuffle()
+	for cell in fireCells:
+		var flammableNeighbors = getFlammableNeighbors(cell)
+		set_cell(Global.base_layer, cell, 0, Global.empty)
+		for neighbor in flammableNeighbors:
+			set_cell(Global.base_layer, neighbor, 0, Global.fire)
+			newFireCells.append(neighbor)
+	fireCells = newFireCells
+		
+func getFlammableNeighbors(cell):
+	var flammableNeighbors = []
+	for dir in Global.ALL_DIRS:
+		var adjacentCell = Global.stepInDirection(cell, dir)
+		if get_cell_atlas_coords(Global.base_layer, adjacentCell) in Global.flammable:
+			flammableNeighbors.append(adjacentCell)
+			
+	return flammableNeighbors
+
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -1082,43 +1112,6 @@ func _input(event):
 			if event.pressed:
 				confirmed.emit(Global.FUNCTION_STATES.Success)
 				
-func makeMetalShine():
-	var shine_time = 0.15
-	var shine_period = 2.5
-	while true:
-		await get_tree().create_timer(shine_period).timeout
-		var metal_cells = get_used_cells_by_id(Global.base_layer, 0, Global.metal)
-		
-		for cell in metal_cells:
-			set_cell(Global.animation_layer, cell, 0, Global.metal_shine1)
-			
-		
-			
-		await get_tree().create_timer(shine_time).timeout
-		
-		for cell in metal_cells:
-			set_cell(Global.animation_layer, cell, 0, Global.metal_shine2)
-			
-		await get_tree().create_timer(shine_time).timeout
-		
-		for cell in metal_cells:
-			set_cell(Global.animation_layer, cell, 0, Global.delete)
-		
-		await get_tree().create_timer(shine_time*2).timeout
-		
-		metal_cells = get_used_cells_by_id(Global.base_layer, 0, Global.metal)
-		for cell in metal_cells:
-			set_cell(Global.animation_layer, cell, 0, Global.metal_shine1)
-			
-		await get_tree().create_timer(shine_time).timeout
-		
-		for cell in metal_cells:
-			set_cell(Global.animation_layer, cell, 0, Global.metal_shine2)
-			
-		await get_tree().create_timer(shine_time).timeout
-		
-		for cell in metal_cells:
-			set_cell(Global.animation_layer, cell, 0, Global.delete)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):

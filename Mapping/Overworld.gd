@@ -5,7 +5,7 @@ const TRAIN_MOVE_TIME = 1.0
 static var graph:DirectedGraph
 
 const BASIC_AREAS = ["Corridor", "Diverging", "LostTrack", "SlugForest"]
-const MINIBOSSES = ["Desert Highway"]
+const MINIBOSSES = ["Desert Highway", "Fire Mountain"]
 
 var currentNode: MapRewards
 var trainAvatar:TrainCar
@@ -15,7 +15,8 @@ func _ready():
 	
 	var preRoot = MapRewards.new("Empty", false, [])
 	
-	var root = getBasicMap()
+	#var root = getBasicMap()
+	var root = getMapWithRewards("Fire Mountain")
 	graph.add_node(preRoot)
 	graph.add_node(root, [[preRoot, [0]]])
 	currentNode = preRoot

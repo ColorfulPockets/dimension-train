@@ -184,7 +184,37 @@ static var mapDb = {
 		},
 		
 		SpeedRamp: rampToFour
-	}
+	},
+	
+	"Fire Mountain": {
+		Cells: [
+			[S, S, S, S, S, S, S, M, S, S, S, S, S, S, S],
+			[S, S, S, S, S, S, M, M, M, S, S, S, S, S, S],
+			[S, S, S, S, M, M, M, M, M, M, M, S, S, S, S],
+			[S, S, M, M, M, M, M, M, M, M, M, M, M, S, S],
+			[S, M, M, M, M, M, M, M, M, M, M, M, M, M, S],
+			[S, M, M, M, M, M, M, M, M, M, M, M, M, M, S],
+			[X, M, M, M, M, M, M, M, M, M, M, M, M, M, X],
+			[X, M, M, M, M, M, M, M, M, M, M, M, M, M, X],
+			[X, M, M, M, M, M, M, M, M, M, M, M, M, M, 0],
+			[L, M, M, M, M, M, M, 2, M, M, M, M, M, M, X],
+			[X, T, T, T, T, T, T, T, T, T, T, T, T, T, X],
+			[X, T, T, T, T, T, T, T, T, T, T, T, T, T, X],
+			[X, T, T, T, T, T, T, T, T, T, T, T, T, T, X],
+			[X, T, T, T, T, T, T, T, T, T, T, T, T, T, X],
+			[S, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+			[S, S, X, X, X, X, X, X, X, X, X, X, X, X, 1],
+		],
+	
+		CellInfo: {
+			0: goalWithRewards(REWARDS.Hard),
+			1: goalWithRewards(REWARDS.Hard),
+			
+			2: spawnerWithName("Cave", 1),
+		},
+		
+		SpeedRamp: slowBuild
+	},
 }
 
 static func getNumExits(mapName):

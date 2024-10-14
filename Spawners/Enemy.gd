@@ -163,6 +163,10 @@ func takeActions() -> Array[Array]:
 					facing = Global.oppositeDir(facing)
 					updateFacing()
 				cell = Global.stepInDirection(cell, facing)
+				var adjacentWood = TERRAIN.getFlammableNeighbors(cell)
+				if adjacentWood.size() > 0:
+					var chosenCell = adjacentWood.pick_random()
+					TERRAIN.lightOnFire(chosenCell)
 			return [[old_cell, cell], [old_facing, facing]]
 	return [[]]
 
@@ -207,6 +211,7 @@ func damage(amount:int):
 	self.health -= amount
 	if self.health < 1:
 		destroy(false)
+	self.healthCounter.text = str(self.health)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

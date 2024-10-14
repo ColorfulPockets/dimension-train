@@ -363,6 +363,7 @@ func endTurn():
 		for debuff:Debuff in $FixedElements/BuffsAndDebuffs.get_children():
 			debuff.endTurn()
 		await terrain.advanceTrain()
+		await terrain.propogateFire()
 		await terrain.enemyTurn()
 		await terrain.spawnerTurn()
 		for debuff_node in $FixedElements/BuffsAndDebuffs.get_children():
