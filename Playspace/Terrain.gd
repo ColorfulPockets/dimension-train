@@ -813,9 +813,15 @@ func buildRail(numRail, buildOver:Array):
 	emit_signal("building_rail")
 	originalRailEndpoint = railEndpoint
 	originalRevealedTiles = revealedTiles
-	if useEmergencyRail and Stats.emergencyRailCount > 0:
+	var min_er_threshold = 1
+	if "Shaken" in Stats.debuffs:
+		min_er_threshold = 2
+	if useEmergencyRail and Stats.emergencyRailCount >= min_er_threshold:
 		buildingRail = true
-		numRailToBuild = min(numRail, Stats.emergencyRailCount)
+		if "Shaken" in Stats.debuffs:
+			numRailToBuild = min(numRail, Stats.emergencyRailCount/2)
+		else:
+			numRailToBuild = min(numRail, Stats.emergencyRailCount)
 		highlightCells(get_viewport().get_mouse_position(), Vector2i.ONE)
 		return true
 	elif !useEmergencyRail and Stats.metalCount > 0 and Stats.woodCount > 0:
@@ -875,7 +881,10 @@ func buildRailOn(mousePosition):
 		lastRailPlaced = mapPosition
 		numRailToBuild -= amountAdded
 		if useEmergencyRail:
-			Stats.emergencyRailCount -= amountAdded
+			if "Shaken" in Stats.debuffs:
+				Stats.emergencyRailCount -= amountAdded * 2
+			else:
+				Stats.emergencyRailCount -= amountAdded
 		else:
 			Stats.woodCount -= amountAdded
 			Stats.metalCount -= amountAdded

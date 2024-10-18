@@ -12,7 +12,7 @@ signal clearRangeHighlight
 var previousActions:Array[INTENT] = []
 var spawnerName
 var spawnerRadius
-var debuffName:String
+var currentDebuff:String
 var highlightedCells:Array
 var enemySpawned
 var numSpawned
@@ -55,7 +55,6 @@ func _init(spawnerName:String, numSpawned:int, cell:Vector2i):
 		"Swamp":
 			enemySpawned = "Corrupt Slug"
 			spawnerRadius = 2
-			debuffName = "Slimed"
 		"Guard Factory":
 			enemySpawned = "Guard"
 			spawnerRadius = 2
@@ -121,13 +120,19 @@ func endTurnAction():
 	if previousActions[-1] == INTENT.Debuff:
 		match spawnerName:
 			"Swamp":
-				if "Slimed" in Stats.debuffs.keys():
-					Stats.debuffs["Slimed"] += 2
-				else:
-					Stats.debuffs["Slimed"] = 2
+				addStackingDebuff("Slimed", 2)
 			"Cave":
-				#TODO: All Fire Giants explode with radius 2
-				pass
+				if currentDebuff == "Explosion":
+					for enemy in TERRAIN.enemies:
+						enemy.explode(2)
+				elif currentDebuff == "Shaken":
+					addStackingDebuff("Shaken", 1)
+
+func addStackingDebuff(debuffName, amount):
+	if debuffName in Stats.debuffs.keys():
+		Stats.debuffs[debuffName] += amount
+	else:
+		Stats.debuffs[debuffName] = amount
 
 func spawnDebuff(name, number):
 	debuffDisplay = Debuff.new(name, number, true, 0.1)
@@ -142,7 +147,11 @@ func displayDebuff():
 		"Swamp":
 			spawnDebuff("Slimed", 2)
 		"Cave":
-			spawnDebuff("Explosion", 0)
+			if currentDebuff == "Explosion":
+				spawnDebuff(currentDebuff, 0)
+			elif currentDebuff == "Shaken":
+				spawnDebuff(currentDebuff, 1)
+				
 
 func clearDebuffDisplay():
 	if debuffShowing:
@@ -195,8 +204,13 @@ func chooseAction():
 					genericCounter += 1
 			else:
 				intent = INTENT.Debuff
+				if randi_range(0, 1) == 0:
+					currentDebuff = "Explosion"
+				else:
+					currentDebuff = "Shaken"
 	
 	if intent == INTENT.Debuff:
+		clearDebuffDisplay()
 		displayDebuff()
 		clearIncreaseDisplay()
 	elif intent == INTENT.Increase:
@@ -207,8 +221,6 @@ func chooseAction():
 		clearIncreaseDisplay()
 	previousActions.append(intent)
 	
-func debuff():
-	pass
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

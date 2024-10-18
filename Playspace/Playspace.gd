@@ -360,9 +360,9 @@ func endTurn():
 		while cardsInHand.size() > 0:
 			cardDiscarded(0)
 			await get_tree().create_timer(0.05).timeout
+		await terrain.advanceTrain()
 		for debuff:Debuff in $FixedElements/BuffsAndDebuffs.get_children():
 			debuff.endTurn()
-		await terrain.advanceTrain()
 		await terrain.propogateFire()
 		await terrain.enemyTurn()
 		await terrain.spawnerTurn()

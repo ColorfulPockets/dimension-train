@@ -1,9 +1,25 @@
 class_name Debuff extends TextureRect
 
-const DEBUFF_TOOLTIP = {
-	"Slimed": "For the next VALUE turn(s), each resource you Gather has a 50% chance to not be gathered.",
-	"Increase": "This spawner will increase the number of enemies it spawns by 1.",
-	"Explosion": "After they move, all Fire Giants will deal 5 damage within 2 cells.",
+enum {TOOLTIP, CATEGORY}
+enum CATEGORIES {DECREMENT, PERMANENT, NONE}
+
+const DEBUFF_INFO = {
+	"Slimed": {
+		TOOLTIP: "For the next VALUE turn(s), each resource you Gather has a 50% chance to not be gathered.",
+		CATEGORY: CATEGORIES.DECREMENT,
+		},
+	"Increase": { 
+		TOOLTIP: "This spawner will increase the number of enemies it spawns by 1.",
+		CATEGORY: CATEGORIES.NONE,
+		},
+	"Explosion": {
+		TOOLTIP: "After they move, all Fire Giants will deal 5 damage within 2 cells.",
+		CATEGORY: CATEGORIES.NONE,
+		},
+	"Shaken": {
+		TOOLTIP: "For the next VALUE turn(s), each emergency rail placed costs two rails instead of 1.",
+		CATEGORY: CATEGORIES.DECREMENT,
+		},
 }
 
 var value = 1
@@ -32,22 +48,21 @@ func _init(debuffName:String, value, isPreview:bool = false, scale:float = 1):
 func process_tooltip():
 	# VALUE replacement in Tooltip
 	var pattern = RegEx.new()
-	var tooltipText:String = DEBUFF_TOOLTIP[debuffName]
+	var tooltipText:String = DEBUFF_INFO[debuffName][TOOLTIP]
 	pattern.compile(r'VALUE')
-	var matches = pattern.search_all(DEBUFF_TOOLTIP[debuffName])
+	var matches = pattern.search_all(DEBUFF_INFO[debuffName][TOOLTIP])
 	for match in matches:
 		var key = match.get_string(1)	# get the matched argument name
 		var replacement = str(value)
-		tooltipText = DEBUFF_TOOLTIP[debuffName].replace("VALUE", replacement)
+		tooltipText = DEBUFF_INFO[debuffName][TOOLTIP].replace("VALUE", replacement)
 		
 	return "[color=Red]"+debuffName+": [/color]" + tooltipText
 
 func endTurn():
-	match debuffName:
-		"Slimed":
-			Stats.debuffs[debuffName] -= 1
-			if Stats.debuffs[debuffName] == 0:
-				Stats.debuffs.erase(debuffName)
+	if DEBUFF_INFO[debuffName][CATEGORY] == CATEGORIES.DECREMENT:
+		Stats.debuffs[debuffName] -= 1
+		if Stats.debuffs[debuffName] == 0:
+			Stats.debuffs.erase(debuffName)
 
 var bobbing_speed = 2
 var bobbing_amount = 5

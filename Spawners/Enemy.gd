@@ -189,7 +189,6 @@ func afterMoveActions():
 func startMoving():
 	moveTexture.visible = true
 	idleTexture.visible = false
-	
 
 # Called when the train runs over the enemy
 # Collision is true if the train collided with the enemy to kill it
@@ -212,6 +211,17 @@ func damage(amount:int):
 	if self.health < 1:
 		destroy(false)
 	self.healthCounter.text = str(self.health)
+
+########## ENEMY SPECIFIC ACTIONS ###########
+func explode(explosionRadius):
+	if enemyName == "Fire Giant":
+		var range_cells = TERRAIN.radiusAroundCell(cell, explosionRadius)
+		for explosionCell in range_cells:
+			TERRAIN.shootProjectile(cell, explosionCell)
+		for train_cell in TERRAIN.trainLocations:
+			if train_cell in range_cells:
+				Stats.removeEmergencyRail(2)
+				break
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
