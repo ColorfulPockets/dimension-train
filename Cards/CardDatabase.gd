@@ -277,4 +277,16 @@ var DATA = {
 			fields.MousePointer: load("res://Assets/Icons/Gather_mouse.png"),
 			fields.Arguments: {"Draw": 1},
 		},
+	"Energize":
+		{
+			fields.Name: "Energize",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 1,
+			fields.Exhaust: true,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Gain ARGEnergy energy.\nExhaust.",
+			fields.Function: "Energize",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+			fields.Arguments: {"Energy": 2},
+		},
 }

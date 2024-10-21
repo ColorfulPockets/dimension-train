@@ -528,6 +528,17 @@ func Scoop(cardInfo):
 	
 	return confirmed
 
+func Energize(cardInfo):
+	terrain.clearHighlights()
+	
+	var energyPlus = cardInfo[Global.CARD_FIELDS.Arguments]["Energy"]
+	
+	var confirmed = await confirmIfEnabled("Gain " + str(energyPlus) + " Energy")
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.currentEnergy += energyPlus
+		
+	return confirmed
 
 func confirmIfEnabled(text:String):
 	var confirmed
