@@ -289,4 +289,15 @@ var DATA = {
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 			fields.Arguments: {"Energy": 2},
 		},
+	"Vacuum":
+		{
+			fields.Name: "Vacuum",
+			fields.Rarity: "Rare",
+			fields.EnergyCost: 2,
+			fields.Exhaust: true,
+			fields.Type: Global.CARD_TYPES.Logistics,
+			fields.Text: "Gather ALL resources on the map.\nExhaust.",
+			fields.Function: "Vacuum",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
 }

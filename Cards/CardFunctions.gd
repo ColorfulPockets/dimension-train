@@ -540,6 +540,20 @@ func Energize(cardInfo):
 		
 	return confirmed
 
+func Vacuum(_cardInfo):
+	terrain.clearHighlights()
+	
+	var confirmed = await confirmIfEnabled("Gather everything.")
+	
+	if confirmed == Global.FUNCTION_STATES.Success:
+		for x in range(terrain.mapShape.x):
+			for y in range(terrain.mapShape.y):
+				terrain.highlighted_cells.append(Vector2i(x, y))
+				
+		return await Gather(_cardInfo, false)
+		
+	return confirmed
+
 func confirmIfEnabled(text:String):
 	var confirmed
 	if Stats.confirmCardClicks:

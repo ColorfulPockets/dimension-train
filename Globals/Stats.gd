@@ -45,7 +45,7 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Energize"]
+var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Vacuum"]
 var deck = []
 var rareChance = 0.1
 
