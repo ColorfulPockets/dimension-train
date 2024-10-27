@@ -300,4 +300,14 @@ var DATA = {
 			fields.Function: "Vacuum",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
+	"Collateral Damage":
+		{
+			fields.Name: "Collateral Damage",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 2,
+			fields.Type: Global.CARD_TYPES.Technology,
+			fields.Text: "Whenever you Harvest, also deal 1 damage to all enemies within the harvested area.",
+			fields.Function: "Collateral",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
 }

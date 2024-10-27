@@ -10,14 +10,19 @@ signal selection(selected_or_cancelled)
 var highlight_tiles = false
 
 func containsTileType(highlightedTiles, tileType):
-	var containsHarvestables = func(highlightedTiles):
-		for tile in highlightedTiles:
-			if terrain.get_cell_atlas_coords(0,tile) in tileType:
-				return true
-		
-		return false
+	for tile in highlightedTiles:
+		if terrain.get_cell_atlas_coords(0,tile) in tileType:
+			return true
 	
-	terrain.target(containsHarvestables)
+	return false
+	
+
+func containsEnemy(highlightedTiles):
+	for enemy in terrain.enemies:
+		if enemy.cell in highlightedTiles:
+			return true
+	
+	return false
 
 var harvestFailedDueToNonHarvesting = false
 func Harvest(_cardInfo, displayConfirmation:bool = true, confirmationString:String = "Harvest\n(Esc to cancel)"):
@@ -27,7 +32,12 @@ func Harvest(_cardInfo, displayConfirmation:bool = true, confirmationString:Stri
 		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
 		middleBarContainer.setText(confirmationString)
 		
-		terrain.target(func(tiles): return containsTileType(tiles, Global.harvestable))
+		terrain.target(func(tiles): 
+			if "Collateral" in Stats.powersInPlay:
+				return containsTileType(tiles, Global.harvestable) or containsEnemy(tiles)
+			
+			return containsTileType(tiles, Global.harvestable)
+		)
 		
 		discard = await terrain.confirmed
 	
@@ -37,6 +47,12 @@ func Harvest(_cardInfo, displayConfirmation:bool = true, confirmationString:Stri
 			return discard
 	
 	discard = Global.FUNCTION_STATES.Fail
+	
+	if "Collateral" in Stats.powersInPlay:
+		for enemy in terrain.enemies:
+			if enemy.cell in terrain.highlighted_cells:
+				enemy.damage(1)
+				discard = Global.FUNCTION_STATES.Success
 
 	for tile in terrain.highlighted_cells:
 		if terrain.get_cell_atlas_coords(0,tile) == Global.tree:
@@ -164,12 +180,7 @@ func Blast(cardInfo):
 					break
 		if not orthogonal: return false
 		
-		for tile in highlightedTiles:
-			for enemy in terrain.enemies:
-				if enemy.cell == tile:
-					return true
-
-		return false
+		return containsEnemy(highlightedTiles)
 	
 	terrain.target(checkOrthogonalForEnemy)
 	
@@ -386,6 +397,17 @@ func AutoManufacture(_cardInfo):
 		
 	if confirmed == Global.FUNCTION_STATES.Success:
 		Stats.powersInPlay.append("AutoManufacture")
+		confirmed = Global.FUNCTION_STATES.Power
+		
+	return confirmed
+	
+func Collateral(_cardInfo):
+	terrain.clearHighlights()
+	
+	var confirmed = await confirmIfEnabled("Enable Collateral Damage")
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.powersInPlay.append("Collateral")
 		confirmed = Global.FUNCTION_STATES.Power
 		
 	return confirmed
