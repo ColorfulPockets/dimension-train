@@ -33,7 +33,7 @@ func Harvest(_cardInfo, displayConfirmation:bool = true, confirmationString:Stri
 		middleBarContainer.setText(confirmationString)
 		
 		terrain.target(func(tiles): 
-			if "Collateral" in Stats.powersInPlay:
+			if "Collateral Damage" in Stats.powersInPlay:
 				return containsTileType(tiles, Global.harvestable) or containsEnemy(tiles)
 			
 			return containsTileType(tiles, Global.harvestable)
@@ -48,7 +48,7 @@ func Harvest(_cardInfo, displayConfirmation:bool = true, confirmationString:Stri
 	
 	discard = Global.FUNCTION_STATES.Fail
 	
-	if "Collateral" in Stats.powersInPlay:
+	if "Collateral Damage" in Stats.powersInPlay:
 		for enemy in terrain.enemies:
 			if enemy.cell in terrain.highlighted_cells:
 				enemy.damage(1)
@@ -199,26 +199,6 @@ func Blast(cardInfo):
 	
 	return confirmed
 
-
-func AutoBuild(_cardInfo):
-	if Stats.confirmCardClicks:
-		middleBarContainer.setText("Enable Autobuild\n(Enter to confirm, Esc to cancel)")
-		middleBarContainer.visible = true
-		middleBarContainer.setPosition(middleBarContainer.POSITIONS.TOP)
-		
-		var confirmed = await confirmation
-		
-		middleBarContainer.visible = false
-		
-		if confirmed == Global.FUNCTION_STATES.Success:
-			Stats.powersInPlay.append("AutoBuild")
-			confirmed = Global.FUNCTION_STATES.Power
-			
-		return confirmed
-	else:
-		Stats.powersInPlay.append("AutoBuild")
-		return Global.FUNCTION_STATES.Power
-
 # note helper function, not capitalized
 func buildRail(numBuilt:int, buildOver:Array):
 	if terrain.useEmergencyRail:
@@ -367,50 +347,6 @@ func Magnet(_cardInfo):
 		Stats.pickupRange += 1
 		Stats.powersInPlay += "Magnet"
 		return Global.FUNCTION_STATES.Power
-
-func Recycle(_cardInfo):
-	terrain.clearHighlights()
-	
-	var confirmed = await confirmIfEnabled("Recycle enemies for 2 ER")
-		
-	if confirmed == Global.FUNCTION_STATES.Success:
-		Stats.powersInPlay.append("Recycle")
-		confirmed = Global.FUNCTION_STATES.Power
-		
-	return confirmed
-
-func Swarm(_cardInfo):
-	terrain.clearHighlights()
-	
-	var confirmed = await confirmIfEnabled("Swarm")
-		
-	if confirmed == Global.FUNCTION_STATES.Success:
-		Stats.powersInPlay.append("Swarm")
-		confirmed = Global.FUNCTION_STATES.Power
-		
-	return confirmed
-
-func AutoManufacture(_cardInfo):
-	terrain.clearHighlights()
-	
-	var confirmed = await confirmIfEnabled("AutoManufacture")
-		
-	if confirmed == Global.FUNCTION_STATES.Success:
-		Stats.powersInPlay.append("AutoManufacture")
-		confirmed = Global.FUNCTION_STATES.Power
-		
-	return confirmed
-	
-func Collateral(_cardInfo):
-	terrain.clearHighlights()
-	
-	var confirmed = await confirmIfEnabled("Enable Collateral Damage")
-		
-	if confirmed == Global.FUNCTION_STATES.Success:
-		Stats.powersInPlay.append("Collateral")
-		confirmed = Global.FUNCTION_STATES.Power
-		
-	return confirmed
 
 func Turbo(_cardInfo):
 	terrain.clearHighlights()
@@ -606,6 +542,18 @@ func middleBarConfirmation(text:String):
 	
 	return confirmed
 
+func StandardTechnology(cardInfo):
+	var techName:String = cardInfo[Global.CARD_FIELDS.Name]
+	terrain.clearHighlights()
+	
+	var confirmed = await confirmIfEnabled("Enable " + techName)
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		Stats.powersInPlay.append(techName)
+		confirmed = Global.FUNCTION_STATES.Power
+		
+	return confirmed
+	
 func _input(event):
 	if event is InputEventKey:
 		if event.key_label == KEY_ENTER:

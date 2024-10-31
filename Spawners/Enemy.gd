@@ -183,7 +183,7 @@ func afterMoveActions():
 				if train_cell in range_cells:
 					# TODO: add animation
 					await TERRAIN.shootProjectile(cell, train_cell)
-					Stats.removeEmergencyRail(2)
+					damagePlayer(2)
 					break
 
 func startMoving():
@@ -194,7 +194,7 @@ func startMoving():
 # Collision is true if the train collided with the enemy to kill it
 func destroy(collision:bool):
 	if collision:
-		Stats.removeEmergencyRail(1)
+		damagePlayer(1)
 	if "Recycle" in Stats.powersInPlay:
 		Stats.addEmergencyRail(2)
 		
@@ -220,8 +220,15 @@ func explode(explosionRadius):
 			TERRAIN.shootProjectile(cell, explosionCell)
 		for train_cell in TERRAIN.trainLocations:
 			if train_cell in range_cells:
-				Stats.removeEmergencyRail(2)
+				damagePlayer(2)
 				break
+
+
+func damagePlayer(amount:int):
+	if "Wooden Shield" in Stats.powersInPlay:
+		Stats.removeWood(amount)
+	else:
+		Stats.removeEmergencyRail(amount)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

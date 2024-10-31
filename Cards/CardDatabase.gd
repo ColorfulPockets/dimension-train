@@ -155,7 +155,7 @@ var DATA = {
 			fields.EnergyCost: 3,
 			fields.Type: Global.CARD_TYPES.Technology,
 			fields.Text: "Whenever you reach the end of the track with speed remaining, place a rail in a straight line.",
-			fields.Function: "AutoBuild",
+			fields.Function: "StandardTechnology",
 			fields.MousePointer: load("res://Assets/Icons/Reveal_mouse.png"),
 		},
 	"Magnet":
@@ -186,7 +186,7 @@ var DATA = {
 			fields.EnergyCost: 1,
 			fields.Type: Global.CARD_TYPES.Technology,
 			fields.Text: "Each time you destroy an enemy, +2 ER",
-			fields.Function: "Recycle",
+			fields.Function: "StandardTechnology",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
 	"Swarm":
@@ -196,7 +196,7 @@ var DATA = {
 			fields.EnergyCost: 3,
 			fields.Type: Global.CARD_TYPES.Technology,
 			fields.Text: "Whenever you Harvest, Clear all squares around the highlighted area.",
-			fields.Function: "Swarm",
+			fields.Function: "StandardTechnology",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
 	"AutoManufacture":
@@ -206,7 +206,7 @@ var DATA = {
 			fields.EnergyCost: 3,
 			fields.Type: Global.CARD_TYPES.Technology,
 			fields.Text: "Each time you play a card, Manufacture 2.",
-			fields.Function: "AutoManufacture",
+			fields.Function: "StandardTechnology",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
 	"Turbo":
@@ -307,7 +307,17 @@ var DATA = {
 			fields.EnergyCost: 2,
 			fields.Type: Global.CARD_TYPES.Technology,
 			fields.Text: "Whenever you Harvest, also deal 1 damage to all enemies within the harvested area.",
-			fields.Function: "Collateral",
+			fields.Function: "StandardTechnology",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+		},
+	"Wooden Shield":
+		{
+			fields.Name: "Wooden Shield",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 0,
+			fields.Type: Global.CARD_TYPES.Technology,
+			fields.Text: "Enemies remove Wood when they damage you, rather than Emergency Rail (even if you have no Wood).",
+			fields.Function: "StandardTechnology",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
 }

@@ -39,13 +39,19 @@ func removeEmergencyRail(num:int):
 	else:
 		emergencyRailCount -= num
 
+func removeWood(num:int):
+	if woodCount - num < 0:
+		woodCount = 0
+	else:
+		woodCount -= num
+		
 var currentEnergy = 3
 var maxEnergy = 3
 
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Collateral Damage"]
+var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Wooden Shield"]
 var deck = []
 var rareChance = 0.1
 
