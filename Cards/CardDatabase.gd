@@ -69,7 +69,7 @@ var DATA = {
 			fields.TargetArea: Vector2i(2,2),
 			fields.Function: "Factory",
 			fields.MousePointer: load("res://Assets/Icons/Gather_mouse.png"),
-			fields.Arguments: {"Build": 3}
+			fields.Arguments: {"Build": 6}
 		},
 	"Drill":
 		{
@@ -320,4 +320,16 @@ var DATA = {
 			fields.Function: "StandardTechnology",
 			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
 		},
+	"Hyperbeam":
+		{
+			fields.Name: "Hyperbeam",
+			fields.Rarity: "Uncommon",
+			fields.EnergyCost: 2,
+			fields.Exhaust: true,
+			fields.Type: Global.CARD_TYPES.Weapons,
+			fields.Text: "Blast a ARGWidth-wide line to the right of the front car, dealing ARGBlast damage and clearing all cells.\nExhaust.",
+			fields.Function: "Hyperbeam",
+			fields.MousePointer: load("res://Assets/Icons/cursor.png"),
+			fields.Arguments: {"Blast": 2, "Width": 3},
+		}
 }

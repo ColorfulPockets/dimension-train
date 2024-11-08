@@ -199,6 +199,40 @@ func Blast(cardInfo):
 	
 	return confirmed
 
+func Hyperbeam(cardInfo):
+	terrain.clearHighlights()
+	
+	var trainFrontLocation:Vector2i = terrain.trainLocations[0]
+	var beamWidth = (cardInfo[Global.CARD_FIELDS.Arguments]["Width"]-1) / 2
+	
+	for x in range(trainFrontLocation.x+1, terrain.mapShape.x):
+		for y in range(trainFrontLocation.y-beamWidth, trainFrontLocation.y+beamWidth+1):
+			if 0 <= y and y < terrain.mapShape.y:
+				terrain.highlighted_cells.append(Vector2i(x, y))
+				
+	terrain.drawHighlights(terrain.highlighted_cells)
+	
+	var damage:int = cardInfo[Global.CARD_FIELDS.Arguments]["Blast"]
+	
+	var confirmed = await confirmIfEnabled("Clear terrain and Blast " + str(damage))
+		
+	if confirmed == Global.FUNCTION_STATES.Success:
+		var targetedCells = terrain.highlighted_cells.duplicate()
+		
+		for cell in targetedCells:
+			var cellContents = terrain.get_cell_atlas_coords(0,cell)
+			if cellContents in Global.harvestable or cellContents in Global.gatherable:
+				terrain.set_cell(0, cell, 0, Global.empty)
+		
+		var numEnemies = terrain.enemies.size()
+		for i in range(numEnemies-1, -1, -1):
+			var enemy = terrain.enemies[i]
+			if enemy.cell in targetedCells:
+				await terrain.shootProjectile(terrain.trainLocations[0], enemy.cell)
+				enemy.damage(damage)
+	
+	return confirmed
+
 # note helper function, not capitalized
 func buildRail(numBuilt:int, buildOver:Array):
 	if terrain.useEmergencyRail:

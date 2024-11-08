@@ -51,7 +51,7 @@ var maxEnergy = 3
 var pickupRange = 1
 var startingPickupRange = 1
 
-var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Wooden Shield"]
+var startingDeckNames = ["Blast", "Blast", "Harvest", "Harvest", "Harvest", "Gather", "Gather", "Build", "Build"] + ["Hyperbeam"]
 var deck = []
 var rareChance = 0.1
 
